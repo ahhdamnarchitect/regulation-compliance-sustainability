@@ -46,11 +46,13 @@ jobs:
           
       - name: Deploy to root
         run: |
+          # Remove the loading page index.html
+          rm -f index.html
           # Copy all built files to root directory
           cp -r dist/* .
-          # Ensure the built index.html is the main one
-          ls -la
-          echo "Files copied to root directory"
+          # Verify the built index.html is now the main one
+          ls -la index.html
+          echo "Built React app deployed to root directory"
           
       - name: Setup Pages
         uses: actions/configure-pages@v4

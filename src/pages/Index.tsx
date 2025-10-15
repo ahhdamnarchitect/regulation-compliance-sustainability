@@ -66,7 +66,7 @@ export default function Index() {
         <div className="container mx-auto px-4 text-center">
           <div className="mb-8">
             <h1 className="text-6xl md:text-8xl font-bold mb-6 text-gray-900">
-              Missick
+              MISSICK
             </h1>
             <p className="text-2xl md:text-3xl text-gray-600 mb-8">
               The Google for Sustainability Regulations
