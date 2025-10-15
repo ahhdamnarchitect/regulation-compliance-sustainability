@@ -37,10 +37,10 @@ jobs:
       - name: Build
         run: |
           echo "Starting build process..."
-          npm run build
+          npm run build || (echo "Build failed!" && exit 1)
           echo "Build completed, checking dist directory..."
-          ls -la dist/ || echo "dist directory not found"
-          echo "Build process finished"
+          ls -la dist/ || (echo "dist directory not found!" && exit 1)
+          echo "Build process finished successfully"
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
