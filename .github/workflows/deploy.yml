@@ -59,23 +59,30 @@ jobs:
             exit 1
           fi
           
+          echo "Contents of dist directory before copy:"
+          ls -la dist/
+          echo "Contents of dist/assets directory:"
+          ls -la dist/assets/
+          
           # Remove files but preserve dist directory
           find . -maxdepth 1 -type f ! -name 'dist' -delete
           find . -maxdepth 1 -type d ! -name '.git' ! -name '.' ! -name 'dist' -exec rm -rf {} +
           
           # Copy all built files to root directory
+          echo "Copying files from dist to root..."
           cp -r dist/* .
           
           # Remove the dist directory after copying
           rm -rf dist
           
           # Verify the built index.html is now the main one
-          ls -la index.html
+          echo "Contents of root directory after copy:"
+          ls -la
+          echo "Contents of assets directory:"
+          ls -la assets/
           echo "Built React app deployed to root directory"
           echo "Contents of index.html (first 10 lines):"
           head -10 index.html
-          echo "Contents of assets directory:"
-          ls -la assets/
           echo "Checking if main.tsx exists (it shouldn't):"
           ls -la src/ 2>/dev/null || echo "src directory not found (good - this is built version)"
           
