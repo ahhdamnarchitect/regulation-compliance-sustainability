@@ -59,12 +59,15 @@ jobs:
             exit 1
           fi
           
-          # Remove ALL files except .git directory
-          find . -maxdepth 1 -type f -delete
-          find . -maxdepth 1 -type d ! -name '.git' ! -name '.' -exec rm -rf {} +
+          # Remove files but preserve dist directory
+          find . -maxdepth 1 -type f ! -name 'dist' -delete
+          find . -maxdepth 1 -type d ! -name '.git' ! -name '.' ! -name 'dist' -exec rm -rf {} +
           
           # Copy all built files to root directory
           cp -r dist/* .
+          
+          # Remove the dist directory after copying
+          rm -rf dist
           
           # Verify the built index.html is now the main one
           ls -la index.html
