@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { mockRegulations } from '@/data/mockRegulations';
 import { Regulation } from '@/types/regulation';
 import { Download, BookmarkX, FileText } from 'lucide-react';
+// @ts-ignore
 import jsPDF from 'jspdf';
 
 export default function Dashboard() {
