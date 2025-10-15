@@ -48,8 +48,9 @@ jobs:
         run: |
           # Copy all built files to root directory
           cp -r dist/* .
-          # Remove the dist folder reference from the copied index.html
-          # The built index.html will now be served directly from root
+          # Ensure the built index.html is the main one
+          ls -la
+          echo "Files copied to root directory"
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
