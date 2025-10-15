@@ -42,8 +42,9 @@ jobs:
           
       - name: Deploy to root
         run: |
-          # Remove any existing index.html (loading page)
-          rm -f index.html
+          # Remove ALL files except .git directory
+          find . -maxdepth 1 -type f -delete
+          find . -maxdepth 1 -type d ! -name '.git' ! -name '.' -exec rm -rf {} +
           # Copy all built files to root directory
           cp -r dist/* .
           # Verify the built index.html is now the main one
@@ -53,6 +54,8 @@ jobs:
           head -10 index.html
           echo "Contents of assets directory:"
           ls -la assets/
+          echo "Checking if main.tsx exists (it shouldn't):"
+          ls -la src/ 2>/dev/null || echo "src directory not found (good - this is built version)"
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
