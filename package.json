@@ -9,7 +9,9 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "prebuild": "npm install jspdf @types/jspdf --save-dev"
+    "prebuild": "npm install jspdf @types/jspdf --save-dev",
+    "deploy": "npm run build && node deploy-to-root.js",
+    "build:pages": "npm run build && node deploy-to-root.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

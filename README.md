@@ -68,6 +68,11 @@ A comprehensive platform for tracking and managing global ESG regulations with s
    npm run build
    ```
 
+7. **Deploy to GitHub Pages**
+   ```bash
+   npm run deploy
+   ```
+
 ## Deployment
 
 ### GitHub Pages (Free)
