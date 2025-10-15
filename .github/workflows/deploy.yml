@@ -38,11 +38,18 @@ jobs:
       - name: Install additional dependencies
         run: npm install jspdf @types/jspdf --save-dev
         
-      - name: Build and Deploy
-        run: npm run build:pages
+      - name: Build
+        run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          
+      - name: Deploy to root
+        run: |
+          # Copy all built files to root directory
+          cp -r dist/* .
+          # Remove the dist folder reference from the copied index.html
+          # The built index.html will now be served directly from root
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
