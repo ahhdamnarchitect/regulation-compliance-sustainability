@@ -51,6 +51,8 @@ jobs:
           echo "Built React app deployed to root directory"
           echo "Contents of index.html (first 10 lines):"
           head -10 index.html
+          echo "Contents of assets directory:"
+          ls -la assets/
           
       - name: Setup Pages
         uses: actions/configure-pages@v4
