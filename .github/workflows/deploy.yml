@@ -68,6 +68,9 @@ jobs:
           find . -maxdepth 1 -type f ! -name 'dist' -delete
           find . -maxdepth 1 -type d ! -name '.git' ! -name '.' ! -name 'dist' -exec rm -rf {} +
           
+          # Ensure we remove any development index.html
+          rm -f index.html
+          
           # Copy all built files to root directory
           echo "Copying files from dist to root..."
           cp -r dist/* .
