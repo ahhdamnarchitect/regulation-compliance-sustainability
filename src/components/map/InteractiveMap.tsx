@@ -17,31 +17,43 @@ const mapStyles = `
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
     filter: none !important;
+    box-shadow: none !important;
   }
   .leaflet-tile-pane {
     border: none !important;
     outline: none !important;
+    box-shadow: none !important;
   }
   .leaflet-tile-container {
     border: none !important;
     outline: none !important;
+    box-shadow: none !important;
   }
   .leaflet-layer {
     border: none !important;
     outline: none !important;
+    box-shadow: none !important;
   }
   .leaflet-map-pane {
     border: none !important;
     outline: none !important;
+    box-shadow: none !important;
   }
   .leaflet-tile-pane img {
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
+    filter: none !important;
   }
   .leaflet-zoom-animated {
     border: none !important;
     outline: none !important;
+    box-shadow: none !important;
+  }
+  .leaflet-tile-pane canvas {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
   }
   
   .leaflet-popup {
@@ -155,18 +167,16 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     }
   }, [mapRef]);
 
-  // Force close all popups when opening a new one
+  // Close other popups when a new one opens
   useEffect(() => {
     if (mapRef && openPopup) {
-      // Close all popups first
-      mapRef.closePopup();
-      // Then open the new one after a small delay
-      setTimeout(() => {
-        const marker = document.querySelector(`[data-country="${openPopup}"]`);
-        if (marker) {
-          marker.click();
+      // Close all popups except the current one
+      const allPopups = document.querySelectorAll('.leaflet-popup');
+      allPopups.forEach(popup => {
+        if (!popup.querySelector(`[data-country="${openPopup}"]`)) {
+          popup.remove();
         }
-      }, 100);
+      });
     }
   }, [openPopup, mapRef]);
 
@@ -202,13 +212,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   const getTileLayerUrl = (language: string) => {
-    // Use CartoDB Voyager tiles with Earth-friendly colors and no gridlines
-    // This provides a clean, professional look that complements the Earth theme
-    return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    // Try OpenStreetMap standard tiles - more reliable
+    return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
   };
 
   const getTileLayerAttribution = (language: string) => {
-    return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
+    return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
   };
 
   return (
@@ -261,11 +270,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 offset={[0, -25]}
                 position="top"
                 onOpen={() => {
-                  // Force close all other popups first
-                  if (mapRef) {
-                    mapRef.closePopup();
-                  }
-                  // Set the new popup as open
+                  // Only set the popup as open, don't interfere with opening
                   setOpenPopup(country);
                 }}
                 onClose={() => setOpenPopup(null)}
