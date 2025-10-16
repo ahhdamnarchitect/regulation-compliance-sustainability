@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Calendar, MapPin } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ExternalLink, Calendar, MapPin, Globe } from 'lucide-react';
 import { Regulation } from '@/types/regulation';
 import { countryCoordinates, getCountriesForRegulation } from '@/data/countryMapping';
 import 'leaflet/dist/leaflet.css';
@@ -44,6 +45,7 @@ const createCustomIcon = (color: string) => new Icon({
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
+  const [mapLanguage, setMapLanguage] = useState('en');
 
   useEffect(() => {
     // Group regulations by country using the new mapping system
@@ -76,8 +78,39 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     }
   };
 
+  const getTileLayerUrl = (language: string) => {
+    switch (language) {
+      case 'en':
+        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      case 'es':
+        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'; // OpenStreetMap doesn't have language variants
+      case 'fr':
+        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      case 'de':
+        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+      default:
+        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    }
+  };
+
   return (
-    <div className="w-full h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand">
+    <div className="w-full h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative">
+      {/* Map Language Toggle */}
+      <div className="absolute top-4 right-4 z-10">
+        <Select value={mapLanguage} onValueChange={setMapLanguage}>
+          <SelectTrigger className="w-32 bg-white border-earth-sand">
+            <Globe className="w-4 h-4 mr-2" />
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="en">English</SelectItem>
+            <SelectItem value="es">Español</SelectItem>
+            <SelectItem value="fr">Français</SelectItem>
+            <SelectItem value="de">Deutsch</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
       <MapContainer
         center={[20, 0]}
         zoom={2}
@@ -86,7 +119,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          url={getTileLayerUrl(mapLanguage)}
         />
         
         {Object.entries(regulationsByCountry).map(([country, countryRegulations]) => {

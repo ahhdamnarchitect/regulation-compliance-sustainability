@@ -22,6 +22,8 @@ export interface User {
   email: string;
   role: 'admin' | 'user';
   bookmarks: string[];
+  plan?: 'free' | 'professional' | 'enterprise';
+  region?: string;
   created_at?: string;
 }
 

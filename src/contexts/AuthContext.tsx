@@ -4,7 +4,7 @@ import { User } from '@/types/regulation';
 interface AuthContextType {
   user: User | null;
   login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, name: string) => Promise<boolean>;
+  register: (email: string, password: string, name: string, region: string) => Promise<boolean>;
   logout: () => void;
   isAdmin: boolean;
 }
@@ -30,16 +30,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock authentication
-    const isAdmin = email === 'admin@missick.com' && password === 'admin123';
-    const isUser = email === 'user@missick.com' && password === 'user123';
+    // Mock authentication with different user types
+    const credentials = {
+      'admin@missick.com': { password: 'admin123', role: 'admin', plan: 'enterprise' },
+      'premium@missick.com': { password: 'premium123', role: 'user', plan: 'professional' },
+      'free@missick.com': { password: 'free123', role: 'user', plan: 'free', region: 'Europe' },
+      'user@missick.com': { password: 'user123', role: 'user', plan: 'free', region: 'North America' }
+    };
     
-    if (isAdmin || isUser) {
+    const userCreds = credentials[email as keyof typeof credentials];
+    if (userCreds && userCreds.password === password) {
       const newUser: User = {
-        id: isAdmin ? 'admin-1' : 'user-1',
+        id: `user-${Date.now()}`,
         email,
-        role: isAdmin ? 'admin' : 'user',
-        bookmarks: []
+        role: userCreds.role as 'admin' | 'user',
+        bookmarks: [],
+        plan: userCreds.plan,
+        region: userCreds.region || 'Global'
       };
       setUser(newUser);
       localStorage.setItem('missick_user', JSON.stringify(newUser));
@@ -48,13 +55,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return false;
   };
 
-  const register = async (email: string, password: string, name: string): Promise<boolean> => {
-    // Mock registration - create new user
+  const register = async (email: string, password: string, name: string, region: string): Promise<boolean> => {
+    // Mock registration - create new free user
     const newUser: User = {
       id: `user-${Date.now()}`,
       email,
       role: 'user',
-      bookmarks: []
+      bookmarks: [],
+      plan: 'free',
+      region: region
     };
     setUser(newUser);
     localStorage.setItem('missick_user', JSON.stringify(newUser));

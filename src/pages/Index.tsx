@@ -32,11 +32,11 @@ export default function Index() {
     }
   };
 
-  const handleRegister = async (email: string, password: string, name: string) => {
+  const handleRegister = async (email: string, password: string, name: string, region: string) => {
     setIsLoading(true);
     setLoginError('');
     try {
-      await register(email, password, name);
+      await register(email, password, name, region);
       setShowLogin(false);
     } catch (err) {
       setLoginError('Failed to create account');

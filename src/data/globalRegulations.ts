@@ -16,6 +16,102 @@ export const globalRegulations: Regulation[] = [
     tags: ['sustainability', 'reporting', 'ESG', 'EU'],
     dateAdded: '2024-01-15'
   },
+  
+  // France-specific regulations
+  {
+    id: 'fr-1',
+    title: 'French Climate and Resilience Law',
+    jurisdiction: 'France',
+    country: 'France',
+    sector: 'All Sectors',
+    framework: 'French Law',
+    description: 'Comprehensive climate legislation including mandatory carbon reporting and green finance requirements.',
+    complianceDeadline: '2022-01-01',
+    status: 'active',
+    source_url: 'https://www.legifrance.gouv.fr/jorf/id/JORFTEXT000043956924',
+    tags: ['climate', 'carbon reporting', 'France'],
+    dateAdded: '2024-01-15'
+  },
+  
+  // Germany-specific regulations
+  {
+    id: 'de-1',
+    title: 'German Supply Chain Due Diligence Act',
+    jurisdiction: 'Germany',
+    country: 'Germany',
+    sector: 'All Sectors',
+    framework: 'German Law',
+    description: 'Requires companies to conduct due diligence on human rights and environmental standards in supply chains.',
+    complianceDeadline: '2023-01-01',
+    status: 'active',
+    source_url: 'https://www.bmj.de/SharedDocs/Gesetzgebungsverfahren/Dokumente/Lieferkettengesetz.html',
+    tags: ['supply chain', 'human rights', 'Germany'],
+    dateAdded: '2024-01-15'
+  },
+  
+  // California-specific regulations
+  {
+    id: 'ca-1',
+    title: 'California Climate Corporate Data Accountability Act (SB 253)',
+    jurisdiction: 'California',
+    country: 'California',
+    sector: 'All Sectors',
+    framework: 'California Law',
+    description: 'Requires large companies doing business in California to disclose their greenhouse gas emissions.',
+    complianceDeadline: '2026-01-01',
+    status: 'active',
+    source_url: 'https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB253',
+    tags: ['climate', 'emissions', 'California', 'disclosure'],
+    dateAdded: '2024-01-15'
+  },
+  
+  // Texas-specific regulations
+  {
+    id: 'tx-1',
+    title: 'Texas Environmental, Social, and Governance (ESG) Act',
+    jurisdiction: 'Texas',
+    country: 'Texas',
+    sector: 'Finance',
+    framework: 'Texas Law',
+    description: 'Prohibits state investment in companies that boycott energy companies or use ESG criteria.',
+    complianceDeadline: '2023-09-01',
+    status: 'active',
+    source_url: 'https://capitol.texas.gov/BillLookup/History.aspx?LegSess=88R&Bill=SB13',
+    tags: ['ESG', 'energy', 'Texas', 'investment'],
+    dateAdded: '2024-01-15'
+  },
+  
+  // Ontario-specific regulations
+  {
+    id: 'on-1',
+    title: 'Ontario Climate Change Action Plan',
+    jurisdiction: 'Ontario',
+    country: 'Ontario',
+    sector: 'All Sectors',
+    framework: 'Ontario Law',
+    description: 'Comprehensive climate action plan including carbon pricing and emissions reduction targets.',
+    complianceDeadline: '2024-01-01',
+    status: 'active',
+    source_url: 'https://www.ontario.ca/page/climate-change-action-plan',
+    tags: ['climate', 'carbon pricing', 'Ontario', 'emissions'],
+    dateAdded: '2024-01-15'
+  },
+  
+  // Bavaria-specific regulations
+  {
+    id: 'bay-1',
+    title: 'Bavarian Energy Transition Act',
+    jurisdiction: 'Bavaria',
+    country: 'Bavaria',
+    sector: 'Energy',
+    framework: 'Bavarian Law',
+    description: 'State-level renewable energy targets and grid modernization requirements.',
+    complianceDeadline: '2025-01-01',
+    status: 'active',
+    source_url: 'https://www.bayern.de/energiewende/',
+    tags: ['renewable energy', 'grid', 'Bavaria', 'transition'],
+    dateAdded: '2024-01-15'
+  },
   {
     id: 'eu-2',
     title: 'EU Taxonomy Regulation',

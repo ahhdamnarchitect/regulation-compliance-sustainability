@@ -5,11 +5,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TestCredentials } from '@/components/TestCredentials';
+import { Eye, EyeOff, Mail, Lock, User, Globe } from 'lucide-react';
 
 interface LoginOverlayProps {
   onLogin: (email: string, password: string) => void;
-  onRegister: (email: string, password: string, name: string) => void;
+  onRegister: (email: string, password: string, name: string, region: string) => void;
   error?: string;
   loading?: boolean;
 }
@@ -22,7 +24,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [registerData, setRegisterData] = useState({ email: '', password: '', name: '' });
+  const [registerData, setRegisterData] = useState({ email: '', password: '', name: '', region: '' });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    onRegister(registerData.email, registerData.password, registerData.name);
+    onRegister(registerData.email, registerData.password, registerData.name, registerData.region);
   };
 
   return (
@@ -180,6 +182,28 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                   </div>
                 </div>
                 
+                <div>
+                  <Label htmlFor="register-region" className="text-earth-text font-medium">
+                    Region (Free Plan Access)
+                  </Label>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                    <Select value={registerData.region} onValueChange={(value) => setRegisterData(prev => ({ ...prev, region: value }))}>
+                      <SelectTrigger className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary">
+                        <SelectValue placeholder="Select your region" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Europe">Europe</SelectItem>
+                        <SelectItem value="North America">North America</SelectItem>
+                        <SelectItem value="Asia Pacific">Asia Pacific</SelectItem>
+                        <SelectItem value="South America">South America</SelectItem>
+                        <SelectItem value="Africa">Africa</SelectItem>
+                        <SelectItem value="Middle East">Middle East</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
                 {error && (
                   <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
@@ -202,6 +226,11 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
             <p className="text-xs">
               Access to 1 region • Map view only • Limited results • No exports
             </p>
+          </div>
+          
+          {/* Test Credentials */}
+          <div className="mt-6">
+            <TestCredentials />
           </div>
         </CardContent>
       </Card>
