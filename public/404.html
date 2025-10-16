@@ -13,10 +13,11 @@
         if (!path.startsWith(basePath)) {
             window.location.href = basePath + path;
         } else {
-            // If we're already in the base path, use hash routing
-            const hashPath = path.replace(basePath, '');
-            if (hashPath && hashPath !== '/') {
-                window.location.href = basePath + '/#' + hashPath;
+            // If we're already in the base path, preserve the path
+            const currentPath = path.replace(basePath, '');
+            if (currentPath && currentPath !== '/') {
+                // Use hash routing to preserve the path
+                window.location.href = basePath + '/#' + currentPath;
             } else {
                 window.location.href = basePath + '/';
             }

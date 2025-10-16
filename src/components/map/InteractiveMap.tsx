@@ -45,12 +45,15 @@ const mapStyles = `
   }
   
   .leaflet-popup {
-    max-width: 300px !important;
+    max-width: 320px !important;
+    min-width: 280px !important;
   }
   
   .leaflet-popup-content-wrapper {
     border-radius: 8px !important;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    min-width: 280px !important;
+    max-width: 320px !important;
   }
   
   .leaflet-popup-tip {
@@ -61,6 +64,13 @@ const mapStyles = `
   .leaflet-popup-content {
     margin: 0 !important;
     padding: 0 !important;
+    min-width: 280px !important;
+    max-width: 320px !important;
+  }
+  
+  .map-popup {
+    min-width: 280px !important;
+    max-width: 320px !important;
   }
 `;
 
@@ -100,17 +110,35 @@ const createCustomIcon = (color: string) => new Icon({
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
   const [openPopup, setOpenPopup] = useState<string | null>(null);
+  const [mapRef, setMapRef] = useState<any>(null);
 
   // Inject custom CSS to remove gridlines
   useEffect(() => {
     const style = document.createElement('style');
     style.textContent = mapStyles;
     document.head.appendChild(style);
-    
+
     return () => {
       document.head.removeChild(style);
     };
   }, []);
+
+  // Close popup when map changes
+  useEffect(() => {
+    if (mapRef) {
+      const handleZoom = () => {
+        setOpenPopup(null);
+      };
+      
+      mapRef.on('zoom', handleZoom);
+      mapRef.on('move', handleZoom);
+      
+      return () => {
+        mapRef.off('zoom', handleZoom);
+        mapRef.off('move', handleZoom);
+      };
+    }
+  }, [mapRef]);
 
   useEffect(() => {
     // Group regulations by country using the new mapping system
@@ -172,6 +200,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         scrollWheelZoom={true}
         doubleClickZoom={true}
         touchZoom={true}
+        ref={setMapRef}
       >
         <TileLayer
           attribution={getTileLayerAttribution('en')}
@@ -193,19 +222,25 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
             >
               <Popup 
                 className="map-popup"
-                maxWidth={280}
-                minWidth={250}
+                maxWidth={320}
+                minWidth={280}
                 closeButton={true}
                 autoClose={false}
                 closeOnClick={false}
-                offset={[0, -20]}
+                offset={[0, -25]}
                 position="top"
                 onOpen={() => {
                   // Close any other open popup first
                   if (openPopup && openPopup !== country) {
                     setOpenPopup(null);
+                    // Force close all popups
+                    if (mapRef) {
+                      mapRef.closePopup();
+                    }
                     // Small delay to ensure previous popup closes
-                    setTimeout(() => setOpenPopup(country), 100);
+                    setTimeout(() => {
+                      setOpenPopup(country);
+                    }, 150);
                   } else {
                     setOpenPopup(country);
                   }
