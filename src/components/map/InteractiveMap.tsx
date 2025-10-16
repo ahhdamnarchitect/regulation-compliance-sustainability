@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ExternalLink, Calendar, MapPin, Globe } from 'lucide-react';
+import { ExternalLink, Calendar, MapPin } from 'lucide-react';
 import { Regulation } from '@/types/regulation';
 import { countryCoordinates, getCountriesForRegulation } from '@/data/countryMapping';
 import 'leaflet/dist/leaflet.css';
@@ -45,7 +44,6 @@ const createCustomIcon = (color: string) => new Icon({
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
-  const [mapLanguage, setMapLanguage] = useState('en');
 
   useEffect(() => {
     // Group regulations by country using the new mapping system
@@ -79,37 +77,17 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   const getTileLayerUrl = (language: string) => {
-    // Use OpenStreetMap with proper language support
-    // For English, use standard OSM tiles which show English names
-    // For other languages, we'll use a consistent English base
-    return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    // Use CartoDB Positron tiles which consistently show English labels
+    // This ensures all country/region names appear in English regardless of language setting
+    return 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
   };
 
   const getTileLayerAttribution = (language: string) => {
-    return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+    return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
   };
 
   return (
     <div className="w-full h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative">
-            {/* Map Language Toggle */}
-            <div className="absolute top-4 right-4 z-10">
-              <div className="bg-white rounded-lg shadow-md border border-earth-sand p-2">
-                <div className="text-xs text-earth-text/70 mb-1 text-center">Map Labels</div>
-                <Select value={mapLanguage} onValueChange={setMapLanguage}>
-                  <SelectTrigger className="w-32 bg-white border-earth-sand">
-                    <Globe className="w-4 h-4 mr-2" />
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="en">English</SelectItem>
-                    <SelectItem value="es">Español</SelectItem>
-                    <SelectItem value="fr">Français</SelectItem>
-                    <SelectItem value="de">Deutsch</SelectItem>
-                  </SelectContent>
-                </Select>
-                <div className="text-xs text-earth-text/50 mt-1 text-center">English labels</div>
-              </div>
-            </div>
       
       <MapContainer
         center={[20, 0]}
@@ -118,8 +96,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         className="z-0"
       >
         <TileLayer
-          attribution={getTileLayerAttribution(mapLanguage)}
-          url={getTileLayerUrl(mapLanguage)}
+          attribution={getTileLayerAttribution('en')}
+          url={getTileLayerUrl('en')}
         />
         
         {Object.entries(regulationsByCountry).map(([country, countryRegulations]) => {
