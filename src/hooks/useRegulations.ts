@@ -64,12 +64,41 @@ export const useRegulations = () => {
           );
         }
         if (filters?.region && filters.region !== 'all') {
-          filteredData = filteredData.filter(reg => 
-            (reg.jurisdiction || reg.region) === filters.region
-          );
+          filteredData = filteredData.filter(reg => {
+            const jurisdiction = (reg.jurisdiction || '').toLowerCase();
+            const country = (reg.country || '').toLowerCase();
+            const filterRegion = filters.region.toLowerCase();
+            
+            // Map filter values to data values
+            if (filterRegion === 'europe') {
+              return jurisdiction === 'eu' || country.includes('european union');
+            }
+            if (filterRegion === 'north america') {
+              return jurisdiction === 'us' || jurisdiction === 'canada' || country.includes('united states') || country.includes('canada');
+            }
+            if (filterRegion === 'asia pacific') {
+              return jurisdiction === 'asia' || country.includes('china') || country.includes('japan') || country.includes('australia');
+            }
+            if (filterRegion === 'global') {
+              return jurisdiction === 'global' || jurisdiction === 'international';
+            }
+            
+            // Fallback to exact match
+            return jurisdiction === filterRegion || country.includes(filterRegion);
+          });
         }
         if (filters?.sector && filters.sector !== 'all') {
-          filteredData = filteredData.filter(reg => reg.sector === filters.sector);
+          filteredData = filteredData.filter(reg => {
+            const sector = (reg.sector || '').toLowerCase();
+            const filterSector = filters.sector.toLowerCase();
+            
+            // Handle "All Sectors" case
+            if (sector === 'all sectors') {
+              return true;
+            }
+            
+            return sector === filterSector || sector.includes(filterSector);
+          });
         }
         if (filters?.framework && filters.framework !== 'all') {
           filteredData = filteredData.filter(reg => reg.framework === filters.framework);
