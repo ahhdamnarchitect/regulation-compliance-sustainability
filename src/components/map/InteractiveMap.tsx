@@ -79,37 +79,37 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   const getTileLayerUrl = (language: string) => {
-    switch (language) {
-      case 'en':
-        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      case 'es':
-        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'; // OpenStreetMap doesn't have language variants
-      case 'fr':
-        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      case 'de':
-        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-      default:
-        return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    }
+    // Use OpenStreetMap with proper language support
+    // For English, use standard OSM tiles which show English names
+    // For other languages, we'll use a consistent English base
+    return 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  };
+
+  const getTileLayerAttribution = (language: string) => {
+    return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
   };
 
   return (
     <div className="w-full h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative">
-      {/* Map Language Toggle */}
-      <div className="absolute top-4 right-4 z-10">
-        <Select value={mapLanguage} onValueChange={setMapLanguage}>
-          <SelectTrigger className="w-32 bg-white border-earth-sand">
-            <Globe className="w-4 h-4 mr-2" />
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="en">English</SelectItem>
-            <SelectItem value="es">Español</SelectItem>
-            <SelectItem value="fr">Français</SelectItem>
-            <SelectItem value="de">Deutsch</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
+            {/* Map Language Toggle */}
+            <div className="absolute top-4 right-4 z-10">
+              <div className="bg-white rounded-lg shadow-md border border-earth-sand p-2">
+                <div className="text-xs text-earth-text/70 mb-1 text-center">Map Labels</div>
+                <Select value={mapLanguage} onValueChange={setMapLanguage}>
+                  <SelectTrigger className="w-32 bg-white border-earth-sand">
+                    <Globe className="w-4 h-4 mr-2" />
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="en">English</SelectItem>
+                    <SelectItem value="es">Español</SelectItem>
+                    <SelectItem value="fr">Français</SelectItem>
+                    <SelectItem value="de">Deutsch</SelectItem>
+                  </SelectContent>
+                </Select>
+                <div className="text-xs text-earth-text/50 mt-1 text-center">English labels</div>
+              </div>
+            </div>
       
       <MapContainer
         center={[20, 0]}
@@ -118,7 +118,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         className="z-0"
       >
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          attribution={getTileLayerAttribution(mapLanguage)}
           url={getTileLayerUrl(mapLanguage)}
         />
         
