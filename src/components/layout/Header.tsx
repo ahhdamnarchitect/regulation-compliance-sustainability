@@ -23,9 +23,14 @@ export const Header = () => {
             Search
           </Link>
           {user && (
-            <Link to="/dashboard" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
-              Dashboard
-            </Link>
+            <>
+              <Link to="/dashboard" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
+                Dashboard
+              </Link>
+              <Link to="/account" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
+                Account
+              </Link>
+            </>
           )}
           {isAdmin && (
             <Link to="/admin" className="text-earth-text hover:text-earth-primary transition-colors flex items-center space-x-1 font-medium">

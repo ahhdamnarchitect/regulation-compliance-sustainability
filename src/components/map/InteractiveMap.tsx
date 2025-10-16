@@ -9,22 +9,39 @@ import { Regulation } from '@/types/regulation';
 import { countryCoordinates, getCountriesForRegulation } from '@/data/countryMapping';
 import 'leaflet/dist/leaflet.css';
 
-// Custom CSS to remove tile gridlines
+// Custom CSS to remove tile gridlines - more aggressive approach
 const mapStyles = `
   .leaflet-tile {
     border: none !important;
     outline: none !important;
     image-rendering: -webkit-optimize-contrast;
     image-rendering: crisp-edges;
+    filter: none !important;
   }
   .leaflet-tile-pane {
     border: none !important;
+    outline: none !important;
   }
   .leaflet-tile-container {
     border: none !important;
+    outline: none !important;
   }
   .leaflet-layer {
     border: none !important;
+    outline: none !important;
+  }
+  .leaflet-map-pane {
+    border: none !important;
+    outline: none !important;
+  }
+  .leaflet-tile-pane img {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  .leaflet-zoom-animated {
+    border: none !important;
+    outline: none !important;
   }
 `;
 
