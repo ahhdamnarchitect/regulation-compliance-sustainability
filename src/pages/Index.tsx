@@ -62,7 +62,7 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-earth-background relative">
+    <div className="min-h-screen bg-earth-background relative mobile-full-width prevent-zoom">
       <Header />
       
       {/* Login Overlay */}

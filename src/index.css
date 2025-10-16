@@ -110,6 +110,19 @@
   }
 }
 
+/* Mobile viewport fixes */
+@layer utilities {
+  .mobile-full-width {
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .prevent-zoom {
+    touch-action: manipulation;
+  }
+}
+
 .markdown-editor {
   @apply font-mono text-base leading-relaxed;
 }

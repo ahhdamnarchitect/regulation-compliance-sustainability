@@ -80,6 +80,7 @@ const createCustomIcon = (color: string) => new Icon({
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
+  const [openPopup, setOpenPopup] = useState<string | null>(null);
 
   // Inject custom CSS to remove gridlines
   useEffect(() => {
@@ -148,6 +149,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         maxBounds={[[-85, -180], [85, 180]]}
         maxBoundsViscosity={1.0}
         worldCopyJump={false}
+        zoomControl={true}
+        scrollWheelZoom={true}
+        doubleClickZoom={true}
+        touchZoom={true}
       >
         <TileLayer
           attribution={getTileLayerAttribution('en')}
@@ -174,6 +179,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 closeButton={true}
                 autoClose={false}
                 closeOnClick={false}
+                onOpen={() => setOpenPopup(country)}
+                onClose={() => setOpenPopup(null)}
               >
                 <div className="p-2 w-full max-w-[280px] sm:max-w-[350px]">
                   <h3 className="font-semibold text-earth-primary mb-2 flex items-center">

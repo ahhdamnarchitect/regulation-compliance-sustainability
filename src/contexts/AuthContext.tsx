@@ -27,7 +27,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (savedUser) {
       try {
         const parsedUser = JSON.parse(savedUser);
-        setUser(parsedUser);
+        // Validate that the user object has required fields
+        if (parsedUser && parsedUser.email && parsedUser.role) {
+          setUser(parsedUser);
+        } else {
+          localStorage.removeItem('missick_user');
+          setUser(null);
+        }
       } catch (error) {
         // If parsing fails, clear the invalid data
         localStorage.removeItem('missick_user');

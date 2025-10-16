@@ -8,7 +8,14 @@
         // Redirect to the main app with the current path
         const path = window.location.pathname;
         const basePath = '/regulation-compliance-sustainability';
-        window.location.href = basePath + path;
+        
+        // Prevent infinite loops by checking if we're already in the base path
+        if (!path.startsWith(basePath)) {
+            window.location.href = basePath + path;
+        } else {
+            // If we're already in the base path, just redirect to the base
+            window.location.href = basePath + '/';
+        }
     </script>
 </head>
 <body>
