@@ -9,6 +9,25 @@ import { Regulation } from '@/types/regulation';
 import { countryCoordinates, getCountriesForRegulation } from '@/data/countryMapping';
 import 'leaflet/dist/leaflet.css';
 
+// Custom CSS to remove tile gridlines
+const mapStyles = `
+  .leaflet-tile {
+    border: none !important;
+    outline: none !important;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+  .leaflet-tile-pane {
+    border: none !important;
+  }
+  .leaflet-tile-container {
+    border: none !important;
+  }
+  .leaflet-layer {
+    border: none !important;
+  }
+`;
+
 // Fix for default markers in react-leaflet
 import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
 import markerIcon from 'leaflet/dist/images/marker-icon.png';
@@ -44,6 +63,17 @@ const createCustomIcon = (color: string) => new Icon({
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
+
+  // Inject custom CSS to remove gridlines
+  useEffect(() => {
+    const style = document.createElement('style');
+    style.textContent = mapStyles;
+    document.head.appendChild(style);
+    
+    return () => {
+      document.head.removeChild(style);
+    };
+  }, []);
 
   useEffect(() => {
     // Group regulations by country using the new mapping system
@@ -98,6 +128,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
           backgroundColor: '#F7F8F3' // Earth background color
         }}
         className="z-0 rounded-lg"
+        maxBounds={[[-85, -180], [85, 180]]}
+        maxBoundsViscosity={1.0}
+        worldCopyJump={false}
       >
         <TileLayer
           attribution={getTileLayerAttribution('en')}
