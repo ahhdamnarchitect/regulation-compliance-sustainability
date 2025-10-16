@@ -88,7 +88,6 @@ export default function AccountSettings() {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
   };
 
   const getPlanBadge = (plan?: string) => {

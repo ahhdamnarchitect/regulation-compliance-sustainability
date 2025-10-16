@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { User } from '@/types/regulation';
 
 interface AuthContextType {
@@ -22,7 +21,6 @@ export const useAuth = () => {
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const savedUser = localStorage.getItem('missick_user');
@@ -76,7 +74,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setUser(null);
     localStorage.removeItem('missick_user');
     // Redirect to home page after logout
-    navigate('/');
+    window.location.href = '/';
   };
 
   return (

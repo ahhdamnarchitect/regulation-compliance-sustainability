@@ -185,7 +185,6 @@ export const countryAliases: Record<string, string> = {
   'Britain': 'United Kingdom',
   'Great Britain': 'United Kingdom',
   'Deutschland': 'Germany',
-  'Deutschland': 'Germany',
   'España': 'Spain',
   'Espagne': 'Spain',
   'Italia': 'Italy',
