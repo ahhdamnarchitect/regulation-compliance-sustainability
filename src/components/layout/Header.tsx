@@ -23,14 +23,9 @@ export const Header = () => {
             Search
           </Link>
           {user && (
-            <>
-              <Link to="/dashboard" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
-                Dashboard
-              </Link>
-              <Link to="/account" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
-                Account
-              </Link>
-            </>
+            <Link to="/dashboard" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
+              Dashboard
+            </Link>
           )}
           {isAdmin && (
             <Link to="/admin" className="text-earth-text hover:text-earth-primary transition-colors flex items-center space-x-1 font-medium">
@@ -43,10 +38,13 @@ export const Header = () => {
         <div className="flex items-center space-x-4">
           {user ? (
             <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2">
+              <Link 
+                to="/account" 
+                className="flex items-center space-x-2 hover:bg-earth-sand/50 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+              >
                 <User className="w-4 h-4 text-gray-500" />
                 <span className="text-sm text-gray-700">{user.email}</span>
-              </div>
+              </Link>
               <Button variant="outline" size="sm" onClick={logout}>
                 <LogOut className="w-4 h-4 mr-2" />
                 Logout
