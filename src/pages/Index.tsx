@@ -102,7 +102,7 @@ export default function Index() {
       <div className="container mx-auto px-2 sm:px-4 py-8 max-w-full overflow-x-hidden">
         {/* Hero Section */}
         <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-4 text-earth-primary brand-text">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 text-earth-primary brand-text">
             MISSICK
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-earth-text mb-6 md:mb-8 px-4">
@@ -110,8 +110,16 @@ export default function Index() {
           </p>
         </div>
 
-        {/* Interactive Map */}
-        <div className="mb-6 md:mb-8">
+        {/* Interactive Map - More contained like earthday.org */}
+        <div className="mb-6 md:mb-8 max-w-5xl mx-auto">
+          <div className="text-center mb-4">
+            <h2 className="text-xl md:text-2xl font-semibold text-earth-text mb-2">
+              Global Regulation Map
+            </h2>
+            <p className="text-sm md:text-base text-earth-text/70">
+              Click on any country to explore sustainability regulations
+            </p>
+          </div>
           <InteractiveMap
             regulations={regulations}
             onRegulationClick={handleRegulationClick}
@@ -119,18 +127,19 @@ export default function Index() {
         </div>
 
         {/* Search Section */}
-        <Card className="border-earth-sand shadow-lg">
-          <CardContent className="p-4 md:p-6">
-            <div className="text-center mb-4 md:mb-6">
-              <h2 className="text-xl md:text-2xl font-bold text-earth-text mb-2">
-                Search Global Regulations
-              </h2>
-              <p className="text-sm md:text-base text-earth-text/70 px-4">
-                Find sustainability regulations by country, framework, or keyword
-              </p>
-            </div>
-            
-            <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto">
+          <Card className="border-earth-sand shadow-lg">
+            <CardContent className="p-4 md:p-6">
+              <div className="text-center mb-4 md:mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-earth-text mb-2">
+                  Search Global Regulations
+                </h2>
+                <p className="text-sm md:text-base text-earth-text/70 px-4">
+                  Find sustainability regulations by country, framework, or keyword
+                </p>
+              </div>
+              
+              <div className="max-w-2xl mx-auto">
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
                 <div className="flex-1 relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4 md:w-5 md:h-5" />
@@ -161,6 +170,7 @@ export default function Index() {
             </div>
           </CardContent>
         </Card>
+        </div>
       </div>
     </div>
   );

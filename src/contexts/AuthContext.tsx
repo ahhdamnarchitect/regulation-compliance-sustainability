@@ -86,8 +86,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     setUser(null);
     localStorage.removeItem('missick_user');
-    // Redirect to home page after logout with correct base path
-    window.location.href = '/regulation-compliance-sustainability/';
+    // Redirect to home page after logout
+    window.location.href = '/';
   };
 
   return (
