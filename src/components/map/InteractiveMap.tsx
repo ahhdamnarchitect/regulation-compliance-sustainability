@@ -77,9 +77,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   const getTileLayerUrl = (language: string) => {
-    // Use CartoDB Positron tiles which consistently show English labels
-    // This ensures all country/region names appear in English regardless of language setting
-    return 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
+    // Use CartoDB Voyager tiles with Earth-friendly colors and no gridlines
+    // This provides a clean, professional look that complements the Earth theme
+    return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
   };
 
   const getTileLayerAttribution = (language: string) => {
@@ -87,13 +87,17 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   return (
-    <div className="w-full h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative">
+    <div className="w-full h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative bg-earth-background">
       
       <MapContainer
         center={[20, 0]}
         zoom={2}
-        style={{ height: '100%', width: '100%' }}
-        className="z-0"
+        style={{ 
+          height: '100%', 
+          width: '100%',
+          backgroundColor: '#F7F8F3' // Earth background color
+        }}
+        className="z-0 rounded-lg"
       >
         <TileLayer
           attribution={getTileLayerAttribution('en')}
