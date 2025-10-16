@@ -47,6 +47,7 @@ const mapStyles = `
   .leaflet-popup {
     max-width: 320px !important;
     min-width: 280px !important;
+    width: 320px !important;
   }
   
   .leaflet-popup-content-wrapper {
@@ -54,6 +55,7 @@ const mapStyles = `
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
     min-width: 280px !important;
     max-width: 320px !important;
+    width: 320px !important;
   }
   
   .leaflet-popup-tip {
@@ -66,11 +68,22 @@ const mapStyles = `
     padding: 0 !important;
     min-width: 280px !important;
     max-width: 320px !important;
+    width: 320px !important;
   }
   
   .map-popup {
     min-width: 280px !important;
     max-width: 320px !important;
+    width: 320px !important;
+  }
+  
+  .leaflet-popup-pane {
+    z-index: 1000 !important;
+  }
+  
+  .leaflet-popup-scroll {
+    max-height: 300px !important;
+    overflow-y: auto !important;
   }
 `;
 
@@ -128,6 +141,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     if (mapRef) {
       const handleZoom = () => {
         setOpenPopup(null);
+        // Force close all popups
+        mapRef.closePopup();
       };
       
       mapRef.on('zoom', handleZoom);
@@ -139,6 +154,21 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
       };
     }
   }, [mapRef]);
+
+  // Force close all popups when opening a new one
+  useEffect(() => {
+    if (mapRef && openPopup) {
+      // Close all popups first
+      mapRef.closePopup();
+      // Then open the new one after a small delay
+      setTimeout(() => {
+        const marker = document.querySelector(`[data-country="${openPopup}"]`);
+        if (marker) {
+          marker.click();
+        }
+      }, 100);
+    }
+  }, [openPopup, mapRef]);
 
   useEffect(() => {
     // Group regulations by country using the new mapping system
@@ -219,6 +249,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
               key={country}
               position={[coords.lat, coords.lng]}
               icon={createCustomIcon(color)}
+              data-country={country}
             >
               <Popup 
                 className="map-popup"
@@ -230,20 +261,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 offset={[0, -25]}
                 position="top"
                 onOpen={() => {
-                  // Close any other open popup first
-                  if (openPopup && openPopup !== country) {
-                    setOpenPopup(null);
-                    // Force close all popups
-                    if (mapRef) {
-                      mapRef.closePopup();
-                    }
-                    // Small delay to ensure previous popup closes
-                    setTimeout(() => {
-                      setOpenPopup(country);
-                    }, 150);
-                  } else {
-                    setOpenPopup(country);
+                  // Force close all other popups first
+                  if (mapRef) {
+                    mapRef.closePopup();
                   }
+                  // Set the new popup as open
+                  setOpenPopup(country);
                 }}
                 onClose={() => setOpenPopup(null)}
               >
