@@ -33,7 +33,7 @@ export default function Login() {
             <span className="text-white font-bold text-2xl">M</span>
           </div>
           <CardTitle className="text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Welcome to Missick
+            Welcome to MISSICK
           </CardTitle>
         </CardHeader>
         

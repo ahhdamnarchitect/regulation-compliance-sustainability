@@ -14,7 +14,7 @@ export const Header = () => {
             <span className="text-white font-bold text-sm">M</span>
           </div>
           <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Missick
+            MISSICK
           </span>
         </Link>
 
