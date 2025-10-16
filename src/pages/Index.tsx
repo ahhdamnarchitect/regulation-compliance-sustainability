@@ -58,8 +58,7 @@ export default function Index() {
       setShowLogin(true);
       return;
     }
-    // Navigate to regulation detail or show in modal
-    console.log('Regulation clicked:', regulation);
+    navigate(`/regulation/${regulation.id}`);
   };
 
   return (

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Calendar, MapPin } from 'lucide-react';
 import { Regulation } from '@/types/regulation';
+import { countryCoordinates, getCountriesForRegulation } from '@/data/countryMapping';
 import 'leaflet/dist/leaflet.css';
 
 // Fix for default markers in react-leaflet
@@ -26,21 +27,7 @@ interface InteractiveMapProps {
   onRegulationClick: (regulation: Regulation) => void;
 }
 
-// Country coordinates for major regions
-const countryCoordinates = {
-  'EU': { lat: 54.5260, lng: 15.2551, name: 'European Union' },
-  'US': { lat: 39.8283, lng: -98.5795, name: 'United States' },
-  'CA': { lat: 56.1304, lng: -106.3468, name: 'Canada' },
-  'UK': { lat: 55.3781, lng: -3.4360, name: 'United Kingdom' },
-  'AU': { lat: -25.2744, lng: 133.7751, name: 'Australia' },
-  'JP': { lat: 36.2048, lng: 138.2529, name: 'Japan' },
-  'CN': { lat: 35.8617, lng: 104.1954, name: 'China' },
-  'IN': { lat: 20.5937, lng: 78.9629, name: 'India' },
-  'BR': { lat: -14.2350, lng: -51.9253, name: 'Brazil' },
-  'MX': { lat: 23.6345, lng: -102.5528, name: 'Mexico' },
-  'ZA': { lat: -30.5595, lng: 22.9375, name: 'South Africa' },
-  'SG': { lat: 1.3521, lng: 103.8198, name: 'Singapore' },
-};
+// Country coordinates are now imported from countryMapping.ts
 
 // Custom marker icon
 const createCustomIcon = (color: string) => new Icon({
@@ -59,42 +46,25 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
 
   useEffect(() => {
-    // Group regulations by country/jurisdiction
+    // Group regulations by country using the new mapping system
     const grouped: Record<string, Regulation[]> = {};
     
     regulations.forEach(regulation => {
-      const key = regulation.jurisdiction || regulation.country || 'Unknown';
-      if (!grouped[key]) {
-        grouped[key] = [];
-      }
-      grouped[key].push(regulation);
+      const countries = getCountriesForRegulation(regulation.jurisdiction, regulation.country);
+      
+      countries.forEach(country => {
+        if (!grouped[country]) {
+          grouped[country] = [];
+        }
+        grouped[country].push(regulation);
+      });
     });
     
     setRegulationsByCountry(grouped);
   }, [regulations]);
 
-  const getCountryCoordinates = (jurisdiction: string) => {
-    // Map jurisdiction to country coordinates
-    const mapping: Record<string, string> = {
-      'EU': 'EU',
-      'European Union': 'EU',
-      'US': 'US',
-      'United States': 'US',
-      'Canada': 'CA',
-      'UK': 'UK',
-      'United Kingdom': 'UK',
-      'Australia': 'AU',
-      'Japan': 'JP',
-      'China': 'CN',
-      'India': 'IN',
-      'Brazil': 'BR',
-      'Mexico': 'MX',
-      'South Africa': 'ZA',
-      'Singapore': 'SG',
-    };
-    
-    const countryKey = mapping[jurisdiction] || jurisdiction;
-    return countryCoordinates[countryKey as keyof typeof countryCoordinates] || null;
+  const getCountryCoordinates = (country: string) => {
+    return countryCoordinates[country as keyof typeof countryCoordinates] || null;
   };
 
   const getStatusColor = (status: string) => {
@@ -133,7 +103,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
               icon={createCustomIcon(color)}
             >
               <Popup className="map-popup">
-                <div className="p-2 min-w-[300px]">
+                <div className="p-2 min-w-[350px] max-w-[400px]">
                   <h3 className="font-semibold text-earth-primary mb-2 flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
                     {coords.name}
@@ -142,15 +112,15 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                     {countryRegulations.length} regulation{countryRegulations.length !== 1 ? 's' : ''}
                   </p>
                   
-                  <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                    {countryRegulations.slice(0, 5).map((regulation) => (
-                      <Card key={regulation.id} className="p-2 border border-earth-sand">
+                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                    {countryRegulations.map((regulation) => (
+                      <Card key={regulation.id} className="p-3 border border-earth-sand hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h4 className="font-medium text-sm text-earth-text line-clamp-2">
+                            <h4 className="font-medium text-sm text-earth-text line-clamp-2 mb-2">
                               {regulation.title}
                             </h4>
-                            <div className="flex items-center gap-2 mt-1">
+                            <div className="flex items-center gap-2 mb-2">
                               <Badge 
                                 className={`text-xs ${
                                   regulation.status === 'active' ? 'bg-green-100 text-green-800' :
@@ -164,11 +134,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                                 {regulation.framework}
                               </span>
                             </div>
+                            <p className="text-xs text-earth-text/70 line-clamp-2">
+                              {regulation.summary || regulation.description || 'No description available'}
+                            </p>
                           </div>
                           <Button
                             size="sm"
                             variant="outline"
-                            className="ml-2 text-xs"
+                            className="ml-2 text-xs flex-shrink-0"
                             onClick={() => onRegulationClick(regulation)}
                           >
                             View
@@ -176,12 +149,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                         </div>
                       </Card>
                     ))}
-                    
-                    {countryRegulations.length > 5 && (
-                      <p className="text-xs text-earth-text text-center">
-                        +{countryRegulations.length - 5} more regulations
-                      </p>
-                    )}
                   </div>
                 </div>
               </Popup>

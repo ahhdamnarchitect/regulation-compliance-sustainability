@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams, Link } from 'react-router-dom';
+import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { RegulationCard } from '@/components/regulations/RegulationCard';
 import { Button } from '@/components/ui/button';
@@ -14,6 +14,7 @@ import { Search, Filter, ArrowLeft, Download, Bookmark } from 'lucide-react';
 
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [filters, setFilters] = useState<SearchFilters>({
@@ -245,12 +246,20 @@ export default function SearchResults() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredRegulations.map((regulation) => (
-              <RegulationCard
+              <div 
                 key={regulation.id}
-                regulation={regulation}
-                isBookmarked={bookmarks.includes(regulation.id)}
-                onBookmark={() => handleBookmark(regulation.id)}
-              />
+                className="cursor-pointer hover:scale-105 transition-transform duration-200"
+                onClick={() => navigate(`/regulation/${regulation.id}`)}
+              >
+                <RegulationCard
+                  regulation={regulation}
+                  isBookmarked={bookmarks.includes(regulation.id)}
+                  onBookmark={(e) => {
+                    e.stopPropagation();
+                    handleBookmark(regulation.id);
+                  }}
+                />
+              </div>
             ))}
           </div>
         )}

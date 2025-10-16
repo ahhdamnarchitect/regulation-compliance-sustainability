@@ -2,6 +2,41 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Regulation, SearchFilters, DatabaseRegulation } from '@/types/regulation';
 import { mockRegulations } from '@/data/mockRegulations';
+import { countryAliases, getCountriesForRegulation } from '@/data/countryMapping';
+
+// Smart country matching function
+const getSmartCountryMatch = (query: string, regulation: Regulation): boolean => {
+  const normalizedQuery = query.toLowerCase().trim();
+  
+  // Check if query matches any country aliases
+  const matchingCountries = Object.entries(countryAliases).filter(([alias, country]) => 
+    alias.toLowerCase().includes(normalizedQuery) || country.toLowerCase().includes(normalizedQuery)
+  );
+  
+  if (matchingCountries.length > 0) {
+    const countries = getCountriesForRegulation(regulation.jurisdiction, regulation.country);
+    return countries.some(country => 
+      matchingCountries.some(([_, mappedCountry]) => mappedCountry === country)
+    );
+  }
+  
+  // Check for common region terms
+  const regionTerms: Record<string, string[]> = {
+    'europe': ['eu', 'european union', 'european'],
+    'america': ['us', 'usa', 'united states', 'north america'],
+    'asia': ['asian', 'asia pacific', 'pacific'],
+    'global': ['international', 'worldwide', 'world']
+  };
+  
+  for (const [region, terms] of Object.entries(regionTerms)) {
+    if (terms.some(term => normalizedQuery.includes(term))) {
+      const countries = getCountriesForRegulation(region, '');
+      return countries.length > 0;
+    }
+  }
+  
+  return false;
+};
 
 export const useRegulations = () => {
   const [regulations, setRegulations] = useState<Regulation[]>([]);
@@ -58,10 +93,30 @@ export const useRegulations = () => {
         
         if (filters?.query) {
           const query = filters.query.toLowerCase();
-          filteredData = filteredData.filter(reg => 
-            reg.title.toLowerCase().includes(query) || 
-            (reg.summary || reg.description || '').toLowerCase().includes(query)
-          );
+          filteredData = filteredData.filter(reg => {
+            // Search in title and description
+            const titleMatch = reg.title.toLowerCase().includes(query);
+            const descMatch = (reg.summary || reg.description || '').toLowerCase().includes(query);
+            
+            // Search in jurisdiction and country
+            const jurisdictionMatch = (reg.jurisdiction || '').toLowerCase().includes(query);
+            const countryMatch = (reg.country || '').toLowerCase().includes(query);
+            
+            // Search in framework and sector
+            const frameworkMatch = (reg.framework || '').toLowerCase().includes(query);
+            const sectorMatch = (reg.sector || '').toLowerCase().includes(query);
+            
+            // Search in tags
+            const tagsMatch = reg.tags && reg.tags.some((tag: string) => 
+              tag.toLowerCase().includes(query)
+            );
+            
+            // Smart country/region matching
+            const smartCountryMatch = getSmartCountryMatch(query, reg);
+            
+            return titleMatch || descMatch || jurisdictionMatch || countryMatch || 
+                   frameworkMatch || sectorMatch || tagsMatch || smartCountryMatch;
+          });
         }
         if (filters?.region && filters.region !== 'all') {
           filteredData = filteredData.filter(reg => {
