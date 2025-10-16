@@ -43,6 +43,15 @@ const mapStyles = `
     border: none !important;
     outline: none !important;
   }
+  
+  .leaflet-popup {
+    max-width: 300px !important;
+  }
+  
+  .leaflet-popup-content-wrapper {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  }
 `;
 
 // Fix for default markers in react-leaflet
@@ -174,12 +183,19 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
             >
               <Popup 
                 className="map-popup"
-                maxWidth={300}
+                maxWidth={280}
                 minWidth={250}
                 closeButton={true}
                 autoClose={false}
                 closeOnClick={false}
-                onOpen={() => setOpenPopup(country)}
+                offset={[0, -10]}
+                onOpen={() => {
+                  // Close any other open popup
+                  if (openPopup && openPopup !== country) {
+                    setOpenPopup(null);
+                  }
+                  setOpenPopup(country);
+                }}
                 onClose={() => setOpenPopup(null)}
               >
                 <div className="p-2 w-full max-w-[280px] sm:max-w-[350px]">

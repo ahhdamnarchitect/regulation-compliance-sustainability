@@ -20,9 +20,24 @@ export const Header = () => {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
-            Search
-          </Link>
+          {user && user.plan !== 'free' ? (
+            <Link to="/search?q=" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
+              Search
+            </Link>
+          ) : (
+            <button 
+              onClick={() => {
+                if (!user) {
+                  window.location.href = '/login';
+                } else {
+                  alert('Search functionality is only available in the Professional plan. Please upgrade to access advanced search features.');
+                }
+              }}
+              className="text-earth-text hover:text-earth-primary transition-colors font-medium cursor-pointer"
+            >
+              Search
+            </button>
+          )}
           {user && (
             <Link to="/dashboard" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
               Dashboard
@@ -38,6 +53,25 @@ export const Header = () => {
 
         {/* Mobile Navigation */}
         <nav className="md:hidden flex items-center space-x-1">
+          {/* Search icon for mobile */}
+          <button 
+            onClick={() => {
+              if (!user) {
+                window.location.href = '/login';
+              } else if (user.plan === 'free') {
+                alert('Search functionality is only available in the Professional plan. Please upgrade to access advanced search features.');
+              } else {
+                window.location.href = '/search?q=';
+              }
+            }}
+            className="text-earth-text hover:text-earth-primary transition-colors p-1"
+          >
+            <span className="sr-only">Search</span>
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </button>
+          
           {user && (
             <Link to="/dashboard" className="text-earth-text hover:text-earth-primary transition-colors p-1">
               <span className="sr-only">Dashboard</span>

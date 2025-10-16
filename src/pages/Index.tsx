@@ -14,7 +14,7 @@ export default function Index() {
   const { user, login, register } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showLogin, setShowLogin] = useState(!user);
+  const [showLogin, setShowLogin] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { regulations, loading, error } = useRegulations();
@@ -50,6 +50,13 @@ export default function Index() {
       setShowLogin(true);
       return;
     }
+    
+    // Check if user is on free plan
+    if (user.plan === 'free') {
+      alert('Search functionality is only available in the Professional plan. Please upgrade to access advanced search features.');
+      return;
+    }
+    
     navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
@@ -58,6 +65,13 @@ export default function Index() {
       setShowLogin(true);
       return;
     }
+    
+    // Check if user is on free plan
+    if (user.plan === 'free') {
+      alert('Viewing regulation details is only available in the Professional plan. Please upgrade to access detailed regulation information.');
+      return;
+    }
+    
     navigate(`/regulation/${regulation.id}`);
   };
 
