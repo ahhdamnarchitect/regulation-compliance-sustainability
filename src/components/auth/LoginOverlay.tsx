@@ -6,7 +6,6 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TestCredentials } from '@/components/TestCredentials';
 import { Eye, EyeOff, Mail, Lock, User, Globe } from 'lucide-react';
 
 interface LoginOverlayProps {
@@ -228,10 +227,6 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
             </p>
           </div>
           
-          {/* Test Credentials */}
-          <div className="mt-6">
-            <TestCredentials />
-          </div>
         </CardContent>
       </Card>
     </div>
