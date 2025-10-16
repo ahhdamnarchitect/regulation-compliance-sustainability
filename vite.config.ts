@@ -10,7 +10,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/',
+  base: '/regulation-compliance-sustainability/',
   build: {
     outDir: 'dist',
     sourcemap: false,
