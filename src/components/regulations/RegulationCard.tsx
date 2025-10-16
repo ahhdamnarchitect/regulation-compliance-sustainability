@@ -51,14 +51,14 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500">
+    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-earth-primary bg-white border-earth-sand rounded-lg shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+            <h3 className="text-lg font-semibold text-earth-text mb-2 line-clamp-2">
               {regulation.title}
             </h3>
-            <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
+            <div className="flex items-center space-x-4 text-sm text-earth-text/70 mb-2">
               <span className="flex items-center">
                 <MapPin className="w-4 h-4 mr-1" />
                 {regulation.jurisdiction || regulation.region || 'Unknown'}
@@ -68,7 +68,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
                 {formatDate(regulation.complianceDeadline || regulation.reporting_date)}
               </span>
             </div>
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-earth-text/60">
               {regulation.country} • {regulation.sector}
             </div>
           </div>

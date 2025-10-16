@@ -7,28 +7,28 @@ export const Header = () => {
   const { user, logout, isAdmin } = useAuth();
 
   return (
-    <header className="border-b bg-white shadow-sm">
+    <header className="border-b border-earth-sand bg-white shadow-sm">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-sm">M</span>
+        <Link to="/" className="flex items-center space-x-3">
+          <div className="w-10 h-10 bg-earth-primary rounded-lg flex items-center justify-center shadow-sm">
+            <span className="text-white font-bold text-lg">M</span>
           </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <span className="text-3xl font-bold text-earth-primary brand-text">
             MISSICK
           </span>
         </Link>
 
         <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-gray-600 hover:text-gray-900 transition-colors">
+          <Link to="/" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
             Search
           </Link>
           {user && (
-            <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 transition-colors">
+            <Link to="/dashboard" className="text-earth-text hover:text-earth-primary transition-colors font-medium">
               Dashboard
             </Link>
           )}
           {isAdmin && (
-            <Link to="/admin" className="text-gray-600 hover:text-gray-900 transition-colors flex items-center space-x-1">
+            <Link to="/admin" className="text-earth-text hover:text-earth-primary transition-colors flex items-center space-x-1 font-medium">
               <Shield className="w-4 h-4" />
               <span>Admin</span>
             </Link>

@@ -21,6 +21,14 @@ export default {
     },
     extend: {
       colors: {
+        // Modern Earth Theme
+        earth: {
+          primary: '#1B4332',      // Deep forest green
+          accent: '#A8C686',       // Soft sage
+          sand: '#DAD7CD',         // Muted sand
+          background: '#F7F8F3',   // Warm off-white
+          text: '#2E2E2E',         // Charcoal
+        },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -67,7 +75,11 @@ export default {
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'monospace'],
-        sans: ['Inter', 'sans-serif'],
+        sans: ['Inter', 'Source Sans Pro', 'sans-serif'],
+        heading: ['Poppins', 'Montserrat', 'Inter', 'sans-serif'],
+      },
+      letterSpacing: {
+        'brand': '0.05em',
       },
       borderRadius: {
         lg: 'calc(var(--radius) + 2px)',

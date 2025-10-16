@@ -3,7 +3,8 @@ import { User } from '@/types/regulation';
 
 interface AuthContextType {
   user: User | null;
-  login: (email: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (email: string, password: string, name: string) => Promise<boolean>;
   logout: () => void;
   isAdmin: boolean;
 }
@@ -28,7 +29,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, []);
 
-  const login = (email: string, password: string): boolean => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     // Mock authentication
     const isAdmin = email === 'admin@missick.com' && password === 'admin123';
     const isUser = email === 'user@missick.com' && password === 'user123';
@@ -47,6 +48,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return false;
   };
 
+  const register = async (email: string, password: string, name: string): Promise<boolean> => {
+    // Mock registration - create new user
+    const newUser: User = {
+      id: `user-${Date.now()}`,
+      email,
+      role: 'user',
+      bookmarks: []
+    };
+    setUser(newUser);
+    localStorage.setItem('missick_user', JSON.stringify(newUser));
+    return true;
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem('missick_user');
@@ -56,6 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     <AuthContext.Provider value={{
       user,
       login,
+      register,
       logout,
       isAdmin: user?.role === 'admin'
     }}>
