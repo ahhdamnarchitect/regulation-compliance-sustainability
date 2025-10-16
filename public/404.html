@@ -5,16 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MISSICK - Sustainability Regulations</title>
     <script>
-        // Redirect to the main app with the current path
+        // Get the current path and base path
         const path = window.location.pathname;
         const basePath = '/regulation-compliance-sustainability';
         
-        // Prevent infinite loops by checking if we're already in the base path
+        // If we're not in the base path, redirect to it
         if (!path.startsWith(basePath)) {
             window.location.href = basePath + path;
         } else {
-            // If we're already in the base path, just redirect to the base
-            window.location.href = basePath + '/';
+            // If we're already in the base path, use hash routing
+            const hashPath = path.replace(basePath, '');
+            if (hashPath && hashPath !== '/') {
+                window.location.href = basePath + '/#' + hashPath;
+            } else {
+                window.location.href = basePath + '/';
+            }
         }
     </script>
 </head>

@@ -14,10 +14,19 @@ export default function Index() {
   const { user, login, register } = useAuth();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
-  const [showLogin, setShowLogin] = useState(false);
+  const [showLogin, setShowLogin] = useState(!user);
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { regulations, loading, error } = useRegulations();
+
+  // Show login overlay when user logs out
+  useEffect(() => {
+    if (!user) {
+      setShowLogin(true);
+    } else {
+      setShowLogin(false);
+    }
+  }, [user]);
 
   const handleLogin = async (email: string, password: string) => {
     setIsLoading(true);
