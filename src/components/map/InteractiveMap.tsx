@@ -138,7 +138,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
       
       <MapContainer
         center={[20, 0]}
-        zoom={1}
+        zoom={2}
         style={{ 
           height: '100%', 
           width: '100%',
@@ -167,8 +167,15 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
               position={[coords.lat, coords.lng]}
               icon={createCustomIcon(color)}
             >
-              <Popup className="map-popup">
-                <div className="p-2 min-w-[350px] max-w-[400px]">
+              <Popup 
+                className="map-popup"
+                maxWidth={300}
+                minWidth={250}
+                closeButton={true}
+                autoClose={false}
+                closeOnClick={false}
+              >
+                <div className="p-2 w-full max-w-[280px] sm:max-w-[350px]">
                   <h3 className="font-semibold text-earth-primary mb-2 flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
                     {coords.name}
@@ -177,12 +184,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                     {countryRegulations.length} regulation{countryRegulations.length !== 1 ? 's' : ''}
                   </p>
                   
-                  <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+                  <div className="space-y-2 max-h-[200px] sm:max-h-[300px] overflow-y-auto pr-1">
                     {countryRegulations.map((regulation) => (
-                      <Card key={regulation.id} className="p-3 border border-earth-sand hover:shadow-md transition-shadow">
+                      <Card key={regulation.id} className="p-2 sm:p-3 border border-earth-sand hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <h4 className="font-medium text-sm text-earth-text line-clamp-2 mb-2">
+                            <h4 className="font-medium text-xs sm:text-sm text-earth-text line-clamp-2 mb-2">
                               {regulation.title}
                             </h4>
                             <div className="flex items-center gap-2 mb-2">
@@ -203,14 +210,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                               {regulation.summary || regulation.description || 'No description available'}
                             </p>
                           </div>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="ml-2 text-xs flex-shrink-0"
-                            onClick={() => onRegulationClick(regulation)}
-                          >
-                            View
-                          </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="ml-1 sm:ml-2 text-xs flex-shrink-0 px-2 py-1"
+                              onClick={() => onRegulationClick(regulation)}
+                            >
+                              View
+                            </Button>
                         </div>
                       </Card>
                     ))}

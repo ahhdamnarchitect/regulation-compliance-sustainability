@@ -76,7 +76,7 @@ export default function Index() {
       )}
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-2 sm:px-4 py-8 max-w-full overflow-x-hidden">
         {/* Hero Section */}
         <div className="text-center mb-6 md:mb-8">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-3 md:mb-4 text-earth-primary brand-text">
