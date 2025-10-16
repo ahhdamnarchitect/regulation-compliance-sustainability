@@ -69,7 +69,7 @@ export default function Index() {
               MISSICK
             </h1>
             <p className="text-2xl md:text-3xl text-gray-600 mb-8">
-              The Google for Sustainability Regulations
+              Global Sustainability Regulation Intelligence
             </p>
           </div>
           
