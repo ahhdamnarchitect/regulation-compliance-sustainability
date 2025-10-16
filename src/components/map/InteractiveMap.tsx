@@ -134,11 +134,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   return (
-    <div className="w-full h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative bg-earth-background">
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative bg-earth-background">
       
       <MapContainer
         center={[20, 0]}
-        zoom={2}
+        zoom={1}
         style={{ 
           height: '100%', 
           width: '100%',

@@ -36,8 +36,8 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <Card className="w-full max-w-md mx-4 bg-white shadow-2xl border-earth-sand">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+      <Card className="w-full max-w-md bg-white shadow-2xl border-earth-sand max-h-[90vh] overflow-y-auto">
         <CardHeader className="text-center pb-4">
           <div className="w-16 h-16 bg-earth-primary rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-2xl">M</span>
@@ -50,7 +50,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
           </p>
         </CardHeader>
         
-        <CardContent className="px-6 pb-6">
+        <CardContent className="px-4 sm:px-6 pb-6">
           <Tabs defaultValue="login" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="login">Sign In</TabsTrigger>
