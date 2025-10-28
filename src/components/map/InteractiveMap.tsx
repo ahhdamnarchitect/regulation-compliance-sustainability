@@ -98,10 +98,6 @@ const mapStyles = `
     overflow-y: auto !important;
   }
   
-  .regulation-panel {
-    max-height: 80vh !important;
-    overflow-y: auto !important;
-  }
 `;
 
 // Fix for default markers in react-leaflet
@@ -141,7 +137,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
   const [openPopup, setOpenPopup] = useState<string | null>(null);
   const [mapRef, setMapRef] = useState<any>(null);
-  const [selectedRegulation, setSelectedRegulation] = useState<Regulation | null>(null);
 
   // Inject custom CSS to remove gridlines
   useEffect(() => {
@@ -186,17 +181,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     }
   }, [openPopup, mapRef]);
 
-  // Click outside to close fixed panel
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (selectedRegulation && !(event.target as Element).closest('.regulation-panel')) {
-        setSelectedRegulation(null);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [selectedRegulation]);
 
   useEffect(() => {
     // Group regulations by country using the new mapping system
@@ -284,12 +268,15 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 maxWidth={320}
                 minWidth={280}
                 closeButton={true}
-                autoClose={false}
+                autoClose={true}
                 closeOnClick={false}
                 offset={[0, -25]}
                 position="top"
                 onOpen={() => {
-                  // Only set the popup as open, don't interfere with opening
+                  // Close any other open popups first
+                  if (mapRef) {
+                    mapRef.closePopup();
+                  }
                   setOpenPopup(country);
                 }}
                 onClose={() => setOpenPopup(null)}
@@ -333,7 +320,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                               size="sm"
                               variant="outline"
                               className="ml-1 sm:ml-2 text-xs flex-shrink-0 px-2 py-1"
-                              onClick={() => setSelectedRegulation(regulation)}
+                              onClick={() => onRegulationClick(regulation)}
                             >
                               View
                             </Button>
@@ -348,81 +335,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         })}
       </MapContainer>
       
-      {/* Fixed Regulation Panel - like earthday.org */}
-      {selectedRegulation && (
-        <div className="regulation-panel fixed right-4 top-1/2 transform -translate-y-1/2 w-80 max-w-[90vw] bg-white shadow-xl rounded-lg z-50 border border-earth-sand">
-          <div className="p-4">
-            <div className="flex items-start justify-between mb-3">
-              <h3 className="font-semibold text-earth-primary text-lg">
-                {selectedRegulation.title}
-              </h3>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-gray-500 hover:text-gray-700"
-                onClick={() => setSelectedRegulation(null)}
-              >
-                ✕
-              </Button>
-            </div>
-            
-            <div className="space-y-3">
-              <div className="flex items-center gap-2">
-                <Badge 
-                  className={`text-xs ${
-                    selectedRegulation.status === 'active' ? 'bg-green-100 text-green-800' :
-                    selectedRegulation.status === 'proposed' ? 'bg-yellow-100 text-yellow-800' :
-                    'bg-red-100 text-red-800'
-                  }`}
-                >
-                  {selectedRegulation.status}
-                </Badge>
-                <span className="text-sm text-earth-text/70">
-                  {selectedRegulation.framework}
-                </span>
-              </div>
-              
-              <div className="text-sm text-earth-text">
-                <p className="mb-2">
-                  <strong>Jurisdiction:</strong> {selectedRegulation.jurisdiction}
-                </p>
-                <p className="mb-2">
-                  <strong>Country:</strong> {selectedRegulation.country}
-                </p>
-                <p className="mb-2">
-                  <strong>Sector:</strong> {selectedRegulation.sector}
-                </p>
-                {selectedRegulation.complianceDeadline && (
-                  <p className="mb-2">
-                    <strong>Deadline:</strong> {new Date(selectedRegulation.complianceDeadline).toLocaleDateString()}
-                  </p>
-                )}
-              </div>
-              
-              <div className="text-sm text-earth-text">
-                <strong>Description:</strong>
-                <p className="mt-1 text-earth-text/80">
-                  {selectedRegulation.summary || selectedRegulation.description || 'No description available'}
-                </p>
-              </div>
-              
-              {selectedRegulation.sourceUrl && (
-                <div className="pt-2 border-t border-earth-sand">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => window.open(selectedRegulation.sourceUrl, '_blank')}
-                  >
-                    <ExternalLink className="w-4 h-4 mr-2" />
-                    View Source
-                  </Button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
