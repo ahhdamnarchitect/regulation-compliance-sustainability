@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { useRegulations } from '@/hooks/useRegulations';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import jsPDF from 'jspdf';
 import { 
   ArrowLeft, 
   ExternalLink, 
@@ -27,8 +29,138 @@ export default function RegulationDetail() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { regulations } = useRegulations();
+  const { toast } = useToast();
   const [regulation, setRegulation] = useState<any>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  const handleExportPDF = () => {
+    if (!regulation) return;
+    
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(45, 80, 54); // Earth primary color
+    const titleLines = doc.splitTextToSize(regulation.title, 170);
+    doc.text(titleLines, 20, 20);
+    let y = 20 + titleLines.length * 8;
+    
+    // Status and Framework badges
+    doc.setFontSize(11);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Status: ${regulation.status} | Framework: ${regulation.framework}`, 20, y + 5);
+    y += 15;
+    
+    // Separator
+    doc.setDrawColor(200, 200, 200);
+    doc.line(20, y, 190, y);
+    y += 10;
+    
+    // Description section
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Description', 20, y);
+    y += 8;
+    
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    const descLines = doc.splitTextToSize(regulation.summary || regulation.description || 'No description available', 170);
+    doc.text(descLines, 20, y);
+    y += descLines.length * 5 + 10;
+    
+    // Key Information section
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text('Key Information', 20, y);
+    y += 10;
+    
+    doc.setFontSize(10);
+    doc.setTextColor(60, 60, 60);
+    
+    const keyInfo = [
+      { label: 'Jurisdiction', value: regulation.jurisdiction },
+      { label: 'Country', value: regulation.country },
+      { label: 'Sector', value: regulation.sector },
+      { label: 'Compliance Deadline', value: regulation.complianceDeadline ? formatDate(regulation.complianceDeadline) : 'Not specified' }
+    ];
+    
+    keyInfo.forEach(item => {
+      doc.setTextColor(100, 100, 100);
+      doc.text(`${item.label}:`, 20, y);
+      doc.setTextColor(0, 0, 0);
+      doc.text(item.value || 'N/A', 70, y);
+      y += 7;
+    });
+    
+    y += 5;
+    
+    // Tags section
+    if (regulation.tags && regulation.tags.length > 0) {
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Tags', 20, y);
+      y += 8;
+      
+      doc.setFontSize(10);
+      doc.setTextColor(60, 60, 60);
+      doc.text(regulation.tags.join(', '), 20, y);
+      y += 10;
+    }
+    
+    // Source URL
+    if (regulation.source_url) {
+      doc.setFontSize(14);
+      doc.setTextColor(0, 0, 0);
+      doc.text('Official Source', 20, y);
+      y += 8;
+      
+      doc.setFontSize(10);
+      doc.setTextColor(0, 102, 204);
+      const urlLines = doc.splitTextToSize(regulation.source_url, 170);
+      doc.text(urlLines, 20, y);
+    }
+    
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 150);
+    doc.text(`Exported from MISSICK on ${new Date().toLocaleDateString()}`, 20, 285);
+    
+    // Save the PDF
+    const filename = regulation.title.replace(/[^a-z0-9]/gi, '_').substring(0, 50);
+    doc.save(`${filename}.pdf`);
+    
+    toast({
+      title: 'PDF Exported',
+      description: 'The regulation details have been exported to PDF.',
+    });
+  };
+
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: regulation?.title,
+          text: `Check out this regulation: ${regulation?.title}`,
+          url: shareUrl,
+        });
+      } catch (err) {
+        // User cancelled or error
+        copyToClipboard(shareUrl);
+      }
+    } else {
+      copyToClipboard(shareUrl);
+    }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: 'Link Copied',
+      description: 'The regulation link has been copied to your clipboard.',
+    });
+  };
 
   useEffect(() => {
     if (id && regulations.length > 0) {
@@ -190,7 +322,20 @@ export default function RegulationDetail() {
                         <Calendar className="w-5 h-5 text-earth-primary" />
                         <div>
                           <p className="text-sm text-earth-text/60">Compliance Deadline</p>
-                          <p className="font-medium text-earth-text">{formatDate(regulation.complianceDeadline)}</p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-earth-text">{formatDate(regulation.complianceDeadline)}</p>
+                            {new Date(regulation.complianceDeadline) < new Date() ? (
+                              <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-xs">
+                                <CheckCircle className="w-3 h-3 mr-1" />
+                                Effective
+                              </Badge>
+                            ) : new Date(regulation.complianceDeadline) <= new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) ? (
+                              <Badge className="bg-orange-100 text-orange-800 border-orange-200 text-xs">
+                                <Clock className="w-3 h-3 mr-1" />
+                                Due Soon
+                              </Badge>
+                            ) : null}
+                          </div>
                         </div>
                       </div>
                     )}
@@ -259,11 +404,18 @@ export default function RegulationDetail() {
               <CardContent className="space-y-3">
                 {user ? (
                   <>
-                    <Button className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white">
+                    <Button 
+                      onClick={handleExportPDF}
+                      className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
+                    >
                       <Download className="w-4 h-4 mr-2" />
                       Export PDF
                     </Button>
-                    <Button variant="outline" className="w-full border-earth-sand">
+                    <Button 
+                      variant="outline" 
+                      onClick={handleShare}
+                      className="w-full border-earth-sand"
+                    >
                       <Share2 className="w-4 h-4 mr-2" />
                       Share
                     </Button>

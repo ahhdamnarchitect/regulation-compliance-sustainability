@@ -10,7 +10,24 @@ import { Badge } from '@/components/ui/badge';
 import { useRegulations } from '@/hooks/useRegulations';
 import { SearchFilters } from '@/types/regulation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Filter, ArrowLeft, Download, Bookmark } from 'lucide-react';
+import { Search, Filter, ArrowLeft, Download, Bookmark, X } from 'lucide-react';
+
+// Smart search function that uses word boundary matching for short terms
+const smartSearch = (text: string, query: string): boolean => {
+  if (!text || !query) return false;
+  const normalizedQuery = query.toLowerCase().trim();
+  const normalizedText = text.toLowerCase();
+  
+  // For short search terms (3 chars or less), use word boundary matching
+  if (normalizedQuery.length <= 3) {
+    // Match as whole word or at start/end of compound terms
+    const wordBoundaryRegex = new RegExp(`(^|[\\s,._-])${normalizedQuery}($|[\\s,._-])`, 'i');
+    return wordBoundaryRegex.test(normalizedText);
+  }
+  
+  // For longer terms, use contains matching
+  return normalizedText.includes(normalizedQuery);
+};
 
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,6 +69,20 @@ export default function SearchResults() {
     setSearchParams(newParams);
   };
 
+  const handleClearFilters = () => {
+    setFilters({
+      query: '',
+      region: 'all',
+      sector: 'all',
+      framework: 'all',
+      status: 'all'
+    });
+    setSearchQuery('');
+    setSearchParams({});
+  };
+
+  const hasActiveFilters = filters.query || filters.region !== 'all' || filters.sector !== 'all' || filters.framework !== 'all' || filters.status !== 'all';
+
   const handleBookmark = (regulationId: string) => {
     if (!user) return;
 
@@ -70,9 +101,19 @@ export default function SearchResults() {
   };
 
   const filteredRegulations = regulations.filter(regulation => {
-    if (filters.query && !regulation.title.toLowerCase().includes(filters.query.toLowerCase()) && 
-        !(regulation.summary || regulation.description || '').toLowerCase().includes(filters.query.toLowerCase())) {
-      return false;
+    if (filters.query) {
+      const query = filters.query.trim();
+      // Use smart search for various fields
+      const titleMatch = smartSearch(regulation.title, query);
+      const descMatch = smartSearch(regulation.summary || regulation.description || '', query);
+      const jurisdictionMatch = smartSearch(regulation.jurisdiction || '', query);
+      const countryMatch = smartSearch(regulation.country || '', query);
+      const frameworkMatch = smartSearch(regulation.framework || '', query);
+      const tagsMatch = regulation.tags?.some(tag => smartSearch(tag, query)) || false;
+      
+      if (!titleMatch && !descMatch && !jurisdictionMatch && !countryMatch && !frameworkMatch && !tagsMatch) {
+        return false;
+      }
     }
     if (filters.region !== 'all' && regulation.jurisdiction !== filters.region) {
       return false;
@@ -136,8 +177,19 @@ export default function SearchResults() {
           {/* Expandable Filters */}
           {showFilters && (
             <Card className="mb-6 border-earth-sand">
-              <CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-lg text-earth-text">Filter Results</CardTitle>
+                {hasActiveFilters && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleClearFilters}
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  >
+                    <X className="w-4 h-4 mr-1" />
+                    Clear All
+                  </Button>
+                )}
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -254,9 +306,9 @@ export default function SearchResults() {
                 <RegulationCard
                   regulation={regulation}
                   isBookmarked={bookmarks.includes(regulation.id)}
-                  onBookmark={(e) => {
+                  onBookmark={(e, id) => {
                     e.stopPropagation();
-                    handleBookmark(regulation.id);
+                    handleBookmark(id);
                   }}
                 />
               </div>

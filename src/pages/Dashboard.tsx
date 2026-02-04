@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { RegulationCard } from '@/components/regulations/RegulationCard';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockRegulations } from '@/data/mockRegulations';
 import { Regulation } from '@/types/regulation';
-import { Download, BookmarkX, FileText } from 'lucide-react';
-// Temporarily disable PDF export to fix build
-// import jsPDF from 'jspdf';
+import { Download, BookmarkX, FileText, Bookmark } from 'lucide-react';
+import jsPDF from 'jspdf';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [bookmarkedRegulations, setBookmarkedRegulations] = useState<Regulation[]>([]);
   const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
 
@@ -23,7 +24,8 @@ export default function Dashboard() {
     }
   }, [user]);
 
-  const handleRemoveBookmark = (regulationId: string) => {
+  const handleRemoveBookmark = (e: React.MouseEvent, regulationId: string) => {
+    e.stopPropagation();
     if (!user) return;
     
     const currentBookmarks = JSON.parse(localStorage.getItem(`bookmarks_${user.id}`) || '[]');
@@ -58,8 +60,58 @@ export default function Dashboard() {
   };
 
   const exportToPDF = () => {
-    // Temporarily disabled PDF export
-    alert('PDF export temporarily disabled for build fix');
+    const doc = new jsPDF();
+    
+    // Title
+    doc.setFontSize(20);
+    doc.setTextColor(45, 80, 54); // Earth primary color
+    doc.text('Bookmarked Regulations', 20, 20);
+    
+    // Subtitle with count
+    doc.setFontSize(12);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Total: ${bookmarkedRegulations.length} regulations`, 20, 30);
+    doc.text(`Exported: ${new Date().toLocaleDateString()}`, 20, 37);
+    
+    let y = 50;
+    const pageHeight = doc.internal.pageSize.height;
+    
+    bookmarkedRegulations.forEach((reg, index) => {
+      // Check if we need a new page
+      if (y > pageHeight - 40) {
+        doc.addPage();
+        y = 20;
+      }
+      
+      // Regulation title
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+      const titleLines = doc.splitTextToSize(`${index + 1}. ${reg.title}`, 170);
+      doc.text(titleLines, 20, y);
+      y += titleLines.length * 6 + 2;
+      
+      // Details
+      doc.setFontSize(10);
+      doc.setTextColor(80, 80, 80);
+      doc.text(`Jurisdiction: ${reg.jurisdiction} | Country: ${reg.country}`, 25, y);
+      y += 5;
+      doc.text(`Framework: ${reg.framework} | Sector: ${reg.sector}`, 25, y);
+      y += 5;
+      doc.text(`Status: ${reg.status}${reg.complianceDeadline ? ` | Deadline: ${new Date(reg.complianceDeadline).toLocaleDateString()}` : ''}`, 25, y);
+      y += 5;
+      
+      // Source URL if available
+      if (reg.source_url) {
+        doc.setTextColor(0, 102, 204);
+        const urlText = reg.source_url.length > 60 ? reg.source_url.substring(0, 60) + '...' : reg.source_url;
+        doc.text(`Source: ${urlText}`, 25, y);
+        y += 5;
+      }
+      
+      y += 8; // Space between regulations
+    });
+    
+    doc.save('bookmarked-regulations.pdf');
   };
 
   const handleExport = () => {
@@ -81,8 +133,11 @@ export default function Dashboard() {
       <div className="container mx-auto px-4 py-8">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Your Dashboard</h1>
-            <p className="text-gray-600 mt-2">Manage your bookmarked regulations</p>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
+              <Bookmark className="w-8 h-8 text-earth-primary" />
+              Your Bookmarks
+            </h1>
+            <p className="text-gray-600 mt-2">Manage your saved regulations</p>
           </div>
           
           {bookmarkedRegulations.length > 0 && (
@@ -113,12 +168,17 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {bookmarkedRegulations.map((regulation) => (
-              <RegulationCard
+              <div
                 key={regulation.id}
-                regulation={regulation}
-                isBookmarked={true}
-                onBookmark={handleRemoveBookmark}
-              />
+                className="cursor-pointer hover:scale-105 transition-transform duration-200"
+                onClick={() => navigate(`/regulation/${regulation.id}`)}
+              >
+                <RegulationCard
+                  regulation={regulation}
+                  isBookmarked={true}
+                  onBookmark={(e) => handleRemoveBookmark(e, regulation.id)}
+                />
+              </div>
             ))}
           </div>
         )}

@@ -33,6 +33,22 @@ export const globalRegulations: Regulation[] = [
     dateAdded: '2024-01-15'
   },
   
+  // France - Vigilance Law (separate regulation)
+  {
+    id: 'fr-2',
+    title: 'French Corporate Duty of Vigilance Law',
+    jurisdiction: 'France',
+    country: 'France',
+    sector: 'All Sectors',
+    framework: 'French Vigilance Law',
+    description: 'Requires large companies to establish vigilance plans for human rights and environmental risks.',
+    complianceDeadline: '2017-03-27',
+    status: 'active',
+    source_url: 'https://www.legifrance.gouv.fr/eli/loi/2017/3/27/2017-399/jo/texte',
+    tags: ['vigilance', 'human rights', 'France', 'supply chain'],
+    dateAdded: '2024-01-15'
+  },
+  
   // Germany-specific regulations
   {
     id: 'de-1',
@@ -54,7 +70,7 @@ export const globalRegulations: Regulation[] = [
     id: 'ca-1',
     title: 'California Climate Corporate Data Accountability Act (SB 253)',
     jurisdiction: 'California',
-    country: 'California',
+    country: 'United States',
     sector: 'All Sectors',
     framework: 'California Law',
     description: 'Requires large companies doing business in California to disclose their greenhouse gas emissions.',
@@ -70,7 +86,7 @@ export const globalRegulations: Regulation[] = [
     id: 'tx-1',
     title: 'Texas Environmental, Social, and Governance (ESG) Act',
     jurisdiction: 'Texas',
-    country: 'Texas',
+    country: 'United States',
     sector: 'Finance',
     framework: 'Texas Law',
     description: 'Prohibits state investment in companies that boycott energy companies or use ESG criteria.',
@@ -86,7 +102,7 @@ export const globalRegulations: Regulation[] = [
     id: 'on-1',
     title: 'Ontario Climate Change Action Plan',
     jurisdiction: 'Ontario',
-    country: 'Ontario',
+    country: 'Canada',
     sector: 'All Sectors',
     framework: 'Ontario Law',
     description: 'Comprehensive climate action plan including carbon pricing and emissions reduction targets.',
@@ -102,7 +118,7 @@ export const globalRegulations: Regulation[] = [
     id: 'bay-1',
     title: 'Bavarian Energy Transition Act',
     jurisdiction: 'Bavaria',
-    country: 'Bavaria',
+    country: 'Germany',
     sector: 'Energy',
     framework: 'Bavarian Law',
     description: 'State-level renewable energy targets and grid modernization requirements.',
@@ -156,20 +172,6 @@ export const globalRegulations: Regulation[] = [
     tags: ['climate', 'disclosure', 'emissions', 'SEC'],
     dateAdded: '2024-03-06'
   },
-  {
-    id: 'us-2',
-    title: 'California Climate Corporate Accountability Act (SB 253)',
-    jurisdiction: 'US',
-    country: 'United States',
-    sector: 'All Sectors',
-    framework: 'California SB 253',
-    description: 'Requires large companies doing business in California to disclose greenhouse gas emissions.',
-    complianceDeadline: '2026-01-01',
-    status: 'active',
-    source_url: 'https://leginfo.legislature.ca.gov/faces/billTextClient.xhtml?bill_id=202320240SB253',
-    tags: ['climate', 'emissions', 'California', 'disclosure'],
-    dateAdded: '2024-01-15'
-  },
 
   // UK Regulations
   {
@@ -201,36 +203,6 @@ export const globalRegulations: Regulation[] = [
     source_url: 'https://www.ifrs.org/issued-standards/issb-standards/',
     tags: ['ISSB', 'sustainability', 'financial', 'global'],
     dateAdded: '2023-06-26'
-  },
-
-  // Additional EU Countries
-  {
-    id: 'de-1',
-    title: 'German Supply Chain Due Diligence Act',
-    jurisdiction: 'EU',
-    country: 'Germany',
-    sector: 'All Sectors',
-    framework: 'German Supply Chain Act',
-    description: 'Requires companies to conduct due diligence on human rights and environmental risks in supply chains.',
-    complianceDeadline: '2023-01-01',
-    status: 'active',
-    source_url: 'https://www.bmj.de/SharedDocs/Gesetzgebungsverfahren/Dokumente/Lieferkettensorgfaltspflichtengesetz.pdf',
-    tags: ['supply chain', 'human rights', 'Germany', 'due diligence'],
-    dateAdded: '2024-01-15'
-  },
-  {
-    id: 'fr-1',
-    title: 'French Corporate Duty of Vigilance Law',
-    jurisdiction: 'EU',
-    country: 'France',
-    sector: 'All Sectors',
-    framework: 'French Vigilance Law',
-    description: 'Requires large companies to establish vigilance plans for human rights and environmental risks.',
-    complianceDeadline: '2017-03-27',
-    status: 'active',
-    source_url: 'https://www.legifrance.gouv.fr/eli/loi/2017/3/27/2017-399/jo/texte',
-    tags: ['vigilance', 'human rights', 'France', 'supply chain'],
-    dateAdded: '2024-01-15'
   },
   {
     id: 'nl-1',
@@ -291,9 +263,9 @@ export const globalRegulations: Regulation[] = [
     dateAdded: '2024-01-15'
   },
 
-  // Additional Countries
+  // Canada
   {
-    id: 'ca-1',
+    id: 'ca-2',
     title: 'Canadian Net-Zero Emissions Accountability Act',
     jurisdiction: 'North America',
     country: 'Canada',

@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
-import { Icon } from 'leaflet';
-import { useEffect, useState } from 'react';
+import { Icon, LatLngBounds } from 'leaflet';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -98,6 +98,52 @@ const mapStyles = `
     overflow-y: auto !important;
   }
   
+  /* Mobile-friendly popup styles */
+  @media (max-width: 640px) {
+    .leaflet-popup {
+      max-width: 280px !important;
+      min-width: 250px !important;
+      width: 280px !important;
+    }
+    
+    .leaflet-popup-content-wrapper {
+      min-width: 250px !important;
+      max-width: 280px !important;
+      width: 280px !important;
+    }
+    
+    .leaflet-popup-content {
+      min-width: 250px !important;
+      max-width: 280px !important;
+      width: 280px !important;
+    }
+    
+    .map-popup {
+      min-width: 250px !important;
+      max-width: 280px !important;
+      width: 280px !important;
+    }
+  }
+  
+  /* Scrollbar styling for popup content */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: #a1a1a1;
+  }
+  
 `;
 
 // Fix for default markers in react-leaflet
@@ -137,6 +183,9 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
   const [openPopup, setOpenPopup] = useState<string | null>(null);
   const [mapRef, setMapRef] = useState<any>(null);
+  const isUserInteracting = useRef(false);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const popupOpenTimeRef = useRef<number>(0);
 
   // Inject custom CSS to remove gridlines
   useEffect(() => {
@@ -149,37 +198,107 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     };
   }, []);
 
-  // Close popup when map changes
-  useEffect(() => {
-    if (mapRef) {
-      const handleZoom = () => {
+  // Handle popup close with debounce to prevent closing during auto-pan
+  const handleClosePopup = useCallback(() => {
+    // Don't close if popup was just opened (within 500ms) - this allows auto-pan to complete
+    const timeSinceOpen = Date.now() - popupOpenTimeRef.current;
+    if (timeSinceOpen < 500) {
+      return;
+    }
+    
+    // Only close if user is actively interacting (not auto-pan)
+    if (isUserInteracting.current) {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+      closeTimeoutRef.current = setTimeout(() => {
         setOpenPopup(null);
-        // Force close all popups
-        mapRef.closePopup();
-      };
-      
-      mapRef.on('zoom', handleZoom);
-      mapRef.on('move', handleZoom);
-      
-      return () => {
-        mapRef.off('zoom', handleZoom);
-        mapRef.off('move', handleZoom);
-      };
+        if (mapRef) {
+          mapRef.closePopup();
+        }
+      }, 150);
     }
   }, [mapRef]);
 
-  // Close other popups when a new one opens
+  // Track user interaction vs auto-pan
   useEffect(() => {
-    if (mapRef && openPopup) {
-      // Close all popups except the current one
-      const allPopups = document.querySelectorAll('.leaflet-popup');
-      allPopups.forEach(popup => {
-        if (!popup.querySelector(`[data-country="${openPopup}"]`)) {
-          popup.remove();
+    if (mapRef) {
+      const handleUserInteractionStart = () => {
+        isUserInteracting.current = true;
+      };
+      
+      const handleUserInteractionEnd = () => {
+        // Delay resetting to allow move events to fire
+        setTimeout(() => {
+          isUserInteracting.current = false;
+        }, 100);
+      };
+      
+      const handleZoomStart = () => {
+        handleUserInteractionStart();
+        handleClosePopup();
+      };
+      
+      const handleMoveStart = () => {
+        // Only track user-initiated moves (not auto-pan)
+        if (isUserInteracting.current) {
+          handleClosePopup();
         }
-      });
+      };
+      
+      // Track mouse/touch interactions
+      mapRef.on('mousedown', handleUserInteractionStart);
+      mapRef.on('touchstart', handleUserInteractionStart);
+      mapRef.on('mouseup', handleUserInteractionEnd);
+      mapRef.on('touchend', handleUserInteractionEnd);
+      mapRef.on('zoomstart', handleZoomStart);
+      mapRef.on('dragstart', handleUserInteractionStart);
+      mapRef.on('dragend', handleUserInteractionEnd);
+      
+      return () => {
+        mapRef.off('mousedown', handleUserInteractionStart);
+        mapRef.off('touchstart', handleUserInteractionStart);
+        mapRef.off('mouseup', handleUserInteractionEnd);
+        mapRef.off('touchend', handleUserInteractionEnd);
+        mapRef.off('zoomstart', handleZoomStart);
+        mapRef.off('dragstart', handleUserInteractionStart);
+        mapRef.off('dragend', handleUserInteractionEnd);
+        if (closeTimeoutRef.current) {
+          clearTimeout(closeTimeoutRef.current);
+        }
+      };
     }
-  }, [openPopup, mapRef]);
+  }, [mapRef, handleClosePopup]);
+
+  // Handle marker click - ensure proper zoom and popup display
+  const handleMarkerClick = useCallback((country: string, coords: { lat: number; lng: number }) => {
+    if (!mapRef) return;
+    
+    // Close any existing popup first
+    mapRef.closePopup();
+    setOpenPopup(null);
+    
+    // Get current zoom level
+    const currentZoom = mapRef.getZoom();
+    const minZoomForPopup = 3;
+    
+    // If zoomed out too far, zoom in first
+    if (currentZoom < minZoomForPopup) {
+      mapRef.setView([coords.lat, coords.lng], minZoomForPopup, { animate: true });
+      // Open popup after zoom animation completes
+      setTimeout(() => {
+        popupOpenTimeRef.current = Date.now();
+        setOpenPopup(country);
+      }, 300);
+    } else {
+      // Just center and open popup
+      mapRef.setView([coords.lat, coords.lng], currentZoom, { animate: true });
+      setTimeout(() => {
+        popupOpenTimeRef.current = Date.now();
+        setOpenPopup(country);
+      }, 100);
+    }
+  }, [mapRef]);
 
 
   useEffect(() => {
@@ -255,6 +374,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
           
           const activeRegulations = countryRegulations.filter(r => r.status === 'active');
           const color = activeRegulations.length > 0 ? getStatusColor('active') : '#6B7280';
+          const isOpen = openPopup === country;
           
           return (
             <Marker
@@ -262,74 +382,80 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
               position={[coords.lat, coords.lng]}
               icon={createCustomIcon(color)}
               data-country={country}
+              eventHandlers={{
+                click: (e) => {
+                  e.originalEvent.stopPropagation();
+                  handleMarkerClick(country, coords);
+                }
+              }}
             >
-              <Popup 
-                className="map-popup"
-                maxWidth={320}
-                minWidth={280}
-                closeButton={true}
-                autoClose={true}
-                closeOnClick={false}
-                offset={[0, -25]}
-                position="top"
-                onOpen={() => {
-                  // Close any other open popups first
-                  if (mapRef) {
-                    mapRef.closePopup();
-                  }
-                  setOpenPopup(country);
-                }}
-                onClose={() => setOpenPopup(null)}
-              >
-                <div className="p-2 w-full max-w-[280px] sm:max-w-[350px]">
-                  <h3 className="font-semibold text-earth-primary mb-2 flex items-center">
-                    <MapPin className="w-4 h-4 mr-1" />
-                    {coords.name}
-                  </h3>
-                  <p className="text-sm text-earth-text mb-3">
-                    {countryRegulations.length} regulation{countryRegulations.length !== 1 ? 's' : ''}
-                  </p>
-                  
-                  <div className="space-y-2 max-h-[200px] sm:max-h-[300px] overflow-y-auto pr-1">
-                    {countryRegulations.map((regulation) => (
-                      <Card key={regulation.id} className="p-2 sm:p-3 border border-earth-sand hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-medium text-xs sm:text-sm text-earth-text line-clamp-2 mb-2">
-                              {regulation.title}
-                            </h4>
-                            <div className="flex items-center gap-2 mb-2">
-                              <Badge 
-                                className={`text-xs ${
-                                  regulation.status === 'active' ? 'bg-green-100 text-green-800' :
-                                  regulation.status === 'proposed' ? 'bg-yellow-100 text-yellow-800' :
-                                  'bg-red-100 text-red-800'
-                                }`}
-                              >
-                                {regulation.status}
-                              </Badge>
-                              <span className="text-xs text-earth-text">
-                                {regulation.framework}
-                              </span>
+              {isOpen && (
+                <Popup 
+                  className="map-popup"
+                  maxWidth={320}
+                  minWidth={280}
+                  closeButton={true}
+                  autoClose={false}
+                  closeOnClick={false}
+                  autoPan={true}
+                  autoPanPadding={[50, 50]}
+                  keepInView={true}
+                  offset={[0, -35]}
+                  onClose={() => setOpenPopup(null)}
+                >
+                  <div className="p-2 w-full max-w-[280px] sm:max-w-[320px]" data-country={country}>
+                    <h3 className="font-semibold text-earth-primary mb-2 flex items-center">
+                      <MapPin className="w-4 h-4 mr-1" />
+                      {coords.name}
+                    </h3>
+                    <p className="text-sm text-earth-text mb-3">
+                      {countryRegulations.length} regulation{countryRegulations.length !== 1 ? 's' : ''}
+                    </p>
+                    
+                    <div className="space-y-2 max-h-[150px] sm:max-h-[250px] overflow-y-auto pr-1 scrollbar-thin">
+                      {countryRegulations.map((regulation) => (
+                        <Card key={regulation.id} className="p-2 sm:p-3 border border-earth-sand hover:shadow-md transition-shadow cursor-pointer">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-medium text-xs sm:text-sm text-earth-text line-clamp-2 mb-2">
+                                {regulation.title}
+                              </h4>
+                              <div className="flex items-center gap-2 mb-2 flex-wrap">
+                                <Badge 
+                                  className={`text-xs ${
+                                    regulation.status === 'active' ? 'bg-green-100 text-green-800' :
+                                    regulation.status === 'proposed' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-red-100 text-red-800'
+                                  }`}
+                                >
+                                  {regulation.status}
+                                </Badge>
+                                <span className="text-xs text-earth-text truncate max-w-[100px]">
+                                  {regulation.framework}
+                                </span>
+                              </div>
+                              <p className="text-xs text-earth-text/70 line-clamp-2">
+                                {regulation.summary || regulation.description || 'No description available'}
+                              </p>
                             </div>
-                            <p className="text-xs text-earth-text/70 line-clamp-2">
-                              {regulation.summary || regulation.description || 'No description available'}
-                            </p>
-                          </div>
                             <Button
                               size="sm"
                               variant="outline"
                               className="ml-1 sm:ml-2 text-xs flex-shrink-0 px-2 py-1"
-                              onClick={() => onRegulationClick(regulation)}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onRegulationClick(regulation);
+                              }}
                             >
                               View
                             </Button>
-                        </div>
-                      </Card>
-                    ))}
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </Popup>
+                </Popup>
+              )}
             </Marker>
           );
         })}

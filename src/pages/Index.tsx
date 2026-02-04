@@ -160,12 +160,26 @@ export default function Index() {
               </div>
               
               <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-4 md:mt-6">
-                <span className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm">CSRD</span>
-                <span className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm">TCFD</span>
-                <span className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm">ISSB</span>
-                <span className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm">SEC Climate</span>
-                <span className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm">EU Taxonomy</span>
-                <span className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm">SFDR</span>
+                {['CSRD', 'TCFD', 'ISSB', 'SEC Climate', 'EU Taxonomy', 'SFDR'].map((term) => (
+                  <button
+                    key={term}
+                    onClick={() => {
+                      if (!user) {
+                        setShowLogin(true);
+                        return;
+                      }
+                      if (user.plan === 'free') {
+                        alert('Search functionality is only available in the Professional plan. Please upgrade to access advanced search features.');
+                        return;
+                      }
+                      setSearchQuery(term);
+                      navigate(`/search?q=${encodeURIComponent(term)}`);
+                    }}
+                    className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm hover:bg-earth-primary hover:text-white transition-colors cursor-pointer"
+                  >
+                    {term}
+                  </button>
+                ))}
               </div>
             </div>
           </CardContent>

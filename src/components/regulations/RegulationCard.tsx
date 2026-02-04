@@ -1,15 +1,42 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Bookmark, ExternalLink, Calendar, MapPin, AlertCircle } from "lucide-react";
+import { Bookmark, ExternalLink, Calendar, MapPin, AlertCircle, Clock, CheckCircle } from "lucide-react";
 import { Regulation } from "@/types/regulation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 
+// Helper to check if deadline has passed
+const isDeadlinePassed = (deadline?: string): boolean => {
+  if (!deadline) return false;
+  try {
+    return new Date(deadline) < new Date();
+  } catch {
+    return false;
+  }
+};
+
+// Helper to get deadline status
+const getDeadlineStatus = (deadline?: string): 'passed' | 'upcoming' | 'none' => {
+  if (!deadline) return 'none';
+  try {
+    const deadlineDate = new Date(deadline);
+    const now = new Date();
+    const thirtyDaysFromNow = new Date();
+    thirtyDaysFromNow.setDate(now.getDate() + 30);
+    
+    if (deadlineDate < now) return 'passed';
+    if (deadlineDate <= thirtyDaysFromNow) return 'upcoming';
+    return 'none';
+  } catch {
+    return 'none';
+  }
+};
+
 interface RegulationCardProps {
   regulation: Regulation;
   isBookmarked?: boolean;
-  onBookmark?: (id: string) => void;
+  onBookmark?: (e: React.MouseEvent, id: string) => void;
 }
 
 export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: RegulationCardProps) => {
@@ -50,6 +77,29 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
     }
   };
 
+  const deadlineStatus = getDeadlineStatus(regulation.complianceDeadline || regulation.reporting_date);
+  
+  const getDeadlineIndicator = () => {
+    switch (deadlineStatus) {
+      case 'passed':
+        return (
+          <span className="flex items-center text-amber-600" title="Compliance deadline has passed">
+            <CheckCircle className="w-3 h-3 mr-1" />
+            <span className="text-xs">Effective</span>
+          </span>
+        );
+      case 'upcoming':
+        return (
+          <span className="flex items-center text-orange-600" title="Deadline approaching">
+            <Clock className="w-3 h-3 mr-1" />
+            <span className="text-xs">Due Soon</span>
+          </span>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-earth-primary bg-white border-earth-sand rounded-lg shadow-sm">
       <CardHeader className="pb-3">
@@ -58,7 +108,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
             <h3 className="text-lg font-semibold text-earth-text mb-2 line-clamp-2">
               {regulation.title}
             </h3>
-            <div className="flex items-center space-x-4 text-sm text-earth-text/70 mb-2">
+            <div className="flex items-center flex-wrap gap-2 text-sm text-earth-text/70 mb-2">
               <span className="flex items-center">
                 <MapPin className="w-4 h-4 mr-1" />
                 {regulation.jurisdiction || regulation.region || 'Unknown'}
@@ -67,6 +117,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
                 <Calendar className="w-4 h-4 mr-1" />
                 {formatDate(regulation.complianceDeadline || regulation.reporting_date)}
               </span>
+              {getDeadlineIndicator()}
             </div>
             <div className="text-xs text-earth-text/60">
               {regulation.country} • {regulation.sector}
@@ -76,7 +127,10 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
             <Button 
               variant="ghost" 
               size="sm" 
-              onClick={() => onBookmark(regulation.id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onBookmark(e, regulation.id);
+              }}
               className={`${isBookmarked ? 'text-yellow-600' : 'text-gray-400'} hover:text-yellow-600`}
             >
               <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
