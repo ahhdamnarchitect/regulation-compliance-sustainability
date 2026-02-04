@@ -4,7 +4,7 @@ import { Header } from '@/components/layout/Header';
 import { RegulationCard } from '@/components/regulations/RegulationCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useRegulations } from '@/hooks/useRegulations';
@@ -100,6 +100,29 @@ export default function SearchResults() {
     setBookmarks(updatedBookmarks);
   };
 
+  // Define region groups for filtering
+  const europeJurisdictions = ['EU', 'France', 'Germany', 'UK', 'Netherlands', 'Italy', 'Spain', 'Sweden', 'Bavaria'];
+  const northAmericaJurisdictions = ['US', 'California', 'Texas', 'North America', 'Ontario'];
+
+  // Check if a regulation matches a region filter
+  const matchesRegionFilter = (regulation: { jurisdiction?: string; country?: string }, regionFilter: string): boolean => {
+    if (regionFilter === 'all') return true;
+    
+    const jurisdiction = regulation.jurisdiction || '';
+    const country = regulation.country || '';
+    
+    // Handle grouped regions
+    if (regionFilter === 'europe-all') {
+      return europeJurisdictions.includes(jurisdiction) || country === 'European Union' || europeJurisdictions.some(j => country.includes(j));
+    }
+    if (regionFilter === 'north-america-all') {
+      return northAmericaJurisdictions.includes(jurisdiction) || country === 'United States' || country === 'Canada';
+    }
+    
+    // Handle direct jurisdiction match
+    return jurisdiction === regionFilter;
+  };
+
   const filteredRegulations = regulations.filter(regulation => {
     if (filters.query) {
       const query = filters.query.trim();
@@ -115,7 +138,7 @@ export default function SearchResults() {
         return false;
       }
     }
-    if (filters.region !== 'all' && regulation.jurisdiction !== filters.region) {
+    if (!matchesRegionFilter(regulation, filters.region || 'all')) {
       return false;
     }
     if (filters.sector !== 'all' && regulation.sector !== filters.sector) {
@@ -199,19 +222,38 @@ export default function SearchResults() {
                       <SelectTrigger className="border-earth-sand">
                         <SelectValue placeholder="Select region" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="max-h-[300px]">
                         <SelectItem value="all">All Regions</SelectItem>
-                        <SelectItem value="EU">European Union</SelectItem>
-                        <SelectItem value="France">France</SelectItem>
-                        <SelectItem value="Germany">Germany</SelectItem>
-                        <SelectItem value="UK">United Kingdom</SelectItem>
-                        <SelectItem value="US">United States</SelectItem>
-                        <SelectItem value="California">California</SelectItem>
-                        <SelectItem value="Texas">Texas</SelectItem>
-                        <SelectItem value="North America">North America</SelectItem>
-                        <SelectItem value="Asia-Pacific">Asia Pacific</SelectItem>
-                        <SelectItem value="South America">South America</SelectItem>
-                        <SelectItem value="Global">Global</SelectItem>
+                        <SelectItem value="Global">Global Standards</SelectItem>
+                        
+                        <SelectGroup>
+                          <SelectLabel className="text-earth-primary font-semibold">Europe</SelectLabel>
+                          <SelectItem value="europe-all">All Europe</SelectItem>
+                          <SelectItem value="EU">EU (Region-wide)</SelectItem>
+                          <SelectItem value="France">France</SelectItem>
+                          <SelectItem value="Germany">Germany</SelectItem>
+                          <SelectItem value="UK">United Kingdom</SelectItem>
+                        </SelectGroup>
+                        
+                        <SelectGroup>
+                          <SelectLabel className="text-earth-primary font-semibold">North America</SelectLabel>
+                          <SelectItem value="north-america-all">All North America</SelectItem>
+                          <SelectItem value="US">United States (Federal)</SelectItem>
+                          <SelectItem value="California">California</SelectItem>
+                          <SelectItem value="Texas">Texas</SelectItem>
+                          <SelectItem value="North America">Canada</SelectItem>
+                          <SelectItem value="Ontario">Ontario</SelectItem>
+                        </SelectGroup>
+                        
+                        <SelectGroup>
+                          <SelectLabel className="text-earth-primary font-semibold">Asia Pacific</SelectLabel>
+                          <SelectItem value="Asia-Pacific">All Asia Pacific</SelectItem>
+                        </SelectGroup>
+                        
+                        <SelectGroup>
+                          <SelectLabel className="text-earth-primary font-semibold">South America</SelectLabel>
+                          <SelectItem value="South America">All South America</SelectItem>
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
                   </div>
