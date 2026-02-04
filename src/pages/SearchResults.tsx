@@ -10,7 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { useRegulations } from '@/hooks/useRegulations';
 import { SearchFilters } from '@/types/regulation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Filter, ArrowLeft, Download, Bookmark, X } from 'lucide-react';
+import { Search, Filter, ArrowLeft, X } from 'lucide-react';
 
 // Smart search function that uses word boundary matching for short terms
 const smartSearch = (text: string, query: string): boolean => {
@@ -201,9 +201,16 @@ export default function SearchResults() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="all">All Regions</SelectItem>
-                        <SelectItem value="EU">Europe</SelectItem>
-                        <SelectItem value="US">North America</SelectItem>
-                        <SelectItem value="Asia">Asia Pacific</SelectItem>
+                        <SelectItem value="EU">European Union</SelectItem>
+                        <SelectItem value="France">France</SelectItem>
+                        <SelectItem value="Germany">Germany</SelectItem>
+                        <SelectItem value="UK">United Kingdom</SelectItem>
+                        <SelectItem value="US">United States</SelectItem>
+                        <SelectItem value="California">California</SelectItem>
+                        <SelectItem value="Texas">Texas</SelectItem>
+                        <SelectItem value="North America">North America</SelectItem>
+                        <SelectItem value="Asia-Pacific">Asia Pacific</SelectItem>
+                        <SelectItem value="South America">South America</SelectItem>
                         <SelectItem value="Global">Global</SelectItem>
                       </SelectContent>
                     </Select>
@@ -265,18 +272,6 @@ export default function SearchResults() {
             <p className="text-earth-text">
               {loading ? 'Loading...' : `${filteredRegulations.length} regulations found`}
             </p>
-            {user && (
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="border-earth-sand">
-                  <Download className="w-4 h-4 mr-2" />
-                  Export
-                </Button>
-                <Button variant="outline" size="sm" className="border-earth-sand">
-                  <Bookmark className="w-4 h-4 mr-2" />
-                  Bookmarks
-                </Button>
-              </div>
-            )}
           </div>
         </div>
 
