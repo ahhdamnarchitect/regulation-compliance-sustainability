@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Calendar, MapPin } from 'lucide-react';
 import { Regulation } from '@/types/regulation';
-import { countryCoordinates, getCountriesForRegulation } from '@/data/countryMapping';
+import { countryCoordinates } from '@/data/countryMapping';
 import 'leaflet/dist/leaflet.css';
 
 // Custom CSS to remove tile gridlines - more aggressive approach
@@ -191,6 +191,44 @@ const getLocationLevel = (locationName: string): LocationLevel => {
   return 'country';
 };
 
+// Return the single "local" location for a regulation that should get a pin, or null if no pin.
+// Pins only appear where there is at least one regulation that is specifically from that place.
+const getPrimaryLocation = (regulation: Regulation): string | null => {
+  const jurisdiction = regulation.jurisdiction || '';
+  const country = regulation.country || '';
+
+  // State/province level → pin on that state/province
+  if (usStates.includes(jurisdiction) || canadianProvinces.includes(jurisdiction) || germanStates.includes(jurisdiction)) {
+    return countryCoordinates[jurisdiction as keyof typeof countryCoordinates] ? jurisdiction : null;
+  }
+
+  // US federal → pin on United States
+  if (jurisdiction === 'US') return 'United States';
+
+  // UK → pin on United Kingdom
+  if (jurisdiction === 'UK') return 'United Kingdom';
+
+  // Canada-wide (North America + Canada) → pin on Canada
+  if (jurisdiction === 'North America' && country === 'Canada') return 'Canada';
+
+  // EU with country 'European Union' → no pin (EU-wide only, no single local place)
+  if (jurisdiction === 'EU' && (country === 'European Union' || !country)) return null;
+
+  // EU with a specific member state (e.g. Swedish, Italian law) → pin on that country
+  if (jurisdiction === 'EU' && country && country !== 'European Union') {
+    return countryCoordinates[country as keyof typeof countryCoordinates] ? country : null;
+  }
+
+  // Global → no pin
+  if (jurisdiction === 'Global' || country === 'Global') return null;
+
+  // Country-level or region with specific country (France, Germany, Asia-Pacific + Australia, etc.)
+  const candidate = jurisdiction || country;
+  if (candidate && countryCoordinates[candidate as keyof typeof countryCoordinates]) return candidate;
+
+  return null;
+};
+
 // Get all regulations that apply to a specific location (hierarchical).
 // Only inherit parent-level by jurisdiction (e.g. US federal = jurisdiction 'US'), never by country alone,
 // so state-specific regulations (e.g. Texas) do not appear under another state (e.g. California).
@@ -354,14 +392,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
 
 
   useEffect(() => {
-    // 1. Get all candidate pin locations from regulations
+    // 1. Pin only where there's a local regulation: use primary location per regulation (no EU-wide or Global pins)
     const locations = new Set<string>();
-    
+
     regulations.forEach(regulation => {
-      const countries = getCountriesForRegulation(regulation.jurisdiction, regulation.country);
-      countries.forEach(c => locations.add(c));
+      const primary = getPrimaryLocation(regulation);
+      if (primary) locations.add(primary);
     });
-    
+
     // 2. Only show the most specific pin: remove parent when a subsidiary exists
     if (usStates.some(s => locations.has(s))) {
       locations.delete('United States');
@@ -372,17 +410,17 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     if (germanStates.some(s => locations.has(s))) {
       locations.delete('Germany');
     }
-    
+
     // 3. For each remaining location, get ALL applicable regulations (hierarchical)
     const grouped: Record<string, Regulation[]> = {};
-    
+
     locations.forEach(location => {
       const applicableRegs = getApplicableRegulations(location, regulations);
       if (applicableRegs.length > 0) {
         grouped[location] = applicableRegs;
       }
     });
-    
+
     setRegulationsByCountry(grouped);
   }, [regulations]);
 
