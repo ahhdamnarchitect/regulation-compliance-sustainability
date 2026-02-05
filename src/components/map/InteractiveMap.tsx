@@ -166,8 +166,11 @@ interface InteractiveMapProps {
 
 // Country coordinates are now imported from countryMapping.ts
 
-// Location level types (based on the pin location, not regulation jurisdiction)
+// Location level for pin placement (state vs country)
 type LocationLevel = 'region' | 'country' | 'state';
+
+// Regulation scope: Global, Regional, National, State/Province
+type RegulationScope = 'global' | 'regional' | 'country' | 'state';
 
 // Earth theme colors for pins
 const earthThemeColors = {
@@ -259,16 +262,16 @@ const getApplicableRegulations = (locationName: string, allRegulations: Regulati
       if (jurisdiction === 'Global' || country === 'Global') applies = true;
     }
     
-    // 4. German States: inherit only national Germany (jurisdiction 'Germany'), EU, and Global — not country === 'Germany'
+    // 4. German States: inherit only national Germany (jurisdiction 'Germany'), EU-wide, and Global
     if (germanStates.includes(locationName)) {
       if (jurisdiction === 'Germany') applies = true;
-      if (jurisdiction === 'EU' || country === 'European Union') applies = true;
+      if (jurisdiction === 'EU' && country === 'European Union') applies = true;
       if (jurisdiction === 'Global' || country === 'Global') applies = true;
     }
     
-    // 5. EU Countries: inherit EU-wide and Global
+    // 5. EU Countries: only EU-wide (country 'European Union') and Global — country-specific EU laws (Italy, Spain, Sweden, etc.) only show in that country (handled by direct match above)
     if (euCountries.includes(locationName)) {
-      if (jurisdiction === 'EU' || country === 'European Union') applies = true;
+      if (jurisdiction === 'EU' && country === 'European Union') applies = true;
       if (jurisdiction === 'Global' || country === 'Global') applies = true;
     }
     
@@ -292,21 +295,27 @@ const getApplicableRegulations = (locationName: string, allRegulations: Regulati
   return applicable;
 };
 
-// Get the jurisdiction level of a specific regulation
-const getRegulationLevel = (regulation: Regulation): LocationLevel => {
+// Get the scope of a specific regulation: Global, Regional, National, or State/Province
+const getRegulationLevel = (regulation: Regulation): RegulationScope => {
   const jurisdiction = regulation.jurisdiction || '';
+  const country = regulation.country || '';
   
-  // Region-wide regulations
-  if (['EU', 'Global', 'Asia-Pacific', 'South America', 'North America'].includes(jurisdiction) ||
-      regulation.country === 'European Union' || regulation.country === 'Global') {
-    return 'region';
+  // Global — applies everywhere (ISSB, GRI, SASB)
+  if (jurisdiction === 'Global' || country === 'Global') {
+    return 'global';
   }
   
-  // State/Province level
+  // Regional — multi-country region (EU, Asia-Pacific, etc.)
+  if (['EU', 'Asia-Pacific', 'South America', 'North America'].includes(jurisdiction) || country === 'European Union') {
+    return 'regional';
+  }
+  
+  // State/Province — sub-national
   if (usStates.includes(jurisdiction) || canadianProvinces.includes(jurisdiction) || germanStates.includes(jurisdiction)) {
     return 'state';
   }
   
+  // National — country-level
   return 'country';
 };
 
@@ -329,11 +338,12 @@ const createCustomIcon = (locationLevel: LocationLevel) => {
   });
 };
 
-// Colors for regulation level badges in popups
-const regulationLevelColors = {
-  region: { bg: '#E0E7FF', text: '#4338CA', border: '#818CF8' },    // Indigo for global/regional
+// Colors for regulation scope badges in popups
+const regulationLevelColors: Record<RegulationScope, { bg: string; text: string; border: string }> = {
+  global: { bg: '#E0E7FF', text: '#4338CA', border: '#818CF8' },     // Indigo for global
+  regional: { bg: '#C7D2FE', text: '#3730A3', border: '#6366F1' },  // Lighter indigo for regional
   country: { bg: '#D1FAE5', text: '#065F46', border: '#34D399' },   // Green for national
-  state: { bg: '#FEF3C7', text: '#92400E', border: '#FBBF24' },     // Amber for state
+  state: { bg: '#FEF3C7', text: '#92400E', border: '#FBBF24' },     // Amber for state/province
 };
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
@@ -428,19 +438,21 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     return countryCoordinates[country as keyof typeof countryCoordinates] || null;
   };
 
-  // Get regulation level label for display
-  const getRegulationLevelLabel = (level: LocationLevel): string => {
+  // Get regulation scope label for display
+  const getRegulationLevelLabel = (level: RegulationScope): string => {
     switch (level) {
-      case 'region': return 'Global/Regional';
+      case 'global': return 'Global';
+      case 'regional': return 'Regional';
       case 'country': return 'National';
       case 'state': return 'State/Province';
     }
   };
 
-  // Group regulations by their level for display
-  const groupRegulationsByLevel = (regs: Regulation[]): Record<LocationLevel, Regulation[]> => {
-    const grouped: Record<LocationLevel, Regulation[]> = {
-      region: [],
+  // Group regulations by scope for display (state, country, regional, global)
+  const groupRegulationsByLevel = (regs: Regulation[]): Record<RegulationScope, Regulation[]> => {
+    const grouped: Record<RegulationScope, Regulation[]> = {
+      global: [],
+      regional: [],
       country: [],
       state: []
     };
@@ -466,13 +478,17 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   return (
     <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative bg-earth-background max-w-6xl mx-auto">
       
-      {/* Map Legend */}
+      {/* Map Legend — four scopes: Global, Regional, National, State/Province */}
       <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-lg shadow-md p-3 text-xs">
         <div className="font-semibold text-earth-text mb-2">Regulation Scope</div>
         <div className="space-y-1.5">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: regulationLevelColors.region.border }}></div>
-            <span className="text-earth-text/80">Global/Regional</span>
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: regulationLevelColors.global.border }}></div>
+            <span className="text-earth-text/80">Global</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: regulationLevelColors.regional.border }}></div>
+            <span className="text-earth-text/80">Regional</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: regulationLevelColors.country.border }}></div>
@@ -557,8 +573,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                   </p>
                   
                   <div className="space-y-3 max-h-[200px] sm:max-h-[300px] overflow-y-auto pr-1 scrollbar-thin">
-                    {/* Show regulations grouped by level */}
-                    {(['state', 'country', 'region'] as LocationLevel[]).map(level => {
+                    {/* Show regulations grouped by scope: State/Province → National → Regional → Global */}
+                    {(['state', 'country', 'regional', 'global'] as RegulationScope[]).map(level => {
                       const regsForLevel = groupedRegs[level];
                       if (regsForLevel.length === 0) return null;
                       
