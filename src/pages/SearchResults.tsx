@@ -30,7 +30,7 @@ const smartSearch = (text: string, query: string): boolean => {
   return normalizedText.includes(normalizedQuery);
 };
 
-export default const parseArrayParam = (s: string | null): string[] =>
+const parseArrayParam = (s: string | null): string[] =>
   (s ?? '').split(',').map((v) => v.trim()).filter(Boolean);
 
 export default function SearchResults() {
