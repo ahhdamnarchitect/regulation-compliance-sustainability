@@ -4,6 +4,10 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LoginOverlay } from '@/components/auth/LoginOverlay';
 import InteractiveMap from '@/components/map/InteractiveMap';
+import InteractiveGlobe from '@/components/map/InteractiveGlobe';
+
+// Set to false to revert to the flat map
+const USE_GLOBE = true;
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
@@ -137,10 +141,17 @@ export default function Index() {
               Click on any country to explore sustainability regulations
             </p>
           </div>
-          <InteractiveMap
-            regulations={regulations}
-            onRegulationClick={handleRegulationClick}
-          />
+          {USE_GLOBE ? (
+            <InteractiveGlobe
+              regulations={regulations}
+              onRegulationClick={handleRegulationClick}
+            />
+          ) : (
+            <InteractiveMap
+              regulations={regulations}
+              onRegulationClick={handleRegulationClick}
+            />
+          )}
         </div>
 
         {/* Search Section */}
