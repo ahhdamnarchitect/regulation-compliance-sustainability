@@ -162,6 +162,8 @@ Icon.Default.mergeOptions({
 interface InteractiveMapProps {
   regulations: Regulation[];
   onRegulationClick: (regulation: Regulation) => void;
+  /** When true, hide the map legend (e.g. when login overlay is visible so it doesn't appear on top) */
+  hideLegend?: boolean;
 }
 
 // Country coordinates are now imported from countryMapping.ts
@@ -225,7 +227,14 @@ const getPrimaryLocation = (regulation: Regulation): string | null => {
   // Global → no pin
   if (jurisdiction === 'Global' || country === 'Global') return null;
 
-  // Country-level or region with specific country (France, Germany, Asia-Pacific + Australia, etc.)
+  // Regional jurisdiction with specific country (South America → Brazil, Asia-Pacific → Japan, etc.)
+  if (['South America', 'Asia-Pacific'].includes(jurisdiction) && country) {
+    if (countryCoordinates[country as keyof typeof countryCoordinates]) {
+      return country;
+    }
+  }
+
+  // Country-level or region with specific country (France, Germany, etc.)
   const candidate = jurisdiction || country;
   if (candidate && countryCoordinates[candidate as keyof typeof countryCoordinates]) return candidate;
 
@@ -346,7 +355,7 @@ const regulationLevelColors: Record<RegulationScope, { bg: string; text: string;
   state: { bg: '#FEF3C7', text: '#92400E', border: '#FBBF24' },     // Amber for state/province
 };
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
+const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick, hideLegend = false }) => {
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
   const [mapRef, setMapRef] = useState<any>(null);
   const popupOpenTimeRef = useRef<number>(0);
@@ -478,7 +487,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   return (
     <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative bg-earth-background max-w-6xl mx-auto">
       
-      {/* Map Legend — four scopes: Global, Regional, National, State/Province */}
+      {/* Map Legend — hidden when login overlay is shown so it doesn't appear in front */}
+      {!hideLegend && (
       <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-lg shadow-md p-3 text-xs">
         <div className="font-semibold text-earth-text mb-2">Regulation Scope</div>
         <div className="space-y-1.5">
@@ -503,6 +513,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
           Click a pin to see all<br/>applicable regulations
         </div>
       </div>
+      )}
       
       <MapContainer
         center={[20, 0]}

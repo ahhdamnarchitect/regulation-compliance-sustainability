@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Footer } from '@/components/layout/Footer';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -33,7 +34,7 @@ export default function Login() {
             <span className="text-white font-bold text-2xl">M</span>
           </div>
           <CardTitle className="text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Welcome to MISSICK
+            Welcome to MSRB
           </CardTitle>
         </CardHeader>
         
@@ -81,6 +82,7 @@ export default function Login() {
           </div>
         </CardContent>
       </Card>
+      <Footer />
     </div>
   );
 }

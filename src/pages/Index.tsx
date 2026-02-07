@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 import { LoginOverlay } from '@/components/auth/LoginOverlay';
 import InteractiveMap from '@/components/map/InteractiveMap';
 import { Button } from '@/components/ui/button';
@@ -103,10 +104,10 @@ export default function Index() {
         {/* Hero Section */}
         <div className="text-center mb-6 md:mb-8">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 text-earth-primary brand-text">
-            MISSICK
+            MSRB
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-earth-text mb-6 md:mb-8 px-4">
-            Global Sustainability Regulation Intelligence
+            Missick Sustainability Regulation Database
           </p>
         </div>
 
@@ -123,6 +124,7 @@ export default function Index() {
           <InteractiveMap
             regulations={regulations}
             onRegulationClick={handleRegulationClick}
+            hideLegend={showLogin}
           />
         </div>
 
@@ -186,6 +188,7 @@ export default function Index() {
         </Card>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

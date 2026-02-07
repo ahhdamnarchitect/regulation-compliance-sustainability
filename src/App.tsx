@@ -12,6 +12,8 @@ import Admin from "./pages/Admin";
 import SearchResults from "./pages/SearchResults";
 import RegulationDetail from "./pages/RegulationDetail";
 import AccountSettings from "./pages/AccountSettings";
+import About from "./pages/About";
+import Legal from "./pages/Legal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -32,6 +34,8 @@ const App = () => (
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/account" element={<AccountSettings />} />
               <Route path="/admin" element={<Admin />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/legal" element={<Legal />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
