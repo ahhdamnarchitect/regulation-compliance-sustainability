@@ -7,13 +7,13 @@ export const Header = () => {
   const { user, logout, isAdmin } = useAuth();
 
   return (
-    <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm header-font">
+    <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
       <div className="container mx-auto px-2 sm:px-4 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center space-x-2 sm:space-x-3">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[rgb(25,89,8)] rounded-lg flex items-center justify-center shadow-sm">
             <span className="text-white font-bold text-sm sm:text-lg">M</span>
           </div>
-          <span className="text-xl sm:text-2xl md:text-3xl font-bold text-[rgb(25,89,8)] brand-text">
+          <span className="font-title text-xl sm:text-2xl md:text-3xl font-semibold text-[rgb(25,89,8)]">
             MSRB
           </span>
         </Link>

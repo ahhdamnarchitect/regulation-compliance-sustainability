@@ -104,10 +104,10 @@ export default function Index() {
       <div className="flex-1 container mx-auto px-2 sm:px-4 py-8 max-w-full overflow-x-hidden">
         {/* Hero Section */}
         <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 text-[rgb(25,89,8)] font-title title-font">
+          <h1 className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-3 md:mb-4 text-[rgb(25,89,8)] tracking-tight">
             MSRB
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-[rgb(25,89,8)] mb-6 md:mb-8 px-4">
+          <p className="font-title text-lg sm:text-xl md:text-2xl text-earth-text mb-6 md:mb-8 px-4 font-medium">
             Sustainability Regulation Database
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function Index() {
 
         {/* Search Section */}
         <div className="max-w-4xl mx-auto">
-          <Card className="border-[rgb(25,89,8)]/30 bg-quitenice-searchBox shadow-lg">
+          <Card className="border-earth-sand bg-white shadow-lg">
             <CardContent className="p-4 md:p-6">
               <div className="text-center mb-4 md:mb-6">
                 <h2 className="text-xl md:text-2xl font-bold text-[rgb(25,89,8)] mb-2">

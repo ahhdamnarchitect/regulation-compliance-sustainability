@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -95,26 +95,19 @@
 
   body {
     @apply text-earth-text font-sans;
-    /* Seamless ombre: white at header to quitenice cream at footer */
-    background: linear-gradient(180deg, #ffffff 0%, #fdfcfa 15%, #faf8f5 40%, #FAF8F5 100%);
+    /* Vibrant ombre: white at top to light sage (sustainability theme) at bottom */
+    background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
     min-height: 100vh;
     background-attachment: fixed;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    @apply font-heading font-semibold;
+    font-family: Lora, Georgia, serif;
+    @apply font-semibold;
   }
   
   .brand-text {
     @apply font-heading font-semibold tracking-brand;
-  }
-  
-  .title-font {
-    font-family: "Nib Pro", Menlo, Monaco, "Courier New", Courier, monospace;
-  }
-  
-  .header-font {
-    font-family: "Basis Grotesque Pro", "Helvetica Neue LT Std", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
   }
 
   pre, code {

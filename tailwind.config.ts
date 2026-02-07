@@ -83,9 +83,7 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
         sans: ['Inter', 'Source Sans Pro', 'sans-serif'],
         heading: ['Poppins', 'Montserrat', 'Inter', 'sans-serif'],
-        // quitenice.com: title = Nib Pro, header = Basis Grotesque Pro
-        title: ['"Nib Pro"', 'Menlo', 'Monaco', 'Courier New', 'Courier', 'monospace'],
-        header: ['"Basis Grotesque Pro"', 'Helvetica Neue LT Std', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'sans-serif'],
+        title: ['Lora', 'Georgia', 'serif'],
       },
       letterSpacing: {
         'brand': '0.05em',

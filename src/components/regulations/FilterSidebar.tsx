@@ -37,7 +37,7 @@ function getStatesAlphabetical(): string[] {
   return names.sort((a, b) => a.localeCompare(b));
 }
 
-/** Countries that belong to any of the selected region names (cascading). */
+/** Countries that belong to any of the selected region names (cascading). When region(s) selected, only those countries are shown (no fallback to all). */
 function getCountriesForSelectedRegions(selectedRegions: string[]): string[] {
   if (selectedRegions.length === 0) return getCountriesAlphabetical();
   const set = new Set<string>();
@@ -50,11 +50,10 @@ function getCountriesForSelectedRegions(selectedRegions: string[]): string[] {
       });
     }
   }
-  if (set.size === 0) return getCountriesAlphabetical();
   return Array.from(set).sort((a, b) => a.localeCompare(b));
 }
 
-/** States that belong to selected regions and/or selected countries (cascading). */
+/** States that belong to selected regions and/or selected countries (cascading). When a region is selected, only states in that region are returned (no fallback to all states). */
 function getStatesForSelectedRegionsAndCountries(selectedRegions: string[], selectedCountries: string[]): string[] {
   if (selectedCountries.length > 0) {
     const set = new Set<string>();
@@ -74,7 +73,6 @@ function getStatesForSelectedRegionsAndCountries(selectedRegions: string[], sele
         });
       }
     }
-    if (set.size === 0) return getStatesAlphabetical();
     return Array.from(set).sort((a, b) => a.localeCompare(b));
   }
   return getStatesAlphabetical();
@@ -93,8 +91,8 @@ interface FilterSectionProps {
   defaultVisible?: number;
   useDisplayValue?: boolean;
   clearScope?: LocationClearScope;
-  /** When set, use this for "All" checkbox state (e.g. true when no selections in this section only). */
-  isAllSelectedOverride?: boolean;
+  /** When true, show a "Clear" button for this section. */
+  showClear?: boolean;
 }
 
 function FilterSection({
@@ -106,43 +104,38 @@ function FilterSection({
   defaultVisible = DEFAULT_VISIBLE,
   useDisplayValue = false,
   clearScope,
-  isAllSelectedOverride,
+  showClear = false,
 }: FilterSectionProps) {
   const [expanded, setExpanded] = useState(false);
   const showCount = expanded ? options.length : Math.min(defaultVisible, options.length);
   const hasMore = options.length > defaultVisible;
   const visibleOptions = options.slice(0, showCount);
+  const hasSelectionInSection = selectedValues.length > 0;
 
   if (options.length === 0) return null;
 
   const toFilterValue = (opt: string) =>
     useDisplayValue ? opt : opt.toLowerCase().replace(/\s+/g, '-');
 
-  const isAllSelected = isAllSelectedOverride !== undefined ? isAllSelectedOverride : selectedValues.length === 0;
-
-  const handleAllClick = () => {
-    if (!isAllSelected) onToggle(filterKey, '__clear__', false, clearScope);
+  const handleClearSection = () => {
+    onToggle(filterKey, '__clear__', false, clearScope);
   };
 
   return (
     <div className="border-b border-earth-sand/50 pb-4 mb-4 last:border-0 last:mb-0">
-      <div className="font-semibold text-earth-text mb-2 text-sm">{title}</div>
-      <ul className="space-y-1 text-sm">
-        <li>
-          <label
-            className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-earth-sand/50 cursor-pointer"
-            onClick={(e) => { if (!isAllSelected) { e.preventDefault(); e.stopPropagation(); handleAllClick(); } }}
+      <div className="flex items-center justify-between mb-2">
+        <span className="font-semibold text-earth-text text-sm">{title}</span>
+        {showClear && hasSelectionInSection && (
+          <button
+            type="button"
+            onClick={handleClearSection}
+            className="text-earth-primary hover:underline text-xs font-medium"
           >
-            <Checkbox
-              checked={isAllSelected}
-              onCheckedChange={(checked) => {
-                if (checked) onToggle(filterKey, '__clear__', false, clearScope);
-              }}
-              className="border-earth-text/50 data-[state=checked]:bg-earth-primary data-[state=checked]:border-earth-primary"
-            />
-            <span className={isAllSelected ? 'text-earth-primary font-medium' : 'text-earth-text/90'}>All</span>
-          </label>
-        </li>
+            Clear
+          </button>
+        )}
+      </div>
+      <ul className="space-y-1 text-sm">
         {visibleOptions.map((opt) => {
           const value = toFilterValue(opt);
           const isSelected = selectedValues.includes(value) || selectedValues.includes(opt);
@@ -252,10 +245,10 @@ export function FilterSidebar({
             variant="ghost"
             size="sm"
             onClick={onClearFilters}
-            className="text-red-600 hover:text-red-700 hover:bg-red-50 h-8 px-2"
+            className="text-earth-primary hover:bg-earth-sand/50 h-8 px-2 font-medium"
           >
             <X className="w-3.5 h-3.5 mr-1" />
-            Clear
+            Clear All
           </Button>
         )}
       </div>
@@ -269,7 +262,7 @@ export function FilterSidebar({
         defaultVisible={6}
         useDisplayValue
         clearScope="region"
-        isAllSelectedOverride={selectedRegions.length === 0}
+        showClear
       />
       {countryOptions.length > 0 && (
       <FilterSection
@@ -280,7 +273,7 @@ export function FilterSidebar({
         onToggle={handleToggle}
         useDisplayValue
         clearScope="country"
-        isAllSelectedOverride={selectedCountries.length === 0}
+        showClear
       />
       )}
       {stateOptions.length > 0 && (
@@ -292,7 +285,7 @@ export function FilterSidebar({
         onToggle={handleToggle}
         useDisplayValue
         clearScope="state"
-        isAllSelectedOverride={selectedStates.length === 0}
+        showClear
       />
       )}
       <FilterSection
@@ -301,6 +294,7 @@ export function FilterSidebar({
         filterKey="sector"
         selectedValues={sectorValues}
         onToggle={handleToggle}
+        showClear
       />
       <FilterSection
         title="Framework"
@@ -308,6 +302,7 @@ export function FilterSidebar({
         filterKey="framework"
         selectedValues={frameworkValues}
         onToggle={handleToggle}
+        showClear
       />
       <FilterSection
         title="Status"
@@ -316,6 +311,7 @@ export function FilterSidebar({
         selectedValues={statusValues}
         onToggle={handleToggle}
         defaultVisible={10}
+        showClear
       />
     </aside>
   );
