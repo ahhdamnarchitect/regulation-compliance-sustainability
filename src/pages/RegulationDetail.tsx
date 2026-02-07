@@ -427,7 +427,7 @@ export default function RegulationDetail() {
                       Sign in to access export and sharing features
                     </p>
                     <Button asChild className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white">
-                      <Link to="/login">Sign In</Link>
+                      <Link to="/">Sign In</Link>
                     </Button>
                   </div>
                 )}

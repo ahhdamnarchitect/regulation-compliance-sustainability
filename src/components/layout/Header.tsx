@@ -34,7 +34,7 @@ export const Header = () => {
             <button 
               onClick={() => {
                 if (!user) {
-                  window.location.href = '/login';
+                  navigate('/');
                 } else {
                   openUpgrade();
                 }
@@ -69,7 +69,7 @@ export const Header = () => {
           <button 
             onClick={() => {
               if (!user) {
-                window.location.href = '/login';
+                navigate('/');
               } else if (user.plan === 'free') {
                 openUpgrade();
               } else {
@@ -133,7 +133,7 @@ export const Header = () => {
               </Button>
             </div>
           ) : (
-            <Link to="/login">
+            <Link to="/">
               <Button size="sm" className="text-xs md:text-sm px-1 md:px-3">
                 <span className="hidden md:inline">Login</span>
                 <span className="md:hidden">Login</span>
