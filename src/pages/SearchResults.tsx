@@ -10,6 +10,8 @@ import { useRegulations } from '@/hooks/useRegulations';
 import { SearchFilters } from '@/types/regulation';
 import { useAuth } from '@/contexts/AuthContext';
 import { regulationAppliesToLocationFilter } from '@/lib/regulationFilter';
+import { REGION_LEVEL_NAMES, getCountryNames, getStateNames } from '@/data/locationHierarchy';
+import type { LocationClearScope } from '@/components/regulations/FilterSidebar';
 import { Search, ArrowLeft, Filter } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
@@ -71,7 +73,21 @@ export default function SearchResults() {
   };
 
   type FilterKey = 'region' | 'sector' | 'framework' | 'status';
-  const handleFilterToggle = (key: FilterKey, value: string, checked: boolean) => {
+  const handleFilterToggle = (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => {
+    if (value === '__clear__' && key === 'region' && clearScope) {
+      const scopeSet = new Set<string>(
+        clearScope === 'region' ? REGION_LEVEL_NAMES : clearScope === 'country' ? getCountryNames() : getStateNames()
+      );
+      const nextRegion = (filters.region ?? []).filter((v) => !scopeSet.has(v));
+      setFilters(prev => ({ ...prev, region: nextRegion }));
+      setSearchParams(prev => {
+        const next = new URLSearchParams(prev);
+        if (nextRegion.length) next.set('region', nextRegion.join(','));
+        else next.delete('region');
+        return next;
+      });
+      return;
+    }
     if (value === '__clear__') {
       setFilters(prev => ({ ...prev, [key]: [] }));
       setSearchParams(prev => {

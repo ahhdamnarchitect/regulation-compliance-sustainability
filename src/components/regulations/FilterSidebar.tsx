@@ -1,28 +1,24 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
-import { locationHierarchy } from '@/data/locationHierarchy';
+import {
+  locationHierarchy,
+  getLocationsInRegion,
+  REGION_LEVEL_NAMES,
+  type RegionCode,
+} from '@/data/locationHierarchy';
 import { SearchFilters } from '@/types/regulation';
 
 const DEFAULT_VISIBLE = 5;
 
-const REGION_OPTIONS: string[] = [
-  'Global',
-  'Africa',
-  'Asia',
-  'Asia-Pacific',
-  'EU',
-  'Europe',
-  'Middle East',
-  'North America',
-  'Oceania',
-  'South America',
-].sort((a, b) => a.localeCompare(b));
+const REGION_OPTIONS = [...REGION_LEVEL_NAMES];
 
 const SECTORS = ['Finance', 'Energy', 'Consumer Goods', 'Technology', 'Healthcare'].sort((a, b) => a.localeCompare(b));
 const FRAMEWORKS = ['CSRD', 'TCFD', 'ISSB', 'GRI', 'SEC', 'SASB'].sort((a, b) => a.localeCompare(b));
 const STATUSES = ['active', 'proposed', 'repealed'].sort((a, b) => a.localeCompare(b));
+
+const REGION_CODES = new Set<string>(['North America', 'South America', 'EU', 'Europe', 'Asia-Pacific', 'Asia', 'Africa', 'Middle East', 'Oceania']);
 
 function getCountriesAlphabetical(): string[] {
   const names = new Set<string>();
@@ -40,6 +36,51 @@ function getStatesAlphabetical(): string[] {
   return names.sort((a, b) => a.localeCompare(b));
 }
 
+/** Countries that belong to any of the selected region names (cascading). */
+function getCountriesForSelectedRegions(selectedRegions: string[]): string[] {
+  if (selectedRegions.length === 0) return getCountriesAlphabetical();
+  const set = new Set<string>();
+  for (const r of selectedRegions) {
+    if (r === 'Global') continue;
+    if (REGION_CODES.has(r)) {
+      const locations = getLocationsInRegion(r as RegionCode);
+      locations.forEach((name) => {
+        if (locationHierarchy[name]?.level === 'country') set.add(name);
+      });
+    }
+  }
+  if (set.size === 0) return getCountriesAlphabetical();
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+
+/** States that belong to selected regions and/or selected countries (cascading). */
+function getStatesForSelectedRegionsAndCountries(selectedRegions: string[], selectedCountries: string[]): string[] {
+  if (selectedCountries.length > 0) {
+    const set = new Set<string>();
+    for (const [name, meta] of Object.entries(locationHierarchy)) {
+      if (meta.level === 'state' && meta.parentCountry && selectedCountries.includes(meta.parentCountry)) set.add(name);
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }
+  if (selectedRegions.length > 0) {
+    const set = new Set<string>();
+    for (const r of selectedRegions) {
+      if (r === 'Global') continue;
+      if (REGION_CODES.has(r)) {
+        const locations = getLocationsInRegion(r as RegionCode);
+        locations.forEach((name) => {
+          if (locationHierarchy[name]?.level === 'state') set.add(name);
+        });
+      }
+    }
+    if (set.size === 0) return getStatesAlphabetical();
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }
+  return getStatesAlphabetical();
+}
+
+export type LocationClearScope = 'region' | 'country' | 'state';
+
 type FilterKey = 'region' | 'sector' | 'framework' | 'status';
 
 interface FilterSectionProps {
@@ -47,9 +88,12 @@ interface FilterSectionProps {
   options: string[];
   filterKey: FilterKey;
   selectedValues: string[];
-  onToggle: (key: FilterKey, value: string, checked: boolean) => void;
+  onToggle: (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => void;
   defaultVisible?: number;
   useDisplayValue?: boolean;
+  clearScope?: LocationClearScope;
+  /** When set, use this for "All" checkbox state (e.g. true when no selections in this section only). */
+  isAllSelectedOverride?: boolean;
 }
 
 function FilterSection({
@@ -60,6 +104,8 @@ function FilterSection({
   onToggle,
   defaultVisible = DEFAULT_VISIBLE,
   useDisplayValue = false,
+  clearScope,
+  isAllSelectedOverride,
 }: FilterSectionProps) {
   const [expanded, setExpanded] = useState(false);
   const showCount = expanded ? options.length : Math.min(defaultVisible, options.length);
@@ -71,7 +117,7 @@ function FilterSection({
   const toFilterValue = (opt: string) =>
     useDisplayValue ? opt : opt.toLowerCase().replace(/\s+/g, '-');
 
-  const isAllSelected = selectedValues.length === 0;
+  const isAllSelected = isAllSelectedOverride !== undefined ? isAllSelectedOverride : selectedValues.length === 0;
 
   return (
     <div className="border-b border-earth-sand/50 pb-4 mb-4 last:border-0 last:mb-0">
@@ -82,7 +128,7 @@ function FilterSection({
             <Checkbox
               checked={isAllSelected}
               onCheckedChange={(checked) => {
-                if (checked) onToggle(filterKey, '__clear__', false);
+                if (checked) onToggle(filterKey, '__clear__', false, clearScope);
               }}
               className="border-earth-text/50 data-[state=checked]:bg-earth-primary data-[state=checked]:border-earth-primary"
             />
@@ -133,23 +179,42 @@ function FilterSection({
 
 interface FilterSidebarProps {
   filters: SearchFilters;
-  onFilterToggle: (key: FilterKey, value: string, checked: boolean) => void;
+  onFilterToggle: (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => void;
   onClearFilters: () => void;
   hasActiveFilters: boolean;
 }
 
 export function FilterSidebar({ filters, onFilterToggle, onClearFilters, hasActiveFilters }: FilterSidebarProps) {
-  const countries = getCountriesAlphabetical();
-  const states = getStatesAlphabetical();
-
   const regionValues = filters.region ?? [];
   const sectorValues = filters.sector ?? [];
   const frameworkValues = filters.framework ?? [];
   const statusValues = filters.status ?? [];
 
-  const handleToggle = (key: FilterKey, value: string, checked: boolean) => {
+  const selectedRegions = useMemo(
+    () => regionValues.filter((v) => REGION_LEVEL_NAMES.includes(v)),
+    [regionValues]
+  );
+  const selectedCountries = useMemo(
+    () => regionValues.filter((v) => locationHierarchy[v]?.level === 'country'),
+    [regionValues]
+  );
+  const selectedStates = useMemo(
+    () => regionValues.filter((v) => locationHierarchy[v]?.level === 'state'),
+    [regionValues]
+  );
+
+  const countryOptions = useMemo(
+    () => getCountriesForSelectedRegions(selectedRegions),
+    [selectedRegions]
+  );
+  const stateOptions = useMemo(
+    () => getStatesForSelectedRegionsAndCountries(selectedRegions, selectedCountries),
+    [selectedRegions, selectedCountries]
+  );
+
+  const handleToggle = (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => {
     if (value === '__clear__') {
-      onFilterToggle(key, '', false);
+      onFilterToggle(key, '', false, clearScope);
       return;
     }
     onFilterToggle(key, value, checked);
@@ -180,22 +245,28 @@ export function FilterSidebar({ filters, onFilterToggle, onClearFilters, hasActi
         onToggle={handleToggle}
         defaultVisible={6}
         useDisplayValue
+        clearScope="region"
+        isAllSelectedOverride={selectedRegions.length === 0}
       />
       <FilterSection
         title="Country / Jurisdiction"
-        options={countries}
+        options={countryOptions}
         filterKey="region"
         selectedValues={regionValues}
         onToggle={handleToggle}
         useDisplayValue
+        clearScope="country"
+        isAllSelectedOverride={selectedCountries.length === 0}
       />
       <FilterSection
         title="State / Province"
-        options={states}
+        options={stateOptions}
         filterKey="region"
         selectedValues={regionValues}
         onToggle={handleToggle}
         useDisplayValue
+        clearScope="state"
+        isAllSelectedOverride={selectedStates.length === 0}
       />
       <FilterSection
         title="Sector"

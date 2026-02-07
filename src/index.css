@@ -95,8 +95,8 @@
 
   body {
     @apply text-earth-text font-sans;
-    /* Butter yellow ombre: white at top (seamless with header), flowing into warm butter */
-    background: linear-gradient(180deg, #ffffff 0%, #FFFCF5 10%, #FDF8F0 35%, #F9F2E5 65%, #F5EBD8 100%);
+    /* Ombre: white at top (seamless with header), smooth transition to butter yellow at bottom */
+    background: linear-gradient(180deg, #ffffff 0%, #fffef8 8%, #fffde8 20%, #fff9d6 45%, #fff3b8 70%, #ffeea0 100%);
     min-height: 100vh;
     background-attachment: fixed;
   }

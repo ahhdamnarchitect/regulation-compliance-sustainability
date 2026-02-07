@@ -370,3 +370,22 @@ export function getLocationsInRegion(region: RegionCode): string[] {
 export function isKnownLocation(locationName: string): boolean {
   return locationName in locationHierarchy;
 }
+
+/** Names that count as "region" level for filter clear scope (sidebar Region section). */
+export const REGION_LEVEL_NAMES: string[] = [
+  'Global', 'Africa', 'Asia', 'Asia-Pacific', 'EU', 'Europe', 'Middle East', 'North America', 'Oceania', 'South America',
+].sort((a, b) => a.localeCompare(b));
+
+/** All country names in the hierarchy (for filter clear scope). */
+export function getCountryNames(): string[] {
+  return Object.entries(locationHierarchy)
+    .filter(([, meta]) => meta.level === 'country')
+    .map(([name]) => name);
+}
+
+/** All state/subdivision names in the hierarchy (for filter clear scope). */
+export function getStateNames(): string[] {
+  return Object.entries(locationHierarchy)
+    .filter(([, meta]) => meta.level === 'state')
+    .map(([name]) => name);
+}
