@@ -15,7 +15,7 @@ export default function Legal() {
           <CardContent className="space-y-4 text-earth-text/90 text-sm">
             <p>
               This page will contain the terms of use, privacy policy, and other legal information for
-              the Sustainability Regulation Database (MSRB). Placeholder content only.
+              the Sustainability Regulation Database (MSRD). Placeholder content only.
             </p>
             <p>
               Final legal text will be added before launch. Do not rely on this placeholder for any

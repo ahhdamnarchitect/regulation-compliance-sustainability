@@ -7,14 +7,14 @@ export default function About() {
     <div className="min-h-screen bg-transparent flex flex-col">
       <Header />
       <main className="container mx-auto px-4 py-8 flex-1 max-w-3xl">
-        <h1 className="text-3xl font-bold text-earth-primary mb-6">About MSRB</h1>
+        <h1 className="text-3xl font-bold text-earth-primary mb-6">About MSRD</h1>
         <Card className="border-earth-sand">
           <CardHeader>
             <CardTitle className="text-earth-text">Sustainability Regulation Database</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 text-earth-text/90 text-sm">
             <p>
-              MSRB (Sustainability Regulation Database) is a platform designed to help organizations
+              MSRD (Sustainability Regulation Database) is a platform designed to help organizations
               track and understand global sustainability regulations. This is placeholder content and will be
               replaced with full product description, mission, and team information.
             </p>

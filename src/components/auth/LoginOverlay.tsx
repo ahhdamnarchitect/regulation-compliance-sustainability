@@ -42,7 +42,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
             <span className="text-white font-bold text-2xl">M</span>
           </div>
           <CardTitle className="text-2xl font-bold text-earth-primary brand-text">
-            Welcome to MSRB
+            Welcome to MSRD
           </CardTitle>
           <p className="text-earth-text text-sm mt-2">
             Sustainability Regulation Database

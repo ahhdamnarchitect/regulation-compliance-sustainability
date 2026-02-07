@@ -125,7 +125,7 @@ export default function RegulationDetail() {
     // Footer
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
-    doc.text(`Exported from MSRB on ${new Date().toLocaleDateString()}`, 20, 285);
+    doc.text(`Exported from MSRD on ${new Date().toLocaleDateString()}`, 20, 285);
     
     // Save the PDF
     const filename = regulation.title.replace(/[^a-z0-9]/gi, '_').substring(0, 50);
