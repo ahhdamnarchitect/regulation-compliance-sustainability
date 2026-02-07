@@ -10,7 +10,7 @@ import { useRegulations } from '@/hooks/useRegulations';
 import { SearchFilters } from '@/types/regulation';
 import { useAuth } from '@/contexts/AuthContext';
 import { regulationAppliesToLocationFilter } from '@/lib/regulationFilter';
-import { REGION_LEVEL_NAMES, getCountryNames, getStateNames } from '@/data/locationHierarchy';
+import { REGION_LEVEL_NAMES, getCountryNames, getStateNames, locationHierarchy } from '@/data/locationHierarchy';
 import type { LocationClearScope } from '@/components/regulations/FilterSidebar';
 import { Search, ArrowLeft, Filter } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -144,11 +144,15 @@ export default function SearchResults() {
     setBookmarks(updatedBookmarks);
   };
 
-  const norm = (s: string | undefined) => (s ?? '').toLowerCase().replace(/\s+/g, '-');
+  const norm = (s: string | undefined) => (s ?? '').toLowerCase().trim().replace(/\s+/g, '-');
   const regions = filters.region ?? [];
   const sectors = filters.sector ?? [];
   const frameworks = filters.framework ?? [];
   const statuses = filters.status ?? [];
+
+  const selectedCountries = regions.filter((r) => locationHierarchy[r]?.level === 'country');
+  const selectedStates = regions.filter((r) => locationHierarchy[r]?.level === 'state');
+  const selectedRegionsOnly = regions.filter((r) => REGION_LEVEL_NAMES.includes(r));
 
   const filteredRegulations = regulations.filter(regulation => {
     if (filters.query) {
@@ -163,13 +167,19 @@ export default function SearchResults() {
         return false;
       }
     }
-    if (regions.length > 0 && !regions.some((r) => regulationAppliesToLocationFilter(regulation, r))) {
+    if (regions.length > 0) {
+      if (selectedStates.length > 0) {
+        if (!selectedStates.some((r) => regulationAppliesToLocationFilter(regulation, r))) return false;
+      } else if (selectedCountries.length > 0) {
+        if (!selectedCountries.some((r) => regulationAppliesToLocationFilter(regulation, r))) return false;
+      } else {
+        if (!selectedRegionsOnly.some((r) => regulationAppliesToLocationFilter(regulation, r))) return false;
+      }
+    }
+    if (sectors.length > 0 && !sectors.some((s) => norm(regulation.sector) === norm(s))) {
       return false;
     }
-    if (sectors.length > 0 && !sectors.some((s) => norm(regulation.sector) === s)) {
-      return false;
-    }
-    if (frameworks.length > 0 && !frameworks.some((f) => norm(regulation.framework) === f)) {
+    if (frameworks.length > 0 && !frameworks.some((f) => norm(regulation.framework) === norm(f))) {
       return false;
     }
     if (statuses.length > 0 && !statuses.includes(regulation.status)) {

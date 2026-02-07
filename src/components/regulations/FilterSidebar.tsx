@@ -93,6 +93,8 @@ interface FilterSectionProps {
   clearScope?: LocationClearScope;
   /** When true, show a "Clear" button for this section. */
   showClear?: boolean;
+  /** When set, use this instead of selectedValues.length > 0 to show Clear (e.g. for Region/Country/State so Clear only shows when that scope has selections). */
+  hasSelectionInSectionOverride?: boolean;
 }
 
 function FilterSection({
@@ -105,12 +107,13 @@ function FilterSection({
   useDisplayValue = false,
   clearScope,
   showClear = false,
+  hasSelectionInSectionOverride,
 }: FilterSectionProps) {
   const [expanded, setExpanded] = useState(false);
   const showCount = expanded ? options.length : Math.min(defaultVisible, options.length);
   const hasMore = options.length > defaultVisible;
   const visibleOptions = options.slice(0, showCount);
-  const hasSelectionInSection = selectedValues.length > 0;
+  const hasSelectionInSection = hasSelectionInSectionOverride !== undefined ? hasSelectionInSectionOverride : selectedValues.length > 0;
 
   if (options.length === 0) return null;
 
@@ -263,6 +266,7 @@ export function FilterSidebar({
         useDisplayValue
         clearScope="region"
         showClear
+        hasSelectionInSectionOverride={selectedRegions.length > 0}
       />
       {countryOptions.length > 0 && (
       <FilterSection
@@ -274,6 +278,7 @@ export function FilterSidebar({
         useDisplayValue
         clearScope="country"
         showClear
+        hasSelectionInSectionOverride={selectedCountries.length > 0}
       />
       )}
       {stateOptions.length > 0 && (
@@ -286,6 +291,7 @@ export function FilterSidebar({
         useDisplayValue
         clearScope="state"
         showClear
+        hasSelectionInSectionOverride={selectedStates.length > 0}
       />
       )}
       <FilterSection
@@ -306,7 +312,7 @@ export function FilterSidebar({
       />
       <FilterSection
         title="Status"
-        options={availableStatuses && availableStatuses.length > 0 ? availableStatuses.sort((a, b) => a.localeCompare(b)) : STATUS_VALUES}
+        options={STATUS_VALUES}
         filterKey="status"
         selectedValues={statusValues}
         onToggle={handleToggle}

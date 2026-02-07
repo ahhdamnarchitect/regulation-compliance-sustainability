@@ -8,8 +8,8 @@ export const Header = () => {
 
   return (
     <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
-      <div className="container mx-auto px-2 sm:px-4 py-4 flex items-center justify-between">
-        <Link to="/" className="flex items-center space-x-2 sm:space-x-3">
+      <div className="container mx-auto px-2 sm:px-4 py-4 flex items-center justify-between gap-4">
+        <Link to="/" className="flex items-center space-x-2 sm:space-x-3 shrink-0">
           <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[rgb(25,89,8)] rounded-lg flex items-center justify-center shadow-sm">
             <span className="text-white font-bold text-sm sm:text-lg">M</span>
           </div>
@@ -18,8 +18,8 @@ export const Header = () => {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
+        {/* Desktop Navigation - centered with page title */}
+        <nav className="hidden md:flex flex-1 justify-center items-center space-x-6">
           {user && user.plan !== 'free' ? (
             <Link to="/search?q=" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium">
               Search
@@ -88,7 +88,7 @@ export const Header = () => {
           )}
         </nav>
 
-        <div className="flex items-center space-x-1 md:space-x-4">
+        <div className="flex items-center space-x-1 md:space-x-4 shrink-0">
           {user ? (
             <div className="flex items-center space-x-1 md:space-x-3">
               {/* Desktop: Full email display */}

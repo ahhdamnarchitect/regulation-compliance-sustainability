@@ -106,7 +106,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-earth-text mb-2 line-clamp-2">
+            <h3 className="font-title text-lg font-semibold text-earth-text mb-2 line-clamp-2">
               {regulation.title}
             </h3>
             <div className="flex items-center flex-wrap gap-2 text-sm text-earth-text/70 mb-2">

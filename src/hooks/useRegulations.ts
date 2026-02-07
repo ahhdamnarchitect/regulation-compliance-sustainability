@@ -132,7 +132,8 @@ export const useRegulations = () => {
           });
         }
         if (frameworkArr.length > 0) {
-          filteredData = filteredData.filter(reg => frameworkArr.some((f: string) => (reg.framework || '').toLowerCase() === f.toLowerCase() || (reg.framework || '').toLowerCase().includes(f.toLowerCase())));
+          const normFw = (s: string) => (s || '').toLowerCase().trim().replace(/\s+/g, '-');
+          filteredData = filteredData.filter(reg => frameworkArr.some((f: string) => normFw(reg.framework) === normFw(f)));
         }
         if (statusArr.length > 0) {
           filteredData = filteredData.filter(reg => statusArr.includes(reg.status));

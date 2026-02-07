@@ -258,7 +258,7 @@ export default function RegulationDetail() {
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="text-2xl font-bold text-earth-text mb-4">
+                    <CardTitle className="font-title text-2xl font-bold text-earth-text mb-4">
                       {regulation.title}
                     </CardTitle>
                     
