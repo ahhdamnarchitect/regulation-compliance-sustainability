@@ -403,6 +403,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
   const [mapRef, setMapRef] = useState<any>(null);
   const popupOpenTimeRef = useRef<number>(0);
+  const worldMinZoomRef = useRef<number>(2);
 
   // Inject custom CSS to remove gridlines
   useEffect(() => {
@@ -432,16 +433,17 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     // If zoomed out too far, zoom in first then open popup
     if (currentZoom < minZoomForPopup) {
       mapRef.setView([coords.lat, coords.lng], minZoomForPopup, { animate: true });
-      // Open popup after zoom animation completes
+      // Open popup after zoom animation completes; lock min zoom so user can't zoom out past this view
       setTimeout(() => {
         popupOpenTimeRef.current = Date.now();
         const marker = markerRefs.current[country];
         if (marker) {
           marker.openPopup();
         }
+        mapRef.setMinZoom(mapRef.getZoom());
       }, 400);
     } else {
-      // Just center and open popup
+      // Just center and open popup; lock min zoom
       mapRef.setView([coords.lat, coords.lng], currentZoom, { animate: true });
       setTimeout(() => {
         popupOpenTimeRef.current = Date.now();
@@ -449,6 +451,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         if (marker) {
           marker.openPopup();
         }
+        mapRef.setMinZoom(mapRef.getZoom());
       }, 150);
     }
   }, [mapRef]);
@@ -464,8 +467,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   useEffect(() => {
     if (!mapRef) return;
     fitWorld(mapRef);
+    worldMinZoomRef.current = mapRef.getMinZoom();
     // Re-fit after a short delay so container has final size (removes sliver on first load)
-    const t = setTimeout(() => fitWorld(mapRef), 100);
+    const t = setTimeout(() => {
+      fitWorld(mapRef);
+      worldMinZoomRef.current = mapRef.getMinZoom();
+    }, 100);
 
     const onZoomEnd = () => {
       if (mapRef.getZoom() === mapRef.getMinZoom()) {
@@ -478,13 +485,18 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
       }
     };
+    const onPopupClose = () => {
+      mapRef.setMinZoom(worldMinZoomRef.current);
+    };
 
     mapRef.on('zoomend', onZoomEnd);
+    mapRef.on('popupclose', onPopupClose);
     window.addEventListener('resize', onResize);
 
     return () => {
       clearTimeout(t);
       mapRef.off('zoomend', onZoomEnd);
+      mapRef.off('popupclose', onPopupClose);
       window.removeEventListener('resize', onResize);
     };
   }, [mapRef, fitWorld]);
@@ -575,8 +587,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
   };
 
+  // Match Voyager water so the top sliver blends in
+  const MAP_WATER_BG = '#AAD3DF';
+
   return (
-    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative bg-earth-background max-w-6xl mx-auto">
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_WATER_BG }}>
       
       <MapContainer
         center={[20, 0]}
@@ -584,7 +599,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         style={{ 
           height: '100%', 
           width: '100%',
-          backgroundColor: '#F7F8F3' // Earth background color
+          backgroundColor: MAP_WATER_BG
         }}
         className="z-0 rounded-lg"
         maxBounds={[[-85, -180], [85, 180]]}
