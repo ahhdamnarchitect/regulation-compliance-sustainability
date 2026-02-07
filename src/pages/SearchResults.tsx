@@ -3,15 +3,15 @@ import { useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { RegulationCard } from '@/components/regulations/RegulationCard';
+import { FilterSidebar } from '@/components/regulations/FilterSidebar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue, SelectGroup, SelectLabel } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useRegulations } from '@/hooks/useRegulations';
 import { SearchFilters } from '@/types/regulation';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Filter, ArrowLeft, X } from 'lucide-react';
+import { regulationAppliesToLocationFilter } from '@/lib/regulationFilter';
+import { Search, ArrowLeft, Filter } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 // Smart search function that uses word boundary matching for short terms
 const smartSearch = (text: string, query: string): boolean => {
@@ -42,7 +42,7 @@ export default function SearchResults() {
     framework: searchParams.get('framework') || 'all',
     status: searchParams.get('status') || 'all'
   });
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFiltersMobile, setShowFiltersMobile] = useState(false);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   
   const { regulations, loading, error, refetch } = useRegulations();
@@ -101,51 +101,26 @@ export default function SearchResults() {
     setBookmarks(updatedBookmarks);
   };
 
-  // Define region groups for filtering
-  const europeJurisdictions = ['EU', 'France', 'Germany', 'UK', 'Netherlands', 'Italy', 'Spain', 'Sweden', 'Bavaria'];
-  const northAmericaJurisdictions = ['US', 'California', 'Texas', 'North America', 'Ontario'];
-
-  // Check if a regulation matches a region filter
-  const matchesRegionFilter = (regulation: { jurisdiction?: string; country?: string }, regionFilter: string): boolean => {
-    if (regionFilter === 'all') return true;
-    
-    const jurisdiction = regulation.jurisdiction || '';
-    const country = regulation.country || '';
-    
-    // Handle grouped regions
-    if (regionFilter === 'europe-all') {
-      return europeJurisdictions.includes(jurisdiction) || country === 'European Union' || europeJurisdictions.some(j => country.includes(j));
-    }
-    if (regionFilter === 'north-america-all') {
-      return northAmericaJurisdictions.includes(jurisdiction) || country === 'United States' || country === 'Canada';
-    }
-    
-    // Handle direct jurisdiction match
-    return jurisdiction === regionFilter;
-  };
-
   const filteredRegulations = regulations.filter(regulation => {
     if (filters.query) {
       const query = filters.query.trim();
-      // Use smart search for various fields
       const titleMatch = smartSearch(regulation.title, query);
       const descMatch = smartSearch(regulation.summary || regulation.description || '', query);
       const jurisdictionMatch = smartSearch(regulation.jurisdiction || '', query);
       const countryMatch = smartSearch(regulation.country || '', query);
       const frameworkMatch = smartSearch(regulation.framework || '', query);
       const tagsMatch = regulation.tags?.some(tag => smartSearch(tag, query)) || false;
-      
       if (!titleMatch && !descMatch && !jurisdictionMatch && !countryMatch && !frameworkMatch && !tagsMatch) {
         return false;
       }
     }
-    if (!matchesRegionFilter(regulation, filters.region || 'all')) {
+    if (!regulationAppliesToLocationFilter(regulation, filters.region || 'all')) {
       return false;
     }
-    if (filters.sector !== 'all' && regulation.sector !== filters.sector) {
+    if (filters.sector !== 'all' && regulation.sector?.toLowerCase() !== filters.sector) {
       return false;
     }
-    if (filters.framework !== 'all' && regulation.framework !== filters.framework) {
+    if (filters.framework !== 'all' && regulation.framework?.toLowerCase() !== filters.framework) {
       return false;
     }
     if (filters.status !== 'all' && regulation.status !== filters.status) {
@@ -154,27 +129,39 @@ export default function SearchResults() {
     return true;
   });
 
+  const sidebarContent = (
+    <FilterSidebar
+      filters={filters}
+      onFilterChange={handleFilterChange}
+      onClearFilters={handleClearFilters}
+      hasActiveFilters={hasActiveFilters}
+    />
+  );
+
+  const activeFilterCount = [
+    filters.region !== 'all',
+    filters.sector !== 'all',
+    filters.framework !== 'all',
+    filters.status !== 'all',
+  ].filter(Boolean).length;
+
   return (
     <div className="min-h-screen bg-earth-background">
       <Header />
       
       <div className="container mx-auto px-4 py-8">
-        {/* Back Button */}
-        <div className="mb-6">
+        <div className="mb-4">
           <Link to="/" className="inline-flex items-center text-earth-primary hover:text-earth-primary/80 transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Map
           </Link>
         </div>
 
-        {/* Search Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-earth-text mb-4">
-            Search Results
-          </h1>
-          
-          {/* Search Bar */}
-          <div className="flex gap-4 mb-4">
+        <h1 className="text-3xl font-bold text-earth-text mb-4">Search Results</h1>
+
+        {/* Search bar + Filter bar (filters up top on mobile) */}
+        <div className="space-y-3 mb-6">
+          <div className="flex gap-2 sm:gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
               <Input
@@ -185,174 +172,98 @@ export default function SearchResults() {
                 className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
               />
             </div>
-            <Button onClick={handleSearch} className="bg-earth-primary hover:bg-earth-primary/90">
+            <Button onClick={handleSearch} className="bg-earth-primary hover:bg-earth-primary/90 shrink-0">
               Search
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => setShowFilters(!showFilters)}
-              className="border-earth-sand hover:bg-earth-sand"
-            >
-              <Filter className="w-4 h-4 mr-2" />
-              Filters
-            </Button>
           </div>
-
-          {/* Expandable Filters */}
-          {showFilters && (
-            <Card className="mb-6 border-earth-sand">
-              <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-lg text-earth-text">Filter Results</CardTitle>
-                {hasActiveFilters && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={handleClearFilters}
-                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  >
-                    <X className="w-4 h-4 mr-1" />
-                    Clear All
-                  </Button>
-                )}
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div>
-                    <label className="text-sm font-medium text-earth-text mb-2 block">Region</label>
-                    <Select value={filters.region} onValueChange={(value) => handleFilterChange('region', value)}>
-                      <SelectTrigger className="border-earth-sand">
-                        <SelectValue placeholder="Select region" />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-[300px]">
-                        <SelectItem value="all">All Regions</SelectItem>
-                        <SelectItem value="Global">Global Standards</SelectItem>
-                        
-                        <SelectGroup>
-                          <SelectLabel className="text-earth-primary font-semibold">Europe</SelectLabel>
-                          <SelectItem value="europe-all">All Europe</SelectItem>
-                          <SelectItem value="EU">EU (Region-wide)</SelectItem>
-                          <SelectItem value="France">France</SelectItem>
-                          <SelectItem value="Germany">Germany</SelectItem>
-                          <SelectItem value="UK">United Kingdom</SelectItem>
-                        </SelectGroup>
-                        
-                        <SelectGroup>
-                          <SelectLabel className="text-earth-primary font-semibold">North America</SelectLabel>
-                          <SelectItem value="north-america-all">All North America</SelectItem>
-                          <SelectItem value="US">United States (Federal)</SelectItem>
-                          <SelectItem value="California">California</SelectItem>
-                          <SelectItem value="Texas">Texas</SelectItem>
-                          <SelectItem value="North America">Canada</SelectItem>
-                          <SelectItem value="Ontario">Ontario</SelectItem>
-                        </SelectGroup>
-                        
-                        <SelectGroup>
-                          <SelectLabel className="text-earth-primary font-semibold">Asia Pacific</SelectLabel>
-                          <SelectItem value="Asia-Pacific">All Asia Pacific</SelectItem>
-                        </SelectGroup>
-                        
-                        <SelectGroup>
-                          <SelectLabel className="text-earth-primary font-semibold">South America</SelectLabel>
-                          <SelectItem value="South America">All South America</SelectItem>
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-earth-text mb-2 block">Sector</label>
-                    <Select value={filters.sector} onValueChange={(value) => handleFilterChange('sector', value)}>
-                      <SelectTrigger className="border-earth-sand">
-                        <SelectValue placeholder="Select sector" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Sectors</SelectItem>
-                        <SelectItem value="Finance">Finance</SelectItem>
-                        <SelectItem value="Energy">Energy</SelectItem>
-                        <SelectItem value="Technology">Technology</SelectItem>
-                        <SelectItem value="Healthcare">Healthcare</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-earth-text mb-2 block">Framework</label>
-                    <Select value={filters.framework} onValueChange={(value) => handleFilterChange('framework', value)}>
-                      <SelectTrigger className="border-earth-sand">
-                        <SelectValue placeholder="Select framework" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Frameworks</SelectItem>
-                        <SelectItem value="CSRD">CSRD</SelectItem>
-                        <SelectItem value="TCFD">TCFD</SelectItem>
-                        <SelectItem value="ISSB">ISSB</SelectItem>
-                        <SelectItem value="SEC">SEC</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-earth-text mb-2 block">Status</label>
-                    <Select value={filters.status} onValueChange={(value) => handleFilterChange('status', value)}>
-                      <SelectTrigger className="border-earth-sand">
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="proposed">Proposed</SelectItem>
-                        <SelectItem value="repealed">Repealed</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+          {/* Mobile: filter bar up top with one clear filter-settings button */}
+          <div className="flex items-center lg:hidden">
+            <Sheet open={showFiltersMobile} onOpenChange={setShowFiltersMobile}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="w-full sm:w-auto border-earth-sand hover:bg-earth-sand justify-center gap-2"
+                >
+                  <Filter className="w-4 h-4" />
+                  Filters
+                  {activeFilterCount > 0 && (
+                    <span className="bg-earth-primary text-white text-xs font-medium min-w-[1.25rem] h-5 px-1.5 rounded-full flex items-center justify-center">
+                      {activeFilterCount}
+                    </span>
+                  )}
+                </Button>
+              </SheetTrigger>
+              <SheetContent
+                side="left"
+                className="w-full max-w-full sm:max-w-full h-full rounded-none border-0 flex flex-col p-0 lg:hidden"
+              >
+                <div className="flex items-center justify-between shrink-0 border-b border-earth-sand px-4 pt-3 pb-3 pr-14 bg-white">
+                  <h2 className="text-lg font-bold text-earth-text">Filters</h2>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Results Count */}
-          <div className="flex items-center justify-between">
-            <p className="text-earth-text">
-              {loading ? 'Loading...' : `${filteredRegulations.length} regulations found`}
-            </p>
+                <div className="flex-1 overflow-y-auto px-4 py-4 bg-earth-background">
+                  {sidebarContent}
+                </div>
+                <div className="shrink-0 border-t border-earth-sand bg-white p-4 safe-area-pb">
+                  <Button
+                    className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white py-3"
+                    onClick={() => setShowFiltersMobile(false)}
+                  >
+                    Show {filteredRegulations.length} results
+                  </Button>
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
-        {/* Results */}
-        {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-earth-primary mx-auto"></div>
-            <p className="text-earth-text mt-4">Loading regulations...</p>
+        <div className="flex gap-8 flex-col lg:flex-row">
+          {/* Left sidebar - hidden on mobile (use Sheet instead) */}
+          <div className="hidden lg:block shrink-0">
+            {sidebarContent}
           </div>
-        ) : error ? (
-          <div className="text-center py-12">
-            <p className="text-red-600">Error loading regulations: {error}</p>
-          </div>
-        ) : filteredRegulations.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-earth-text text-lg">No regulations found matching your criteria.</p>
-            <p className="text-earth-text/60 mt-2">Try adjusting your search terms or filters.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredRegulations.map((regulation) => (
-              <div 
-                key={regulation.id}
-                className="cursor-pointer hover:scale-105 transition-transform duration-200"
-                onClick={() => navigate(`/regulation/${regulation.id}`)}
-              >
-                <RegulationCard
-                  regulation={regulation}
-                  isBookmarked={bookmarks.includes(regulation.id)}
-                  onBookmark={(e, id) => {
-                    e.stopPropagation();
-                    handleBookmark(id);
-                  }}
-                />
+
+          {/* Main content */}
+          <div className="flex-1 min-w-0">
+            <p className="text-earth-text mb-6">
+              {loading ? 'Loading...' : `${filteredRegulations.length} regulations found`}
+            </p>
+
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-earth-primary mx-auto" />
+                <p className="text-earth-text mt-4">Loading regulations...</p>
               </div>
-            ))}
+            ) : error ? (
+              <div className="text-center py-12">
+                <p className="text-red-600">Error loading regulations: {error}</p>
+              </div>
+            ) : filteredRegulations.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-earth-text text-lg">No regulations found matching your criteria.</p>
+                <p className="text-earth-text/60 mt-2">Try adjusting your search terms or filters.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredRegulations.map((regulation) => (
+                  <div
+                    key={regulation.id}
+                    className="cursor-pointer hover:scale-105 transition-transform duration-200"
+                    onClick={() => navigate(`/regulation/${regulation.id}`)}
+                  >
+                    <RegulationCard
+                      regulation={regulation}
+                      isBookmarked={bookmarks.includes(regulation.id)}
+                      onBookmark={(e, id) => {
+                        e.stopPropagation();
+                        handleBookmark(id);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
       <Footer />
     </div>
