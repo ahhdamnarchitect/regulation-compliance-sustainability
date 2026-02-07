@@ -354,7 +354,7 @@ export function isLocationInRegion(locationName: string, region: RegionCode): bo
   if (meta.region === region) return true;
   if (meta.parentCountry) {
     const parentMeta = locationHierarchy[meta.parentCountry];
-    return parentMeta?.region === region ?? false;
+    return parentMeta?.region === region;
   }
   return false;
 }

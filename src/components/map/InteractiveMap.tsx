@@ -453,6 +453,14 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     }
   }, [mapRef]);
 
+  // Fit world to container on load so there's no empty space when zoomed out; set minZoom to prevent zooming out past that
+  const WORLD_BOUNDS: [[number, number], [number, number]] = [[-85, -180], [85, 180]];
+  useEffect(() => {
+    if (!mapRef) return;
+    mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
+    const zoomAfterFit = mapRef.getZoom();
+    mapRef.setMinZoom(zoomAfterFit);
+  }, [mapRef]);
 
   useEffect(() => {
     // 1. Pin only where there's a local regulation: use primary location per regulation (no EU-wide or Global pins)
