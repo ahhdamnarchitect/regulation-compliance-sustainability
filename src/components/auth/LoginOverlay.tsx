@@ -46,7 +46,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
             Welcome to MSRB
           </CardTitle>
           <p className="text-earth-text text-sm mt-2">
-            Missick Sustainability Regulation Database
+            Sustainability Regulation Database
           </p>
         </CardHeader>
         

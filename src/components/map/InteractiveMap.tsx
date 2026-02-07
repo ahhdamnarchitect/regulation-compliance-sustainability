@@ -170,7 +170,6 @@ interface InteractiveMapProps {
   regulations: Regulation[];
   onRegulationClick: (regulation: Regulation) => void;
   /** When true, hide the map legend (e.g. when login overlay is visible so it doesn't appear on top) */
-  hideLegend?: boolean;
 }
 
 // Country coordinates are now imported from countryMapping.ts
@@ -399,7 +398,7 @@ const regulationLevelColors: Record<RegulationScope, { bg: string; text: string;
   state: { bg: '#FEF3C7', text: '#92400E', border: '#FBBF24' },     // Amber for state/province
 };
 
-const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick, hideLegend = false }) => {
+const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
   const [regulationsByCountry, setRegulationsByCountry] = useState<Record<string, Regulation[]>>({});
   const [mapRef, setMapRef] = useState<any>(null);
   const popupOpenTimeRef = useRef<number>(0);
@@ -542,34 +541,6 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
 
   return (
     <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative bg-earth-background max-w-6xl mx-auto">
-      
-      {/* Map Legend — hidden when login overlay is shown so it doesn't appear in front */}
-      {!hideLegend && (
-      <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm rounded-lg shadow-md p-3 text-xs">
-        <div className="font-semibold text-earth-text mb-2">Regulation Scope</div>
-        <div className="space-y-1.5">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: regulationLevelColors.global.border }}></div>
-            <span className="text-earth-text/80">Global</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: regulationLevelColors.regional.border }}></div>
-            <span className="text-earth-text/80">Regional</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: regulationLevelColors.country.border }}></div>
-            <span className="text-earth-text/80">National</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-sm" style={{ backgroundColor: regulationLevelColors.state.border }}></div>
-            <span className="text-earth-text/80">State/Province</span>
-          </div>
-        </div>
-        <div className="mt-2 pt-2 border-t border-earth-sand/50 text-earth-text/60">
-          Click a pin to see all<br/>applicable regulations
-        </div>
-      </div>
-      )}
       
       <MapContainer
         center={[20, 0]}

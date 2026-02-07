@@ -94,7 +94,11 @@
   }
 
   body {
-    @apply bg-earth-background text-earth-text font-sans;
+    @apply text-earth-text font-sans;
+    /* Butter yellow ombre: white at top (seamless with header), flowing into warm butter */
+    background: linear-gradient(180deg, #ffffff 0%, #FFFCF5 10%, #FDF8F0 35%, #F9F2E5 65%, #F5EBD8 100%);
+    min-height: 100vh;
+    background-attachment: fixed;
   }
   
   h1, h2, h3, h4, h5, h6 {

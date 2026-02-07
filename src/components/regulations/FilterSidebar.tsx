@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ChevronDown, ChevronUp, X } from 'lucide-react';
 import { locationHierarchy } from '@/data/locationHierarchy';
 import { SearchFilters } from '@/types/regulation';
@@ -39,14 +40,15 @@ function getStatesAlphabetical(): string[] {
   return names.sort((a, b) => a.localeCompare(b));
 }
 
+type FilterKey = 'region' | 'sector' | 'framework' | 'status';
+
 interface FilterSectionProps {
   title: string;
   options: string[];
-  filterKey: keyof SearchFilters;
-  currentValue: string;
-  onSelect: (key: keyof SearchFilters, value: string) => void;
+  filterKey: FilterKey;
+  selectedValues: string[];
+  onToggle: (key: FilterKey, value: string, checked: boolean) => void;
   defaultVisible?: number;
-  /** When true, use option as-is for filter value (e.g. "France"); otherwise lowercase/dash (e.g. "finance") */
   useDisplayValue?: boolean;
 }
 
@@ -54,8 +56,8 @@ function FilterSection({
   title,
   options,
   filterKey,
-  currentValue,
-  onSelect,
+  selectedValues,
+  onToggle,
   defaultVisible = DEFAULT_VISIBLE,
   useDisplayValue = false,
 }: FilterSectionProps) {
@@ -69,35 +71,37 @@ function FilterSection({
   const toFilterValue = (opt: string) =>
     useDisplayValue ? opt : opt.toLowerCase().replace(/\s+/g, '-');
 
+  const isAllSelected = selectedValues.length === 0;
+
   return (
     <div className="border-b border-earth-sand/50 pb-4 mb-4 last:border-0 last:mb-0">
       <div className="font-semibold text-earth-text mb-2 text-sm">{title}</div>
       <ul className="space-y-1 text-sm">
         <li>
-          <button
-            type="button"
-            onClick={() => onSelect(filterKey, 'all')}
-            className={`w-full text-left px-2 py-1 rounded hover:bg-earth-sand/50 transition-colors ${
-              currentValue === 'all' ? 'text-earth-primary font-medium bg-earth-sand/30' : 'text-earth-text/90'
-            }`}
-          >
-            All
-          </button>
+          <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-earth-sand/50 cursor-pointer">
+            <Checkbox
+              checked={isAllSelected}
+              onCheckedChange={(checked) => {
+                if (checked) onToggle(filterKey, '__clear__', false);
+              }}
+              className="border-earth-text/50 data-[state=checked]:bg-earth-primary data-[state=checked]:border-earth-primary"
+            />
+            <span className={isAllSelected ? 'text-earth-primary font-medium' : 'text-earth-text/90'}>All</span>
+          </label>
         </li>
         {visibleOptions.map((opt) => {
           const value = toFilterValue(opt);
-          const isSelected = currentValue === value || currentValue === opt;
+          const isSelected = selectedValues.includes(value) || selectedValues.includes(opt);
           return (
             <li key={opt}>
-              <button
-                type="button"
-                onClick={() => onSelect(filterKey, value)}
-                className={`w-full text-left px-2 py-1 rounded hover:bg-earth-sand/50 transition-colors ${
-                  isSelected ? 'text-earth-primary font-medium bg-earth-sand/30' : 'text-earth-text/90'
-                }`}
-              >
-                {opt}
-              </button>
+              <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-earth-sand/50 cursor-pointer">
+                <Checkbox
+                  checked={!!isSelected}
+                  onCheckedChange={(checked) => onToggle(filterKey, value, !!checked)}
+                  className="border-earth-text/50 data-[state=checked]:bg-earth-primary data-[state=checked]:border-earth-primary"
+                />
+                <span className={isSelected ? 'text-earth-primary font-medium' : 'text-earth-text/90'}>{opt}</span>
+              </label>
             </li>
           );
         })}
@@ -129,24 +133,30 @@ function FilterSection({
 
 interface FilterSidebarProps {
   filters: SearchFilters;
-  onFilterChange: (key: keyof SearchFilters, value: string) => void;
+  onFilterToggle: (key: FilterKey, value: string, checked: boolean) => void;
   onClearFilters: () => void;
   hasActiveFilters: boolean;
 }
 
-export function FilterSidebar({ filters, onFilterChange, onClearFilters, hasActiveFilters }: FilterSidebarProps) {
+export function FilterSidebar({ filters, onFilterToggle, onClearFilters, hasActiveFilters }: FilterSidebarProps) {
   const countries = getCountriesAlphabetical();
   const states = getStatesAlphabetical();
 
-  // Normalize display: region filter can store "global", "north america", "france", "california" etc.
-  const regionValue = filters.region || 'all';
+  const regionValues = filters.region ?? [];
+  const sectorValues = filters.sector ?? [];
+  const frameworkValues = filters.framework ?? [];
+  const statusValues = filters.status ?? [];
 
-  const handleLocationSelect = (value: string) => {
-    onFilterChange('region', value === 'all' ? 'all' : value);
+  const handleToggle = (key: FilterKey, value: string, checked: boolean) => {
+    if (value === '__clear__') {
+      onFilterToggle(key, '', false);
+      return;
+    }
+    onFilterToggle(key, value, checked);
   };
 
   return (
-    <aside className="w-full lg:w-64 shrink-0 bg-white border border-earth-sand rounded-lg p-4 shadow-sm h-fit lg:sticky lg:top-4">
+    <aside className="w-full lg:w-64 shrink-0 bg-white border border-earth-sand rounded-lg p-4 shadow-sm h-fit">
       <div className="flex items-center justify-between mb-4">
         <span className="font-bold text-earth-text">Filters</span>
         {hasActiveFilters && (
@@ -162,13 +172,12 @@ export function FilterSidebar({ filters, onFilterChange, onClearFilters, hasActi
         )}
       </div>
 
-      {/* Order: highest level region → lowest level subsidiary (Region → Country → State), then Sector, Framework, Status */}
       <FilterSection
         title="Region"
         options={REGION_OPTIONS}
         filterKey="region"
-        currentValue={regionValue}
-        onSelect={handleLocationSelect}
+        selectedValues={regionValues}
+        onToggle={handleToggle}
         defaultVisible={6}
         useDisplayValue
       />
@@ -176,38 +185,38 @@ export function FilterSidebar({ filters, onFilterChange, onClearFilters, hasActi
         title="Country / Jurisdiction"
         options={countries}
         filterKey="region"
-        currentValue={regionValue}
-        onSelect={handleLocationSelect}
+        selectedValues={regionValues}
+        onToggle={handleToggle}
         useDisplayValue
       />
       <FilterSection
         title="State / Province"
         options={states}
         filterKey="region"
-        currentValue={regionValue}
-        onSelect={handleLocationSelect}
+        selectedValues={regionValues}
+        onToggle={handleToggle}
         useDisplayValue
       />
       <FilterSection
         title="Sector"
         options={SECTORS}
         filterKey="sector"
-        currentValue={filters.sector || 'all'}
-        onSelect={onFilterChange}
+        selectedValues={sectorValues}
+        onToggle={handleToggle}
       />
       <FilterSection
         title="Framework"
         options={FRAMEWORKS}
         filterKey="framework"
-        currentValue={filters.framework || 'all'}
-        onSelect={onFilterChange}
+        selectedValues={frameworkValues}
+        onToggle={handleToggle}
       />
       <FilterSection
         title="Status"
         options={STATUSES}
         filterKey="status"
-        currentValue={filters.status || 'all'}
-        onSelect={onFilterChange}
+        selectedValues={statusValues}
+        onToggle={handleToggle}
         defaultVisible={10}
       />
     </aside>

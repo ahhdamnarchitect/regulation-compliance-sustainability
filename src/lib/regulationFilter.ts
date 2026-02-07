@@ -77,7 +77,17 @@ export function regulationAppliesToLocationFilter(regulation: Regulation, filter
     return target.type === 'global';
   }
 
-  // Filter is a region name (e.g. North America, EU, Asia-Pacific)
+  // Explicit region names (not keys in locationHierarchy, so getRegionForLocation returns undefined)
+  const regulatoryRegions = ['North America', 'South America', 'EU', 'Asia-Pacific'] as const;
+  if (regulatoryRegions.includes(filterValue as typeof regulatoryRegions[number])) {
+    const region = filterValue as 'North America' | 'South America' | 'EU' | 'Asia-Pacific';
+    if (target.type === 'global') return true;
+    if (target.type === 'region') return target.region === region;
+    if (target.type === 'location') return isLocationInRegion(target.name, region);
+    return false;
+  }
+
+  // Filter is a region name from hierarchy (e.g. location with region metadata)
   if (filterAsRegion && filterValue === filterAsRegion) {
     if (target.type === 'global') return true;
     if (target.type === 'region') return target.region === filterAsRegion;

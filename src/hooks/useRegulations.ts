@@ -71,18 +71,7 @@ export const useRegulations = () => {
       if (filters?.query) {
         query = query.or(`title.ilike.%${filters.query}%,description.ilike.%${filters.query}%`);
       }
-      if (filters?.region && filters.region !== 'all') {
-        query = query.eq('region', filters.region);
-      }
-      if (filters?.sector && filters.sector !== 'all') {
-        query = query.eq('sector', filters.sector);
-      }
-      if (filters?.framework && filters.framework !== 'all') {
-        query = query.eq('framework', filters.framework);
-      }
-      if (filters?.status && filters.status !== 'all') {
-        query = query.eq('status', filters.status);
-      }
+      // Region/sector/framework/status filtering is done client-side (SearchResults) for hierarchy and display-value matching
 
       const { data, error: supabaseError } = await query.order('created_at', { ascending: false });
 
@@ -118,48 +107,35 @@ export const useRegulations = () => {
                    frameworkMatch || sectorMatch || tagsMatch || smartCountryMatch;
           });
         }
-        if (filters?.region && filters.region !== 'all') {
-          filteredData = filteredData.filter(reg => {
-            const jurisdiction = (reg.jurisdiction || '').toLowerCase();
-            const country = (reg.country || '').toLowerCase();
-            const filterRegion = filters.region.toLowerCase();
-            
-            // Map filter values to data values
-            if (filterRegion === 'europe') {
-              return jurisdiction === 'eu' || country.includes('european union');
-            }
-            if (filterRegion === 'north america') {
-              return jurisdiction === 'us' || jurisdiction === 'canada' || country.includes('united states') || country.includes('canada');
-            }
-            if (filterRegion === 'asia pacific') {
-              return jurisdiction === 'asia' || country.includes('china') || country.includes('japan') || country.includes('australia');
-            }
-            if (filterRegion === 'global') {
-              return jurisdiction === 'global' || jurisdiction === 'international';
-            }
-            
-            // Fallback to exact match
-            return jurisdiction === filterRegion || country.includes(filterRegion);
-          });
+        const regionArr = Array.isArray(filters?.region) ? filters.region : filters?.region && filters.region !== 'all' ? [filters.region] : [];
+        const sectorArr = Array.isArray(filters?.sector) ? filters.sector : filters?.sector && filters.sector !== 'all' ? [filters.sector] : [];
+        const frameworkArr = Array.isArray(filters?.framework) ? filters.framework : filters?.framework && filters.framework !== 'all' ? [filters.framework] : [];
+        const statusArr = Array.isArray(filters?.status) ? filters.status : filters?.status && filters.status !== 'all' ? [filters.status] : [];
+        if (regionArr.length > 0) {
+          filteredData = filteredData.filter(reg =>
+            regionArr.some((filterRegion: string) => {
+              const jurisdiction = (reg.jurisdiction || '').toLowerCase();
+              const country = (reg.country || '').toLowerCase();
+              const fr = filterRegion.toLowerCase();
+              if (fr === 'europe') return jurisdiction === 'eu' || country.includes('european union');
+              if (fr === 'north america') return jurisdiction === 'us' || jurisdiction === 'canada' || country.includes('united states') || country.includes('canada');
+              if (fr === 'asia pacific' || fr === 'asia-pacific') return jurisdiction === 'asia' || country.includes('china') || country.includes('japan') || country.includes('australia');
+              if (fr === 'global') return jurisdiction === 'global' || jurisdiction === 'international';
+              return jurisdiction === fr || country.includes(fr);
+            })
+          );
         }
-        if (filters?.sector && filters.sector !== 'all') {
+        if (sectorArr.length > 0) {
           filteredData = filteredData.filter(reg => {
             const sector = (reg.sector || '').toLowerCase();
-            const filterSector = filters.sector.toLowerCase();
-            
-            // Handle "All Sectors" case
-            if (sector === 'all sectors') {
-              return true;
-            }
-            
-            return sector === filterSector || sector.includes(filterSector);
+            return sectorArr.some((fs: string) => sector === fs.toLowerCase() || sector.includes(fs.toLowerCase()) || (sector === 'all sectors'));
           });
         }
-        if (filters?.framework && filters.framework !== 'all') {
-          filteredData = filteredData.filter(reg => reg.framework === filters.framework);
+        if (frameworkArr.length > 0) {
+          filteredData = filteredData.filter(reg => frameworkArr.some((f: string) => (reg.framework || '').toLowerCase() === f.toLowerCase() || (reg.framework || '').toLowerCase().includes(f.toLowerCase())));
         }
-        if (filters?.status && filters.status !== 'all') {
-          filteredData = filteredData.filter(reg => reg.status === filters.status);
+        if (statusArr.length > 0) {
+          filteredData = filteredData.filter(reg => statusArr.includes(reg.status));
         }
         
         setRegulations(filteredData);

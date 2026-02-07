@@ -222,7 +222,7 @@ export default function RegulationDetail() {
 
   if (!regulation) {
     return (
-      <div className="min-h-screen bg-earth-background">
+      <div className="min-h-screen bg-transparent">
         <Header />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
@@ -235,7 +235,7 @@ export default function RegulationDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-earth-background">
+    <div className="min-h-screen bg-transparent">
       <Header />
       
       <div className="container mx-auto px-4 py-8">

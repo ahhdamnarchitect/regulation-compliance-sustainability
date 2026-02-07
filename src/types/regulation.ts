@@ -29,10 +29,10 @@ export interface User {
 
 export interface SearchFilters {
   query: string;
-  region: string;
-  sector: string;
-  framework: string;
-  status: string;
+  region: string[];
+  sector: string[];
+  framework: string[];
+  status: string[];
 }
 
 export interface DatabaseRegulation {

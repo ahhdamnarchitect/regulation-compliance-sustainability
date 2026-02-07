@@ -86,7 +86,7 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-earth-background relative mobile-full-width prevent-zoom">
+    <div className="min-h-screen bg-transparent relative mobile-full-width prevent-zoom">
       <Header />
       
       {/* Login Overlay */}
@@ -107,7 +107,7 @@ export default function Index() {
             MSRB
           </h1>
           <p className="text-lg sm:text-xl md:text-2xl text-earth-text mb-6 md:mb-8 px-4">
-            Missick Sustainability Regulation Database
+            Sustainability Regulation Database
           </p>
         </div>
 
@@ -124,7 +124,6 @@ export default function Index() {
           <InteractiveMap
             regulations={regulations}
             onRegulationClick={handleRegulationClick}
-            hideLegend={showLogin}
           />
         </div>
 
