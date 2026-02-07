@@ -1,10 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useUpgrade } from "@/contexts/UpgradeContext";
 import { LogOut, User, Shield } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const Header = () => {
   const { user, logout, isAdmin } = useAuth();
+  const { openUpgrade } = useUpgrade();
+  const navigate = useNavigate();
 
   return (
     <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
@@ -33,7 +36,7 @@ export const Header = () => {
                 if (!user) {
                   window.location.href = '/login';
                 } else {
-                  alert('Search functionality is only available in the Professional plan. Please upgrade to access advanced search features.');
+                  openUpgrade();
                 }
               }}
               className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium cursor-pointer"
@@ -41,11 +44,18 @@ export const Header = () => {
               Search
             </button>
           )}
-          {user && (
+          {user && user.plan !== 'free' ? (
             <Link to="/dashboard" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium">
               Bookmarks
             </Link>
-          )}
+          ) : user ? (
+            <button 
+              onClick={openUpgrade}
+              className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium cursor-pointer"
+            >
+              Bookmarks
+            </button>
+          ) : null}
           {isAdmin && (
             <Link to="/admin" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors flex items-center space-x-1 font-medium">
               <Shield className="w-4 h-4" />
@@ -61,9 +71,9 @@ export const Header = () => {
               if (!user) {
                 window.location.href = '/login';
               } else if (user.plan === 'free') {
-                alert('Search functionality is only available in the Professional plan. Please upgrade to access advanced search features.');
+                openUpgrade();
               } else {
-                window.location.href = '/search?q=';
+                navigate('/search?q=');
               }
             }}
             className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1"
@@ -73,14 +83,21 @@ export const Header = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </button>
-          {user && (
+          {user && user.plan !== 'free' ? (
             <Link to="/dashboard" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
               <span className="sr-only">Bookmarks</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
             </Link>
-          )}
+          ) : user ? (
+            <button onClick={openUpgrade} className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
+              <span className="sr-only">Bookmarks</span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </button>
+          ) : null}
           {isAdmin && (
             <Link to="/admin" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
               <span className="sr-only">Admin</span>

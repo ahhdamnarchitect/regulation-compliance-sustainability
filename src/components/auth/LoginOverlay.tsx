@@ -5,12 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Eye, EyeOff, Mail, Lock, User, Globe } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
 
 interface LoginOverlayProps {
   onLogin: (email: string, password: string) => void;
-  onRegister: (email: string, password: string, name: string, region: string) => void;
+  onRegister: (email: string, password: string, name: string) => void;
   error?: string;
   loading?: boolean;
 }
@@ -23,7 +22,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
-  const [registerData, setRegisterData] = useState({ email: '', password: '', name: '', region: '' });
+  const [registerData, setRegisterData] = useState({ email: '', password: '', name: '' });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +31,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
-    onRegister(registerData.email, registerData.password, registerData.name, registerData.region);
+    onRegister(registerData.email, registerData.password, registerData.name);
   };
 
   return (
@@ -51,72 +50,11 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
         </CardHeader>
         
         <CardContent className="px-4 sm:px-6 pb-6">
-          <Tabs defaultValue="login" className="w-full">
+          <Tabs defaultValue="register" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
-              <TabsTrigger value="login">Sign In</TabsTrigger>
               <TabsTrigger value="register">Create Account</TabsTrigger>
+              <TabsTrigger value="login">Sign In</TabsTrigger>
             </TabsList>
-            
-            <TabsContent value="login">
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <Label htmlFor="login-email" className="text-earth-text font-medium">
-                    Email
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
-                    <Input
-                      id="login-email"
-                      type="email"
-                      value={loginData.email}
-                      onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
-                      placeholder="Enter your email"
-                      className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
-                      required
-                    />
-                  </div>
-                </div>
-                
-                <div>
-                  <Label htmlFor="login-password" className="text-earth-text font-medium">
-                    Password
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
-                    <Input
-                      id="login-password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={loginData.password}
-                      onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
-                      placeholder="Enter your password"
-                      className="pl-10 pr-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 hover:text-earth-text"
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-                
-                {error && (
-                  <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
-                  </Alert>
-                )}
-                
-                <Button 
-                  type="submit" 
-                  className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
-                  disabled={loading}
-                >
-                  {loading ? 'Signing In...' : 'Sign In'}
-                </Button>
-              </form>
-            </TabsContent>
             
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
@@ -181,28 +119,6 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                   </div>
                 </div>
                 
-                <div>
-                  <Label htmlFor="register-region" className="text-earth-text font-medium">
-                    Region (Free Plan Access)
-                  </Label>
-                  <div className="relative">
-                    <Globe className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
-                    <Select value={registerData.region} onValueChange={(value) => setRegisterData(prev => ({ ...prev, region: value }))}>
-                      <SelectTrigger className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary">
-                        <SelectValue placeholder="Select your region" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Europe">Europe</SelectItem>
-                        <SelectItem value="North America">North America</SelectItem>
-                        <SelectItem value="Asia Pacific">Asia Pacific</SelectItem>
-                        <SelectItem value="South America">South America</SelectItem>
-                        <SelectItem value="Africa">Africa</SelectItem>
-                        <SelectItem value="Middle East">Middle East</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
                 {error && (
                   <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
@@ -218,14 +134,68 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                 </Button>
               </form>
             </TabsContent>
+            
+            <TabsContent value="login">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <Label htmlFor="login-email" className="text-earth-text font-medium">
+                    Email
+                  </Label>
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                    <Input
+                      id="login-email"
+                      type="email"
+                      value={loginData.email}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
+                      placeholder="Enter your email"
+                      className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                      required
+                    />
+                  </div>
+                </div>
+                
+                <div>
+                  <Label htmlFor="login-password" className="text-earth-text font-medium">
+                    Password
+                  </Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                    <Input
+                      id="login-password"
+                      type={showPassword ? 'text' : 'password'}
+                      value={loginData.password}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
+                      placeholder="Enter your password"
+                      className="pl-10 pr-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 hover:text-earth-text"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                </div>
+                
+                {error && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
+                
+                <Button 
+                  type="submit" 
+                  className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
+                  disabled={loading}
+                >
+                  {loading ? 'Signing In...' : 'Sign In'}
+                </Button>
+              </form>
+            </TabsContent>
           </Tabs>
-          
-          <div className="mt-6 p-4 bg-earth-background rounded-lg text-sm text-earth-text">
-            <p className="font-medium mb-2">Free Plan - "Explore"</p>
-            <p className="text-xs">
-              Access to 1 region • Map view only • Limited results • No exports
-            </p>
-          </div>
           
         </CardContent>
       </Card>

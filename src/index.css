@@ -93,11 +93,16 @@
     @apply border-border;
   }
 
+  html {
+    overscroll-behavior-y: none;
+  }
+
   body {
     @apply text-earth-text font-sans;
     /* Vibrant ombre: white at top to light sage (sustainability theme) at bottom */
     background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
     min-height: 100vh;
+    min-height: 100dvh;
     background-attachment: fixed;
   }
   

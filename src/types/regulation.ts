@@ -20,10 +20,12 @@ export interface Regulation {
 export interface User {
   id: string;
   email: string;
+  full_name?: string;
   role: 'admin' | 'user';
   bookmarks: string[];
   plan?: 'free' | 'professional' | 'enterprise';
   region?: string;
+  trial_used_at?: string | null;
   created_at?: string;
 }
 

@@ -3,19 +3,22 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Check, Star, Zap, Shield, Users } from "lucide-react";
 
+const PROFESSIONAL_MONTHLY = 39.99;
+const PROFESSIONAL_YEARLY = 399.99;
+const YEARLY_SAVINGS = Math.round(12 * PROFESSIONAL_MONTHLY - PROFESSIONAL_YEARLY);
+
 export const PricingSection = () => {
   const plans = [
     {
       name: "Free",
       price: "$0",
       period: "/month",
-      description: "Perfect for individuals and small teams",
+      description: "Explore the map and regulation pins",
       features: [
-        "Search 1,000+ regulations",
-        "Basic filtering",
-        "Bookmark up to 10 regulations",
-        "CSV export",
-        "Community support"
+        "View the full global regulation map",
+        "Click on pins to see regulation summaries",
+        "Create an account to get started",
+        "Upgrade anytime for search, bookmarks & export"
       ],
       buttonText: "Get Started Free",
       buttonVariant: "outline" as const,
@@ -23,45 +26,28 @@ export const PricingSection = () => {
     },
     {
       name: "Professional",
-      price: "$29",
+      price: `$${PROFESSIONAL_MONTHLY}`,
       period: "/month",
-      description: "For consultants and growing companies",
+      yearlyPrice: `$${PROFESSIONAL_YEARLY}`,
+      yearlyPeriod: "/year",
+      savings: `Save $${YEARLY_SAVINGS}/year`,
+      description: "Full access with 7-day free trial",
       features: [
         "Unlimited regulation search",
-        "Advanced filtering & analytics",
+        "Advanced filtering by region, sector & framework",
         "Unlimited bookmarks",
         "PDF & CSV export",
-        "Email alerts for new regulations",
-        "Priority support",
-        "Custom reports"
+        "Regulation detail pages & source links",
+        "7-day free trial, then billed monthly or yearly"
       ],
-      buttonText: "Start Free Trial",
+      buttonText: "Start 7-Day Free Trial",
       buttonVariant: "default" as const,
       popular: true
-    },
-    {
-      name: "Enterprise",
-      price: "$99",
-      period: "/month",
-      description: "For large organizations and compliance teams",
-      features: [
-        "Everything in Professional",
-        "Team collaboration tools",
-        "API access",
-        "Custom integrations",
-        "Dedicated account manager",
-        "White-label options",
-        "Advanced analytics dashboard",
-        "SLA guarantee"
-      ],
-      buttonText: "Contact Sales",
-      buttonVariant: "outline" as const,
-      popular: false
     }
   ];
 
   return (
-    <div className="py-16 bg-gray-50">
+    <div id="pricing" className="py-16 bg-gray-50 scroll-mt-20">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -72,7 +58,7 @@ export const PricingSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan, index) => (
             <Card 
               key={plan.name} 
@@ -92,6 +78,12 @@ export const PricingSection = () => {
                 <div className="mt-4">
                   <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                   <span className="text-gray-600">{plan.period}</span>
+                  {'yearlyPrice' in plan && (
+                    <>
+                      <p className="text-sm text-gray-500 mt-2">or {plan.yearlyPrice}{plan.yearlyPeriod}</p>
+                      <p className="text-sm font-medium text-green-600 mt-1">{plan.savings}</p>
+                    </>
+                  )}
                 </div>
                 <p className="text-gray-600 mt-2">{plan.description}</p>
               </CardHeader>

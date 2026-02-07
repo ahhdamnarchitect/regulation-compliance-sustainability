@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUpgrade } from '@/contexts/UpgradeContext';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -14,6 +15,7 @@ import jsPDF from 'jspdf';
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const { openUpgrade } = useUpgrade();
   const navigate = useNavigate();
   const [bookmarkedRegulations, setBookmarkedRegulations] = useState<Regulation[]>([]);
   const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
@@ -117,6 +119,10 @@ export default function Dashboard() {
   };
 
   const handleExport = () => {
+    if (user?.plan === 'free') {
+      openUpgrade();
+      return;
+    }
     if (exportFormat === 'csv') {
       exportToCSV();
     } else {

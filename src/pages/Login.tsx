@@ -15,14 +15,14 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
-    if (login(email, password)) {
+    try {
+      await login(email, password);
       navigate('/');
-    } else {
-      setError('Invalid credentials. Try admin@missick.com/admin123 or user@missick.com/user123');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Invalid email or password');
     }
   };
 
@@ -75,11 +75,9 @@ export default function Login() {
             </Button>
           </form>
           
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg text-sm">
-            <p className="font-medium mb-2">Demo Credentials:</p>
-            <p>Admin: admin@missick.com / admin123</p>
-            <p>User: user@missick.com / user123</p>
-          </div>
+          <p className="mt-4 text-center text-sm text-gray-600">
+            <a href="/" className="text-[rgb(25,89,8)] hover:underline">Back to home</a>
+          </p>
         </CardContent>
       </Card>
       <Footer />

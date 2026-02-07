@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { UpgradeProvider, useUpgrade } from "@/contexts/UpgradeContext";
+import { UpgradePopup } from "@/components/auth/UpgradePopup";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -18,6 +20,16 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
+function UpgradePopupWrapper() {
+  const { showUpgrade, setShowUpgrade } = useUpgrade();
+  return (
+    <UpgradePopup
+      open={showUpgrade}
+      onClose={() => setShowUpgrade(false)}
+    />
+  );
+}
+
 const App = () => (
   <ThemeProvider defaultTheme="light">
     <QueryClientProvider client={queryClient}>
@@ -26,7 +38,9 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
+            <UpgradeProvider>
+              <UpgradePopupWrapper />
+              <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
               <Route path="/search" element={<SearchResults />} />
@@ -38,6 +52,7 @@ const App = () => (
               <Route path="/legal" element={<Legal />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </UpgradeProvider>
           </BrowserRouter>
         </AuthProvider>
       </TooltipProvider>

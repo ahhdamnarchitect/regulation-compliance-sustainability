@@ -1,15 +1,54 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { User } from '@/types/regulation';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { User as AppUser } from '@/types/regulation';
+import { supabase } from '@/lib/supabase';
+import type { Session } from '@supabase/supabase-js';
+
+interface ProfileRow {
+  id: string;
+  email: string;
+  full_name: string | null;
+  role: string;
+  plan: string;
+  region: string | null;
+  trial_used_at: string | null;
+  created_at?: string;
+}
 
 interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<boolean>;
-  register: (email: string, password: string, name: string, region: string) => Promise<boolean>;
-  logout: () => void;
+  user: AppUser | null;
+  session: Session | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, name: string, region: string) => Promise<void>;
+  logout: () => Promise<void>;
   isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+function profileToUser(profile: ProfileRow): AppUser {
+  return {
+    id: profile.id,
+    email: profile.email,
+    full_name: profile.full_name ?? undefined,
+    role: (profile.role === 'admin' ? 'admin' : 'user') as AppUser['role'],
+    bookmarks: [],
+    plan: (profile.plan as AppUser['plan']) ?? 'free',
+    region: profile.region ?? 'Global',
+    trial_used_at: profile.trial_used_at ?? undefined,
+    created_at: profile.created_at,
+  };
+}
+
+async function fetchProfile(userId: string): Promise<ProfileRow | null> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, email, full_name, role, plan, region, trial_used_at, created_at')
+    .eq('id', userId)
+    .single();
+  if (error || !data) return null;
+  return data as ProfileRow;
+}
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -20,83 +59,94 @@ export const useAuth = () => {
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('missick_user');
-    if (savedUser) {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        // Validate that the user object has required fields
-        if (parsedUser && parsedUser.email && parsedUser.role) {
-          setUser(parsedUser);
-        } else {
-          localStorage.removeItem('missick_user');
-          setUser(null);
-        }
-      } catch (error) {
-        // If parsing fails, clear the invalid data
-        localStorage.removeItem('missick_user');
-        setUser(null);
-      }
+  const setUserFromSession = useCallback(async (sess: Session | null) => {
+    if (!sess?.user?.id) {
+      setUser(null);
+      setSession(null);
+      return;
     }
+    const profile = await fetchProfile(sess.user.id);
+    if (!profile) {
+      setUser(null);
+      setSession(null);
+      return;
+    }
+    setSession(sess);
+    setUser(profileToUser(profile));
   }, []);
 
-  const login = async (email: string, password: string): Promise<boolean> => {
-    // Mock authentication with different user types
-    const credentials = {
-      'admin@missick.com': { password: 'admin123', role: 'admin', plan: 'enterprise' },
-      'premium@missick.com': { password: 'premium123', role: 'user', plan: 'professional' },
-      'free@missick.com': { password: 'free123', role: 'user', plan: 'free', region: 'Europe' },
-      'user@missick.com': { password: 'user123', role: 'user', plan: 'free', region: 'North America' }
-    };
-    
-    const userCreds = credentials[email as keyof typeof credentials];
-    if (userCreds && userCreds.password === password) {
-      const newUser: User = {
-        id: `user-${Date.now()}`,
-        email,
-        role: userCreds.role as 'admin' | 'user',
-        bookmarks: [],
-        plan: userCreds.plan,
-        region: userCreds.region || 'Global'
-      };
-      setUser(newUser);
-      localStorage.setItem('missick_user', JSON.stringify(newUser));
-      return true;
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session: sess } }) => {
+      setSession(sess);
+      if (sess?.user?.id) {
+        fetchProfile(sess.user.id).then((profile) => {
+          if (profile) setUser(profileToUser(profile));
+          else setUser(null);
+        }).finally(() => setLoading(false));
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, sess) => {
+      await setUserFromSession(sess);
+    });
+
+    return () => subscription.unsubscribe();
+  }, [setUserFromSession]);
+
+  const login = async (email: string, password: string): Promise<void> => {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      if (error.message?.toLowerCase().includes('invalid') || error.message?.toLowerCase().includes('credentials')) {
+        throw new Error('Invalid email or password');
+      }
+      throw new Error(error.message || 'Sign in failed');
     }
-    return false;
+    if (data.session) await setUserFromSession(data.session);
   };
 
-  const register = async (email: string, password: string, name: string, region: string): Promise<boolean> => {
-    // Mock registration - create new free user
-    const newUser: User = {
-      id: `user-${Date.now()}`,
+  const register = async (email: string, password: string, name: string, region: string): Promise<void> => {
+    const { data, error } = await supabase.auth.signUp({
       email,
-      role: 'user',
-      bookmarks: [],
-      plan: 'free',
-      region: region
-    };
-    setUser(newUser);
-    localStorage.setItem('missick_user', JSON.stringify(newUser));
-    return true;
+      password,
+      options: {
+        data: { full_name: name, region },
+      },
+    });
+    if (error) {
+      if (error.message?.toLowerCase().includes('already registered') || error.code === 'user_already_exists') {
+        throw new Error('An account with this email already exists.');
+      }
+      throw new Error(error.message || 'Sign up failed');
+    }
+    if (data.user && !data.session) {
+      throw new Error('Please check your email to confirm your account.');
+    }
+    if (data.session) await setUserFromSession(data.session);
   };
 
-  const logout = () => {
+  const logout = async (): Promise<void> => {
+    await supabase.auth.signOut();
     setUser(null);
-    localStorage.removeItem('missick_user');
-    // Redirect to home page after logout
+    setSession(null);
     window.location.href = '/';
   };
 
   return (
     <AuthContext.Provider value={{
       user,
+      session,
+      loading,
       login,
       register,
       logout,
-      isAdmin: user?.role === 'admin'
+      isAdmin: user?.role === 'admin',
     }}>
       {children}
     </AuthContext.Provider>

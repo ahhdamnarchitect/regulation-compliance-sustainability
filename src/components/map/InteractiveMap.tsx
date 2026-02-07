@@ -587,8 +587,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
   };
 
-  // Match Voyager water so the top sliver blends in
-  const MAP_WATER_BG = '#AAD3DF';
+  // Match Voyager water so the top sliver blends in (lighter than before)
+  const MAP_WATER_BG = '#C5DFE8';
 
   return (
     <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-earth-sand relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_WATER_BG }}>

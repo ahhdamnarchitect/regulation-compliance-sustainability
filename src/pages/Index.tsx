@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LoginOverlay } from '@/components/auth/LoginOverlay';
@@ -9,16 +9,25 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { useRegulations } from '@/hooks/useRegulations';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUpgrade } from '@/contexts/UpgradeContext';
 import { Search, MapPin, Globe, Filter } from 'lucide-react';
 
 export default function Index() {
-  const { user, login, register } = useAuth();
+  const { user, login, register, loading: authLoading } = useAuth();
+  const { openUpgrade } = useUpgrade();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [showLogin, setShowLogin] = useState(!user);
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { regulations, loading, error } = useRegulations();
+
+  useEffect(() => {
+    if (location.hash === '#pricing') {
+      document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [location.hash]);
 
   // Show login overlay when user logs out
   useEffect(() => {
@@ -36,20 +45,20 @@ export default function Index() {
       await login(email, password);
       setShowLogin(false);
     } catch (err) {
-      setLoginError('Invalid email or password');
+      setLoginError(err instanceof Error ? err.message : 'Invalid email or password');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRegister = async (email: string, password: string, name: string, region: string) => {
+  const handleRegister = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     setLoginError('');
     try {
-      await register(email, password, name, region);
+      await register(email, password, name, 'Global');
       setShowLogin(false);
     } catch (err) {
-      setLoginError('Failed to create account');
+      setLoginError(err instanceof Error ? err.message : 'Failed to create account');
     } finally {
       setIsLoading(false);
     }
@@ -61,12 +70,10 @@ export default function Index() {
       return;
     }
     
-    // Check if user is on free plan
     if (user.plan === 'free') {
-      alert('Search functionality is only available in the Professional plan. Please upgrade to access advanced search features.');
+      openUpgrade();
       return;
     }
-    
     navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
   };
 
@@ -76,12 +83,10 @@ export default function Index() {
       return;
     }
     
-    // Check if user is on free plan
     if (user.plan === 'free') {
-      alert('Viewing regulation details is only available in the Professional plan. Please upgrade to access detailed regulation information.');
+      openUpgrade();
       return;
     }
-    
     navigate(`/regulation/${regulation.id}`);
   };
 
@@ -90,8 +95,8 @@ export default function Index() {
       <Header />
       <div className="flex-1 flex flex-col">
       
-      {/* Login Overlay */}
-      {showLogin && (
+      {/* Login Overlay - hide while checking session to avoid flash */}
+      {showLogin && !authLoading && (
         <LoginOverlay
           onLogin={handleLogin}
           onRegister={handleRegister}
@@ -186,7 +191,7 @@ export default function Index() {
                         return;
                       }
                       if (user.plan === 'free') {
-                        alert('Search functionality is only available in the Professional plan. Please upgrade to access advanced search features.');
+                        openUpgrade();
                         return;
                       }
                       setSearchQuery(term);

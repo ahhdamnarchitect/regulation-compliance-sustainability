@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/lib/supabase';
 import { 
   User, 
   Mail, 
@@ -31,10 +32,16 @@ export default function AccountSettings() {
   
   // Profile form state
   const [profileData, setProfileData] = useState({
-    name: user?.name || '',
+    name: user?.full_name || '',
     email: user?.email || '',
     region: user?.region || ''
   });
+
+  useEffect(() => {
+    if (user) {
+      setProfileData({ name: user.full_name || '', email: user.email || '', region: user.region || '' });
+    }
+  }, [user?.id, user?.full_name, user?.email, user?.region]);
   
   // Password form state
   const [passwordData, setPasswordData] = useState({
@@ -45,12 +52,15 @@ export default function AccountSettings() {
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return;
     setLoading(true);
     setMessage(null);
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: profileData.name, region: profileData.region || null, updated_at: new Date().toISOString() })
+        .eq('id', user.id);
+      if (error) throw error;
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to update profile. Please try again.' });
@@ -63,16 +73,14 @@ export default function AccountSettings() {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
-    
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setMessage({ type: 'error', text: 'New passwords do not match.' });
       setLoading(false);
       return;
     }
-    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const { error } = await supabase.auth.updateUser({ password: passwordData.newPassword });
+      if (error) throw error;
       setMessage({ type: 'success', text: 'Password changed successfully!' });
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error) {
