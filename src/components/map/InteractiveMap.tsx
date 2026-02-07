@@ -186,6 +186,13 @@ const usStates = ['California', 'Texas', 'New York', 'Florida', 'Illinois', 'Pen
 const canadianProvinces = ['Ontario', 'Quebec', 'British Columbia', 'Alberta', 'Manitoba', 'Saskatchewan'];
 const germanStates = ['Bavaria', 'Baden-Württemberg', 'North Rhine-Westphalia', 'Berlin', 'Hamburg'];
 const euCountries = ['Germany', 'France', 'Italy', 'Spain', 'Netherlands', 'Belgium', 'Austria', 'Sweden', 'Denmark', 'Finland', 'Poland', 'Czech Republic', 'Hungary', 'Romania', 'Bulgaria', 'Croatia', 'Slovenia', 'Slovakia', 'Estonia', 'Latvia', 'Lithuania', 'Ireland', 'Portugal', 'Greece', 'Cyprus', 'Malta', 'Luxembourg'];
+const asiaPacificCountries = ['Australia', 'Japan', 'Singapore', 'India', 'China', 'South Korea', 'Hong Kong', 'Taiwan'];
+const southAmericaCountries = ['Brazil'];
+
+type RegulationTarget =
+  | { type: 'location'; name: string }
+  | { type: 'region'; region: 'EU' | 'Asia-Pacific' | 'North America' | 'South America' }
+  | { type: 'global' };
 
 // Determine the location level for a given location name
 const getLocationLevel = (locationName: string): LocationLevel => {
@@ -241,66 +248,107 @@ const getPrimaryLocation = (regulation: Regulation): string | null => {
   return null;
 };
 
-// Get all regulations that apply to a specific location (hierarchical).
-// Only inherit parent-level by jurisdiction (e.g. US federal = jurisdiction 'US'), never by country alone,
-// so state-specific regulations (e.g. Texas) do not appear under another state (e.g. California).
+// Universal: regulation's effective target (lowest-level location, or region-wide, or global).
+const getRegulationTarget = (regulation: Regulation): RegulationTarget => {
+  const jurisdiction = regulation.jurisdiction || '';
+  const country = regulation.country || '';
+
+  if (jurisdiction === 'Global' || country === 'Global') return { type: 'global' };
+
+  // EU: region-wide vs country-specific
+  if (jurisdiction === 'EU') {
+    if (country === 'European Union' || !country) return { type: 'region', region: 'EU' };
+    if (country && countryCoordinates[country as keyof typeof countryCoordinates]) return { type: 'location', name: country };
+  }
+
+  // Asia-Pacific: region-wide vs country-specific
+  if (jurisdiction === 'Asia-Pacific') {
+    if (country && asiaPacificCountries.includes(country) && countryCoordinates[country as keyof typeof countryCoordinates]) {
+      return { type: 'location', name: country };
+    }
+    return { type: 'region', region: 'Asia-Pacific' };
+  }
+
+  // South America: region-wide vs country-specific
+  if (jurisdiction === 'South America') {
+    if (country && countryCoordinates[country as keyof typeof countryCoordinates]) return { type: 'location', name: country };
+    return { type: 'region', region: 'South America' };
+  }
+
+  // North America: Canada-wide, US, or region-wide
+  if (jurisdiction === 'North America') {
+    if (country === 'Canada') return { type: 'location', name: 'Canada' };
+    if (country === 'United States') return { type: 'location', name: 'United States' };
+    return { type: 'region', region: 'North America' };
+  }
+
+  // State/province level → specific location
+  if (usStates.includes(jurisdiction) || canadianProvinces.includes(jurisdiction) || germanStates.includes(jurisdiction)) {
+    if (countryCoordinates[jurisdiction as keyof typeof countryCoordinates]) return { type: 'location', name: jurisdiction };
+  }
+
+  if (jurisdiction === 'US') return { type: 'location', name: 'United States' };
+  if (jurisdiction === 'UK') return { type: 'location', name: 'United Kingdom' };
+
+  // Country-level (France, Germany, Japan, etc.)
+  const candidate = jurisdiction || country;
+  if (candidate && countryCoordinates[candidate as keyof typeof countryCoordinates]) return { type: 'location', name: candidate };
+
+  return { type: 'global' };
+};
+
+// Ancestors of a pin location (parent regions/countries and Global).
+const getAncestors = (locationName: string): string[] => {
+  if (usStates.includes(locationName)) return ['United States', 'Global'];
+  if (canadianProvinces.includes(locationName)) return ['Canada', 'North America', 'Global'];
+  if (germanStates.includes(locationName)) return ['Germany', 'EU', 'Global'];
+  if (euCountries.includes(locationName)) return ['EU', 'Global'];
+  if (asiaPacificCountries.includes(locationName)) return ['Asia-Pacific', 'Global'];
+  if (southAmericaCountries.includes(locationName)) return ['South America', 'Global'];
+  if (locationName === 'United States' || locationName === 'United Kingdom' || locationName === 'Canada') return ['Global'];
+  return ['Global'];
+};
+
+const locationBelongsToRegion = (locationName: string, region: 'EU' | 'Asia-Pacific' | 'North America' | 'South America'): boolean => {
+  switch (region) {
+    case 'EU':
+      return euCountries.includes(locationName) || germanStates.includes(locationName);
+    case 'Asia-Pacific':
+      return asiaPacificCountries.includes(locationName);
+    case 'North America':
+      return locationName === 'United States' || locationName === 'Canada' || usStates.includes(locationName) || canadianProvinces.includes(locationName);
+    case 'South America':
+      return southAmericaCountries.includes(locationName);
+    default:
+      return false;
+  }
+};
+
+// Get all regulations that apply to a specific location (universal rule).
+// A regulation applies to location L if: (1) its target is L or an ancestor of L, (2) its target is region-wide and L is in that region, or (3) its target is global.
 const getApplicableRegulations = (locationName: string, allRegulations: Regulation[]): Regulation[] => {
   const applicable: Regulation[] = [];
   const addedIds = new Set<string>();
-  
+  const ancestors = getAncestors(locationName);
+
   allRegulations.forEach(regulation => {
-    const jurisdiction = regulation.jurisdiction || '';
-    const country = regulation.country || '';
-    
+    const target = getRegulationTarget(regulation);
+
     let applies = false;
-    
-    // 1. Direct match - regulation is specifically for this location
-    if (jurisdiction === locationName || country === locationName) {
+    if (target.type === 'global') {
       applies = true;
+    } else if (target.type === 'location') {
+      applies = target.name === locationName || ancestors.includes(target.name);
+    } else {
+      applies = locationBelongsToRegion(locationName, target.region);
     }
-    
-    // 2. US States: inherit only US federal (jurisdiction 'US') and Global — not country === 'United States'
-    if (usStates.includes(locationName)) {
-      if (jurisdiction === 'US') applies = true;
-      if (jurisdiction === 'Global' || country === 'Global') applies = true;
-    }
-    
-    // 3. Canadian Provinces: inherit only Canada-wide (North America + Canada) and Global
-    if (canadianProvinces.includes(locationName)) {
-      if (jurisdiction === 'North America' && country === 'Canada') applies = true;
-      if (jurisdiction === 'Global' || country === 'Global') applies = true;
-    }
-    
-    // 4. German States: inherit only national Germany (jurisdiction 'Germany'), EU-wide, and Global
-    if (germanStates.includes(locationName)) {
-      if (jurisdiction === 'Germany') applies = true;
-      if (jurisdiction === 'EU' && country === 'European Union') applies = true;
-      if (jurisdiction === 'Global' || country === 'Global') applies = true;
-    }
-    
-    // 5. EU Countries: only EU-wide (country 'European Union') and Global — country-specific EU laws (Italy, Spain, Sweden, etc.) only show in that country (handled by direct match above)
-    if (euCountries.includes(locationName)) {
-      if (jurisdiction === 'EU' && country === 'European Union') applies = true;
-      if (jurisdiction === 'Global' || country === 'Global') applies = true;
-    }
-    
-    // 6. Major countries (US, UK, Canada, etc.): inherit Global only
-    if (['United States', 'United Kingdom', 'Canada', 'Australia', 'Japan', 'China', 'India', 'Brazil', 'Singapore'].includes(locationName)) {
-      if (jurisdiction === 'Global' || country === 'Global') applies = true;
-    }
-    
-    // 7. Asia-Pacific countries: inherit Asia-Pacific regional and Global
-    if (['Australia', 'Japan', 'Singapore', 'India', 'China', 'South Korea', 'Hong Kong', 'Taiwan'].includes(locationName)) {
-      if (jurisdiction === 'Asia-Pacific') applies = true;
-      if (jurisdiction === 'Global' || country === 'Global') applies = true;
-    }
-    
+
     if (applies && !addedIds.has(regulation.id)) {
       applicable.push(regulation);
       addedIds.add(regulation.id);
     }
   });
-  
+
   return applicable;
 };
 
