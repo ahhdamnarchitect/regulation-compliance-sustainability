@@ -248,10 +248,14 @@ const getPrimaryLocation = (regulation: Regulation): string | null => {
   return null;
 };
 
+// Normalize jurisdiction for region comparison (e.g. "Asia Pacific" or "Asia-Pacific" both match)
+const isAsiaPacificJurisdiction = (j: string): boolean =>
+  (j || '').trim() === 'Asia-Pacific' || (j || '').trim().replace(/\s+/g, '-') === 'Asia-Pacific';
+
 // Universal: regulation's effective target (lowest-level location, or region-wide, or global).
 const getRegulationTarget = (regulation: Regulation): RegulationTarget => {
-  const jurisdiction = regulation.jurisdiction || '';
-  const country = regulation.country || '';
+  const jurisdiction = (regulation.jurisdiction || '').trim();
+  const country = (regulation.country || '').trim();
 
   if (jurisdiction === 'Global' || country === 'Global') return { type: 'global' };
 
@@ -261,8 +265,8 @@ const getRegulationTarget = (regulation: Regulation): RegulationTarget => {
     if (country && countryCoordinates[country as keyof typeof countryCoordinates]) return { type: 'location', name: country };
   }
 
-  // Asia-Pacific: region-wide vs country-specific
-  if (jurisdiction === 'Asia-Pacific') {
+  // Asia-Pacific: region-wide vs country-specific; country-specific only shows in that country
+  if (isAsiaPacificJurisdiction(jurisdiction)) {
     if (country && asiaPacificCountries.includes(country) && countryCoordinates[country as keyof typeof countryCoordinates]) {
       return { type: 'location', name: country };
     }
