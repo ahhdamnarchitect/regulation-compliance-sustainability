@@ -10,7 +10,14 @@ import { useRegulations } from '@/hooks/useRegulations';
 import { SearchFilters } from '@/types/regulation';
 import { useAuth } from '@/contexts/AuthContext';
 import { regulationAppliesToLocationFilter } from '@/lib/regulationFilter';
-import { REGION_LEVEL_NAMES, getCountryNames, getStateNames, locationHierarchy } from '@/data/locationHierarchy';
+import {
+  REGION_LEVEL_NAMES,
+  getCountryNames,
+  getStateNames,
+  getCountriesForSelectedRegions,
+  getStatesForSelectedRegionsAndCountries,
+  locationHierarchy,
+} from '@/data/locationHierarchy';
 import type { LocationClearScope } from '@/components/regulations/FilterSidebar';
 import { Search, ArrowLeft, Filter } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
@@ -62,6 +69,27 @@ export default function SearchResults() {
   useEffect(() => {
     refetch(filters);
   }, [filters, refetch]);
+
+  // Sanitize region filter: when region-level selection changes, remove any country/state that is no longer in the current options
+  useEffect(() => {
+    const region = filters.region ?? [];
+    const selectedRegionsOnly = region.filter((v) => REGION_LEVEL_NAMES.includes(v));
+    const validCountrySet = new Set(getCountriesForSelectedRegions(selectedRegionsOnly));
+    const selectedCountriesValid = region.filter((v) => locationHierarchy[v]?.level === 'country' && validCountrySet.has(v));
+    const validStateSet = new Set(getStatesForSelectedRegionsAndCountries(selectedRegionsOnly, selectedCountriesValid));
+    const sanitized = region.filter(
+      (v) => REGION_LEVEL_NAMES.includes(v) || validCountrySet.has(v) || validStateSet.has(v)
+    );
+    if (sanitized.length !== region.length || sanitized.some((v, i) => v !== region[i])) {
+      setFilters((prev) => ({ ...prev, region: sanitized }));
+      setSearchParams((prev) => {
+        const next = new URLSearchParams(prev);
+        if (sanitized.length) next.set('region', sanitized.join(','));
+        else next.delete('region');
+        return next;
+      });
+    }
+  }, [filters.region]);
 
   const handleSearch = () => {
     setFilters(prev => ({ ...prev, query: searchQuery }));

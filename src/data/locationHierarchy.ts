@@ -389,3 +389,63 @@ export function getStateNames(): string[] {
     .filter(([, meta]) => meta.level === 'state')
     .map(([name]) => name);
 }
+
+/** Region codes that have locations (used for cascading country/state options). */
+const REGION_CODES = new Set<RegionCode>([
+  'North America', 'South America', 'EU', 'Europe', 'Asia-Pacific', 'Asia', 'Africa', 'Middle East', 'Oceania',
+]);
+
+function getCountriesAlphabetical(): string[] {
+  return Object.entries(locationHierarchy)
+    .filter(([, meta]) => meta.level === 'country')
+    .map(([name]) => name)
+    .sort((a, b) => a.localeCompare(b));
+}
+
+function getStatesAlphabetical(): string[] {
+  return Object.entries(locationHierarchy)
+    .filter(([, meta]) => meta.level === 'state')
+    .map(([name]) => name)
+    .sort((a, b) => a.localeCompare(b));
+}
+
+/** Countries that belong to any of the selected region names (cascading). When region(s) selected, only those countries are shown. */
+export function getCountriesForSelectedRegions(selectedRegions: string[]): string[] {
+  if (selectedRegions.length === 0) return getCountriesAlphabetical();
+  const set = new Set<string>();
+  for (const r of selectedRegions) {
+    if (r === 'Global') continue;
+    if (REGION_CODES.has(r as RegionCode)) {
+      const locations = getLocationsInRegion(r as RegionCode);
+      locations.forEach((name) => {
+        if (locationHierarchy[name]?.level === 'country') set.add(name);
+      });
+    }
+  }
+  return Array.from(set).sort((a, b) => a.localeCompare(b));
+}
+
+/** States that belong to selected regions and/or selected countries (cascading). */
+export function getStatesForSelectedRegionsAndCountries(selectedRegions: string[], selectedCountries: string[]): string[] {
+  if (selectedCountries.length > 0) {
+    const set = new Set<string>();
+    for (const [name, meta] of Object.entries(locationHierarchy)) {
+      if (meta.level === 'state' && meta.parentCountry && selectedCountries.includes(meta.parentCountry)) set.add(name);
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }
+  if (selectedRegions.length > 0) {
+    const set = new Set<string>();
+    for (const r of selectedRegions) {
+      if (r === 'Global') continue;
+      if (REGION_CODES.has(r as RegionCode)) {
+        const locations = getLocationsInRegion(r as RegionCode);
+        locations.forEach((name) => {
+          if (locationHierarchy[name]?.level === 'state') set.add(name);
+        });
+      }
+    }
+    return Array.from(set).sort((a, b) => a.localeCompare(b));
+  }
+  return getStatesAlphabetical();
+}

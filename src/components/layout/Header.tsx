@@ -8,18 +8,21 @@ export const Header = () => {
 
   return (
     <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
-      <div className="container mx-auto px-2 sm:px-4 py-4 flex items-center justify-between gap-4">
-        <Link to="/" className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[rgb(25,89,8)] rounded-lg flex items-center justify-center shadow-sm">
-            <span className="text-white font-bold text-sm sm:text-lg">M</span>
-          </div>
-          <span className="font-title text-xl sm:text-2xl md:text-3xl font-semibold text-[rgb(25,89,8)]">
-            MSRB
-          </span>
-        </Link>
+      <div className="container mx-auto px-2 sm:px-4 py-4 grid grid-cols-3 items-center gap-4 w-full max-w-full">
+        {/* Left: logo */}
+        <div className="flex justify-start min-w-0">
+          <Link to="/" className="flex items-center space-x-2 sm:space-x-3 shrink-0">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[rgb(25,89,8)] rounded-lg flex items-center justify-center shadow-sm">
+              <span className="text-white font-bold text-sm sm:text-lg">M</span>
+            </div>
+            <span className="font-title text-xl sm:text-2xl md:text-3xl font-semibold text-[rgb(25,89,8)]">
+              MSRB
+            </span>
+          </Link>
+        </div>
 
-        {/* Desktop Navigation - centered with page title */}
-        <nav className="hidden md:flex flex-1 justify-center items-center space-x-6">
+        {/* Center: Search, Bookmarks, Admin – true page center */}
+        <nav className="hidden md:flex justify-center items-center space-x-6">
           {user && user.plan !== 'free' ? (
             <Link to="/search?q=" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium">
               Search
@@ -51,9 +54,8 @@ export const Header = () => {
           )}
         </nav>
 
-        {/* Mobile Navigation - centered with page title */}
-        <nav className="md:hidden flex flex-1 justify-center items-center space-x-4">
-          {/* Search icon for mobile */}
+        {/* Mobile: center nav icons */}
+        <nav className="md:hidden flex justify-center items-center space-x-4">
           <button 
             onClick={() => {
               if (!user) {
@@ -71,7 +73,6 @@ export const Header = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </button>
-          
           {user && (
             <Link to="/dashboard" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
               <span className="sr-only">Bookmarks</span>
@@ -88,7 +89,8 @@ export const Header = () => {
           )}
         </nav>
 
-        <div className="flex items-center space-x-1 md:space-x-4 shrink-0">
+        {/* Right: user / login – symmetrical with left */}
+        <div className="flex justify-end items-center space-x-1 md:space-x-4 min-w-0">
           {user ? (
             <div className="flex items-center space-x-1 md:space-x-3">
               {/* Desktop: Full email display */}
