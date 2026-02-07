@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Badge } from "@/components/ui/badge";
 import { Plus, Edit, Trash2, ExternalLink } from "lucide-react";
 import { DatabaseRegulation } from "@/types/regulation";
+import { formatStatus } from "@/lib/utils";
 
 const Admin = () => {
   const { isAdmin } = useAuth();
@@ -316,7 +317,7 @@ const Admin = () => {
                 <td className="p-3">{r.reporting_year || "—"}</td>
                 <td className="p-3">
                   <Badge variant={r.status === 'active' ? 'default' : r.status === 'proposed' ? 'secondary' : 'destructive'}>
-                    {r.status || "—"}
+                    {formatStatus(r.status || '') || "—"}
                   </Badge>
                 </td>
                 <td className="p-3">

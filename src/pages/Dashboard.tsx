@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { mockRegulations } from '@/data/mockRegulations';
 import { Regulation } from '@/types/regulation';
+import { formatStatus } from '@/lib/utils';
 import { Download, BookmarkX, FileText, Bookmark } from 'lucide-react';
 import jsPDF from 'jspdf';
 
@@ -98,7 +99,7 @@ export default function Dashboard() {
       y += 5;
       doc.text(`Framework: ${reg.framework} | Sector: ${reg.sector}`, 25, y);
       y += 5;
-      doc.text(`Status: ${reg.status}${reg.complianceDeadline ? ` | Deadline: ${new Date(reg.complianceDeadline).toLocaleDateString()}` : ''}`, 25, y);
+      doc.text(`Status: ${formatStatus(reg.status)}${reg.complianceDeadline ? ` | Deadline: ${new Date(reg.complianceDeadline).toLocaleDateString()}` : ''}`, 25, y);
       y += 5;
       
       // Source URL if available

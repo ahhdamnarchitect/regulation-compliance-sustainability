@@ -86,8 +86,9 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent relative mobile-full-width prevent-zoom">
+    <div className="min-h-screen flex flex-col bg-transparent relative mobile-full-width prevent-zoom">
       <Header />
+      <div className="flex-1 flex flex-col">
       
       {/* Login Overlay */}
       {showLogin && (
@@ -100,13 +101,13 @@ export default function Index() {
       )}
 
       {/* Main Content */}
-      <div className="container mx-auto px-2 sm:px-4 py-8 max-w-full overflow-x-hidden">
+      <div className="flex-1 container mx-auto px-2 sm:px-4 py-8 max-w-full overflow-x-hidden">
         {/* Hero Section */}
         <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 text-earth-primary brand-text">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-3 md:mb-4 text-[rgb(25,89,8)] font-title title-font">
             MSRB
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-earth-text mb-6 md:mb-8 px-4">
+          <p className="text-lg sm:text-xl md:text-2xl text-[rgb(25,89,8)] mb-6 md:mb-8 px-4">
             Sustainability Regulation Database
           </p>
         </div>
@@ -129,13 +130,13 @@ export default function Index() {
 
         {/* Search Section */}
         <div className="max-w-4xl mx-auto">
-          <Card className="border-earth-sand shadow-lg">
+          <Card className="border-[rgb(25,89,8)]/30 bg-quitenice-searchBox shadow-lg">
             <CardContent className="p-4 md:p-6">
               <div className="text-center mb-4 md:mb-6">
-                <h2 className="text-xl md:text-2xl font-bold text-earth-text mb-2">
+                <h2 className="text-xl md:text-2xl font-bold text-[rgb(25,89,8)] mb-2">
                   Search Global Regulations
                 </h2>
-                <p className="text-sm md:text-base text-earth-text/70 px-4">
+                <p className="text-sm md:text-base text-earth-text/80 px-4">
                   Find sustainability regulations by country, framework, or keyword
                 </p>
               </div>
@@ -154,7 +155,7 @@ export default function Index() {
                 </div>
                 <Button 
                   onClick={handleSearch} 
-                  className="h-10 md:h-12 px-6 md:px-8 bg-earth-primary hover:bg-earth-primary/90 text-white font-medium text-sm md:text-base"
+                  className="h-10 md:h-12 px-6 md:px-8 bg-[rgb(25,89,8)] hover:opacity-90 text-white font-medium text-sm md:text-base"
                 >
                   Search
                 </Button>
@@ -176,7 +177,7 @@ export default function Index() {
                       setSearchQuery(term);
                       navigate(`/search?q=${encodeURIComponent(term)}`);
                     }}
-                    className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm hover:bg-earth-primary hover:text-white transition-colors cursor-pointer"
+                    className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm hover:bg-[rgb(25,89,8)] hover:text-white transition-colors cursor-pointer"
                   >
                     {term}
                   </button>
@@ -186,6 +187,7 @@ export default function Index() {
           </CardContent>
         </Card>
         </div>
+      </div>
       </div>
       <Footer />
     </div>

@@ -95,8 +95,8 @@
 
   body {
     @apply text-earth-text font-sans;
-    /* Ombre: white at top (seamless with header), smooth transition to butter yellow at bottom */
-    background: linear-gradient(180deg, #ffffff 0%, #fffef8 8%, #fffde8 20%, #fff9d6 45%, #fff3b8 70%, #ffeea0 100%);
+    /* Seamless ombre: white at header to quitenice cream at footer */
+    background: linear-gradient(180deg, #ffffff 0%, #fdfcfa 15%, #faf8f5 40%, #FAF8F5 100%);
     min-height: 100vh;
     background-attachment: fixed;
   }
@@ -107,6 +107,14 @@
   
   .brand-text {
     @apply font-heading font-semibold tracking-brand;
+  }
+  
+  .title-font {
+    font-family: "Nib Pro", Menlo, Monaco, "Courier New", Courier, monospace;
+  }
+  
+  .header-font {
+    font-family: "Basis Grotesque Pro", "Helvetica Neue LT Std", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, sans-serif;
   }
 
   pre, code {

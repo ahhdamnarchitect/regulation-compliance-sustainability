@@ -10,7 +10,7 @@ export const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
   const regions = ['All', 'Global', 'North America', 'Europe', 'Asia Pacific', 'Latin America', 'Africa'];
   const sectors = ['All', 'Finance', 'Energy', 'Consumer Goods', 'Technology', 'Healthcare'];
   const frameworks = ['All', 'CSRD', 'TCFD', 'ISSB', 'GRI', 'SEC', 'SASB'];
-  const statuses = ['All', 'active', 'proposed', 'repealed'];
+  const statuses = ['All', 'Active', 'Proposed', 'Repealed'];
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 bg-gray-50 rounded-lg">
@@ -70,7 +70,7 @@ export const FilterPanel = ({ filters, onFilterChange }: FilterPanelProps) => {
           </SelectTrigger>
           <SelectContent>
             {statuses.map((status) => (
-              <SelectItem key={status} value={status.toLowerCase()}>
+              <SelectItem key={status} value={status === 'All' ? 'all' : status.toLowerCase()}>
                 {status}
               </SelectItem>
             ))}

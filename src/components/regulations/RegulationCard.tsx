@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Bookmark, ExternalLink, Calendar, MapPin, AlertCircle, Clock, CheckCircle } from "lucide-react";
 import { Regulation } from "@/types/regulation";
 import { useAuth } from "@/contexts/AuthContext";
+import { formatStatus } from "@/lib/utils";
 import { useState } from "react";
 
 // Helper to check if deadline has passed
@@ -146,7 +147,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
         
         <div className="flex flex-wrap gap-2 mb-4">
           <Badge className={getStatusColor(regulation.status)}>
-            {getStatusIcon(regulation.status)} {regulation.status}
+            {getStatusIcon(regulation.status)} {formatStatus(regulation.status)}
           </Badge>
           <Badge variant="outline" className="border-blue-200 text-blue-700">
             {regulation.framework}

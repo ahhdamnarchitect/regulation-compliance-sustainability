@@ -178,12 +178,25 @@ export default function SearchResults() {
     return true;
   });
 
+  const availableSectors = filteredRegulations.length > 0
+    ? [...new Set(filteredRegulations.map((r) => r.sector).filter(Boolean))] as string[]
+    : undefined;
+  const availableFrameworks = filteredRegulations.length > 0
+    ? [...new Set(filteredRegulations.map((r) => r.framework).filter(Boolean))] as string[]
+    : undefined;
+  const availableStatuses = filteredRegulations.length > 0
+    ? [...new Set(filteredRegulations.map((r) => r.status).filter(Boolean))] as string[]
+    : undefined;
+
   const sidebarContent = (
     <FilterSidebar
       filters={filters}
       onFilterToggle={handleFilterToggle}
       onClearFilters={handleClearFilters}
       hasActiveFilters={hasActiveFilters}
+      availableSectors={availableSectors}
+      availableFrameworks={availableFrameworks}
+      availableStatuses={availableStatuses}
     />
   );
 
@@ -194,10 +207,9 @@ export default function SearchResults() {
     (filters.status?.length ?? 0);
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
-      
-      <div className="container mx-auto px-4 py-8">
+      <div className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-4">
           <Link to="/" className="inline-flex items-center text-earth-primary hover:text-earth-primary/80 transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" />

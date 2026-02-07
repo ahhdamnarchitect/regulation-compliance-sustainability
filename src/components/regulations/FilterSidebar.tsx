@@ -9,14 +9,15 @@ import {
   type RegionCode,
 } from '@/data/locationHierarchy';
 import { SearchFilters } from '@/types/regulation';
+import { formatStatus } from '@/lib/utils';
 
 const DEFAULT_VISIBLE = 5;
 
 const REGION_OPTIONS = [...REGION_LEVEL_NAMES];
 
-const SECTORS = ['Finance', 'Energy', 'Consumer Goods', 'Technology', 'Healthcare'].sort((a, b) => a.localeCompare(b));
-const FRAMEWORKS = ['CSRD', 'TCFD', 'ISSB', 'GRI', 'SEC', 'SASB'].sort((a, b) => a.localeCompare(b));
-const STATUSES = ['active', 'proposed', 'repealed'].sort((a, b) => a.localeCompare(b));
+const SECTORS_DEFAULT = ['Finance', 'Energy', 'Consumer Goods', 'Technology', 'Healthcare'].sort((a, b) => a.localeCompare(b));
+const FRAMEWORKS_DEFAULT = ['CSRD', 'TCFD', 'ISSB', 'GRI', 'SEC', 'SASB'].sort((a, b) => a.localeCompare(b));
+const STATUS_VALUES = ['active', 'proposed', 'repealed'].sort((a, b) => a.localeCompare(b));
 
 const REGION_CODES = new Set<string>(['North America', 'South America', 'EU', 'Europe', 'Asia-Pacific', 'Asia', 'Africa', 'Middle East', 'Oceania']);
 
@@ -119,12 +120,19 @@ function FilterSection({
 
   const isAllSelected = isAllSelectedOverride !== undefined ? isAllSelectedOverride : selectedValues.length === 0;
 
+  const handleAllClick = () => {
+    if (!isAllSelected) onToggle(filterKey, '__clear__', false, clearScope);
+  };
+
   return (
     <div className="border-b border-earth-sand/50 pb-4 mb-4 last:border-0 last:mb-0">
       <div className="font-semibold text-earth-text mb-2 text-sm">{title}</div>
       <ul className="space-y-1 text-sm">
         <li>
-          <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-earth-sand/50 cursor-pointer">
+          <label
+            className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-earth-sand/50 cursor-pointer"
+            onClick={(e) => { if (!isAllSelected) { e.preventDefault(); e.stopPropagation(); handleAllClick(); } }}
+          >
             <Checkbox
               checked={isAllSelected}
               onCheckedChange={(checked) => {
@@ -138,6 +146,7 @@ function FilterSection({
         {visibleOptions.map((opt) => {
           const value = toFilterValue(opt);
           const isSelected = selectedValues.includes(value) || selectedValues.includes(opt);
+          const displayLabel = filterKey === 'status' ? formatStatus(opt) : opt;
           return (
             <li key={opt}>
               <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-earth-sand/50 cursor-pointer">
@@ -146,7 +155,7 @@ function FilterSection({
                   onCheckedChange={(checked) => onToggle(filterKey, value, !!checked)}
                   className="border-earth-text/50 data-[state=checked]:bg-earth-primary data-[state=checked]:border-earth-primary"
                 />
-                <span className={isSelected ? 'text-earth-primary font-medium' : 'text-earth-text/90'}>{opt}</span>
+                <span className={isSelected ? 'text-earth-primary font-medium' : 'text-earth-text/90'}>{displayLabel}</span>
               </label>
             </li>
           );
@@ -182,9 +191,23 @@ interface FilterSidebarProps {
   onFilterToggle: (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => void;
   onClearFilters: () => void;
   hasActiveFilters: boolean;
+  /** Sector options from current filtered results; when set, only these are shown. */
+  availableSectors?: string[];
+  /** Framework options from current filtered results; when set, only these are shown. */
+  availableFrameworks?: string[];
+  /** Status options from current filtered results (lowercase); when set, only these are shown. */
+  availableStatuses?: string[];
 }
 
-export function FilterSidebar({ filters, onFilterToggle, onClearFilters, hasActiveFilters }: FilterSidebarProps) {
+export function FilterSidebar({
+  filters,
+  onFilterToggle,
+  onClearFilters,
+  hasActiveFilters,
+  availableSectors,
+  availableFrameworks,
+  availableStatuses,
+}: FilterSidebarProps) {
   const regionValues = filters.region ?? [];
   const sectorValues = filters.sector ?? [];
   const frameworkValues = filters.framework ?? [];
@@ -248,6 +271,7 @@ export function FilterSidebar({ filters, onFilterToggle, onClearFilters, hasActi
         clearScope="region"
         isAllSelectedOverride={selectedRegions.length === 0}
       />
+      {countryOptions.length > 0 && (
       <FilterSection
         title="Country / Jurisdiction"
         options={countryOptions}
@@ -258,6 +282,8 @@ export function FilterSidebar({ filters, onFilterToggle, onClearFilters, hasActi
         clearScope="country"
         isAllSelectedOverride={selectedCountries.length === 0}
       />
+      )}
+      {stateOptions.length > 0 && (
       <FilterSection
         title="State / Province"
         options={stateOptions}
@@ -268,23 +294,24 @@ export function FilterSidebar({ filters, onFilterToggle, onClearFilters, hasActi
         clearScope="state"
         isAllSelectedOverride={selectedStates.length === 0}
       />
+      )}
       <FilterSection
         title="Sector"
-        options={SECTORS}
+        options={availableSectors && availableSectors.length > 0 ? availableSectors.sort((a, b) => a.localeCompare(b)) : SECTORS_DEFAULT}
         filterKey="sector"
         selectedValues={sectorValues}
         onToggle={handleToggle}
       />
       <FilterSection
         title="Framework"
-        options={FRAMEWORKS}
+        options={availableFrameworks && availableFrameworks.length > 0 ? availableFrameworks.sort((a, b) => a.localeCompare(b)) : FRAMEWORKS_DEFAULT}
         filterKey="framework"
         selectedValues={frameworkValues}
         onToggle={handleToggle}
       />
       <FilterSection
         title="Status"
-        options={STATUSES}
+        options={availableStatuses && availableStatuses.length > 0 ? availableStatuses.sort((a, b) => a.localeCompare(b)) : STATUS_VALUES}
         filterKey="status"
         selectedValues={statusValues}
         onToggle={handleToggle}

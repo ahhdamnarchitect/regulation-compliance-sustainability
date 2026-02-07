@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, Calendar, MapPin } from 'lucide-react';
 import { Regulation } from '@/types/regulation';
+import { formatStatus } from '@/lib/utils';
 import { countryCoordinates } from '@/data/countryMapping';
 import {
   getAncestors as getHierarchyAncestors,
@@ -646,7 +647,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                                           'bg-red-100 text-red-800'
                                         }`}
                                       >
-                                        {regulation.status}
+                                        {formatStatus(regulation.status)}
                                       </Badge>
                                       <span className="text-[10px] text-earth-text/60">
                                         {regulation.jurisdiction}

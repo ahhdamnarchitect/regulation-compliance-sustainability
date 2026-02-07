@@ -21,13 +21,19 @@ export default {
     },
     extend: {
       colors: {
-        // Modern Earth Theme
+        // Quite Nice / quitenice.com inspired
+        quitenice: {
+          green: 'rgb(25, 89, 8)',  // Header/body/footer divider and primary text
+          cream: '#FAF8F5',         // Background gradient end
+          searchBox: '#FECD97',     // Search Global Regulations card
+        },
+        // Modern Earth Theme (kept for compatibility)
         earth: {
-          primary: '#1B4332',      // Deep forest green
-          accent: '#A8C686',       // Soft sage
-          sand: '#DAD7CD',         // Muted sand
-          background: '#F7F8F3',   // Warm off-white
-          text: '#2E2E2E',         // Charcoal
+          primary: 'rgb(25, 89, 8)', // Align with quitenice green
+          accent: '#A8C686',
+          sand: '#DAD7CD',
+          background: '#F7F8F3',
+          text: '#2E2E2E',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -77,6 +83,9 @@ export default {
         mono: ['JetBrains Mono', 'monospace'],
         sans: ['Inter', 'Source Sans Pro', 'sans-serif'],
         heading: ['Poppins', 'Montserrat', 'Inter', 'sans-serif'],
+        // quitenice.com: title = Nib Pro, header = Basis Grotesque Pro
+        title: ['"Nib Pro"', 'Menlo', 'Monaco', 'Courier New', 'Courier', 'monospace'],
+        header: ['"Basis Grotesque Pro"', 'Helvetica Neue LT Std', '-apple-system', 'BlinkMacSystemFont', 'Helvetica Neue', 'Helvetica', 'sans-serif'],
       },
       letterSpacing: {
         'brand': '0.05em',

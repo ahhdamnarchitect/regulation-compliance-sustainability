@@ -9,6 +9,7 @@ import { Separator } from '@/components/ui/separator';
 import { useRegulations } from '@/hooks/useRegulations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { formatStatus } from '@/lib/utils';
 import jsPDF from 'jspdf';
 import { 
   ArrowLeft, 
@@ -49,7 +50,7 @@ export default function RegulationDetail() {
     // Status and Framework badges
     doc.setFontSize(11);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Status: ${regulation.status} | Framework: ${regulation.framework}`, 20, y + 5);
+    doc.text(`Status: ${formatStatus(regulation.status)} | Framework: ${regulation.framework}`, 20, y + 5);
     y += 15;
     
     // Separator
@@ -235,10 +236,9 @@ export default function RegulationDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
-      
-      <div className="container mx-auto px-4 py-8">
+      <div className="flex-1 container mx-auto px-4 py-8">
         {/* Back Button */}
         <div className="mb-6">
           <Button
@@ -265,7 +265,7 @@ export default function RegulationDetail() {
                     <div className="flex items-center gap-4 mb-4">
                       <Badge className={`${getStatusColor(regulation.status)} flex items-center gap-2`}>
                         {getStatusIcon(regulation.status)}
-                        {regulation.status}
+                        {formatStatus(regulation.status)}
                       </Badge>
                       <Badge variant="outline" className="border-earth-primary text-earth-primary">
                         {regulation.framework}
