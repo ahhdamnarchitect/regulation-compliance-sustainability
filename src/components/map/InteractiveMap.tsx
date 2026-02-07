@@ -7,6 +7,13 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Calendar, MapPin } from 'lucide-react';
 import { Regulation } from '@/types/regulation';
 import { countryCoordinates } from '@/data/countryMapping';
+import {
+  getAncestors as getHierarchyAncestors,
+  getRegionForLocation,
+  isLocationInRegion,
+  locationHierarchy,
+  type RegionCode,
+} from '@/data/locationHierarchy';
 import 'leaflet/dist/leaflet.css';
 
 // Custom CSS to remove tile gridlines - more aggressive approach
@@ -181,26 +188,17 @@ const earthThemeColors = {
   sand: '#DAD7CD',       // Muted sand
 };
 
-// Define location hierarchies
-const usStates = ['California', 'Texas', 'New York', 'Florida', 'Illinois', 'Pennsylvania', 'Ohio', 'Georgia', 'North Carolina', 'Michigan'];
-const canadianProvinces = ['Ontario', 'Quebec', 'British Columbia', 'Alberta', 'Manitoba', 'Saskatchewan'];
-const germanStates = ['Bavaria', 'Baden-Württemberg', 'North Rhine-Westphalia', 'Berlin', 'Hamburg'];
-const euCountries = ['Germany', 'France', 'Italy', 'Spain', 'Netherlands', 'Belgium', 'Austria', 'Sweden', 'Denmark', 'Finland', 'Poland', 'Czech Republic', 'Hungary', 'Romania', 'Bulgaria', 'Croatia', 'Slovenia', 'Slovakia', 'Estonia', 'Latvia', 'Lithuania', 'Ireland', 'Portugal', 'Greece', 'Cyprus', 'Malta', 'Luxembourg'];
-const asiaPacificCountries = ['Australia', 'Japan', 'Singapore', 'India', 'China', 'South Korea', 'Hong Kong', 'Taiwan'];
-const southAmericaCountries = ['Brazil'];
-
 type RegulationTarget =
   | { type: 'location'; name: string }
   | { type: 'region'; region: 'EU' | 'Asia-Pacific' | 'North America' | 'South America' }
   | { type: 'global' };
 
-// Determine the location level for a given location name
+const mapRegion = (r: RegionCode): RegulationTarget['region'] | null =>
+  r === 'EU' || r === 'Asia-Pacific' || r === 'North America' || r === 'South America' ? r : null;
+
+// Determine the location level for a given location name (from global hierarchy)
 const getLocationLevel = (locationName: string): LocationLevel => {
-  if (usStates.includes(locationName) || canadianProvinces.includes(locationName) || germanStates.includes(locationName)) {
-    return 'state';
-  }
-  // Region-level locations don't have their own pins - they apply to countries
-  return 'country';
+  return locationHierarchy[locationName]?.level ?? 'country';
 };
 
 // Return the single "local" location for a regulation that should get a pin, or null if no pin.
@@ -209,8 +207,8 @@ const getPrimaryLocation = (regulation: Regulation): string | null => {
   const jurisdiction = regulation.jurisdiction || '';
   const country = regulation.country || '';
 
-  // State/province level → pin on that state/province
-  if (usStates.includes(jurisdiction) || canadianProvinces.includes(jurisdiction) || germanStates.includes(jurisdiction)) {
+  // State/province level → pin on that state/province (from global hierarchy)
+  if (locationHierarchy[jurisdiction]?.level === 'state') {
     return countryCoordinates[jurisdiction as keyof typeof countryCoordinates] ? jurisdiction : null;
   }
 
@@ -236,7 +234,8 @@ const getPrimaryLocation = (regulation: Regulation): string | null => {
 
   // Regional jurisdiction with specific country (South America → Brazil, Asia-Pacific → Japan, etc.)
   if (['South America', 'Asia-Pacific'].includes(jurisdiction) && country) {
-    if (countryCoordinates[country as keyof typeof countryCoordinates]) {
+    const region = getRegionForLocation(country);
+    if (region && (region === 'South America' || region === 'Asia-Pacific' || region === 'Oceania') && countryCoordinates[country as keyof typeof countryCoordinates]) {
       return country;
     }
   }
@@ -267,7 +266,10 @@ const getRegulationTarget = (regulation: Regulation): RegulationTarget => {
 
   // Asia-Pacific: region-wide vs country-specific; country-specific only shows in that country
   if (isAsiaPacificJurisdiction(jurisdiction)) {
-    if (country && asiaPacificCountries.includes(country) && countryCoordinates[country as keyof typeof countryCoordinates]) {
+    if (country && isLocationInRegion(country, 'Asia-Pacific') && countryCoordinates[country as keyof typeof countryCoordinates]) {
+      return { type: 'location', name: country };
+    }
+    if (country && getRegionForLocation(country) === 'Oceania' && countryCoordinates[country as keyof typeof countryCoordinates]) {
       return { type: 'location', name: country };
     }
     return { type: 'region', region: 'Asia-Pacific' };
@@ -286,8 +288,8 @@ const getRegulationTarget = (regulation: Regulation): RegulationTarget => {
     return { type: 'region', region: 'North America' };
   }
 
-  // State/province level → specific location
-  if (usStates.includes(jurisdiction) || canadianProvinces.includes(jurisdiction) || germanStates.includes(jurisdiction)) {
+  // State/province level → specific location (from global hierarchy)
+  if (locationHierarchy[jurisdiction]?.level === 'state') {
     if (countryCoordinates[jurisdiction as keyof typeof countryCoordinates]) return { type: 'location', name: jurisdiction };
   }
 
@@ -301,31 +303,15 @@ const getRegulationTarget = (regulation: Regulation): RegulationTarget => {
   return { type: 'global' };
 };
 
-// Ancestors of a pin location (parent regions/countries and Global).
+// Ancestors of a pin location (from global hierarchy; includes parent country and region).
 const getAncestors = (locationName: string): string[] => {
-  if (usStates.includes(locationName)) return ['United States', 'Global'];
-  if (canadianProvinces.includes(locationName)) return ['Canada', 'North America', 'Global'];
-  if (germanStates.includes(locationName)) return ['Germany', 'EU', 'Global'];
-  if (euCountries.includes(locationName)) return ['EU', 'Global'];
-  if (asiaPacificCountries.includes(locationName)) return ['Asia-Pacific', 'Global'];
-  if (southAmericaCountries.includes(locationName)) return ['South America', 'Global'];
-  if (locationName === 'United States' || locationName === 'United Kingdom' || locationName === 'Canada') return ['Global'];
-  return ['Global'];
+  const fromHierarchy = getHierarchyAncestors(locationName);
+  return fromHierarchy.length > 0 ? fromHierarchy : ['Global'];
 };
 
 const locationBelongsToRegion = (locationName: string, region: 'EU' | 'Asia-Pacific' | 'North America' | 'South America'): boolean => {
-  switch (region) {
-    case 'EU':
-      return euCountries.includes(locationName) || germanStates.includes(locationName);
-    case 'Asia-Pacific':
-      return asiaPacificCountries.includes(locationName);
-    case 'North America':
-      return locationName === 'United States' || locationName === 'Canada' || usStates.includes(locationName) || canadianProvinces.includes(locationName);
-    case 'South America':
-      return southAmericaCountries.includes(locationName);
-    default:
-      return false;
-  }
+  const r = mapRegion(getRegionForLocation(locationName) ?? ('' as RegionCode));
+  return r === region;
 };
 
 // Get all regulations that apply to a specific location (universal rule).
@@ -366,17 +352,23 @@ const getRegulationLevel = (regulation: Regulation): RegulationScope => {
     return 'global';
   }
   
-  // Regional — multi-country region (EU, Asia-Pacific, etc.)
+  // State/Province — sub-national (from global hierarchy)
+  if (locationHierarchy[jurisdiction]?.level === 'state') {
+    return 'state';
+  }
+  
+  // National — regional jurisdiction but with a specific country (e.g. South America + Brazil, Asia-Pacific + Japan)
+  if (jurisdiction === 'EU' && country && country !== 'European Union') return 'country';
+  if (isAsiaPacificJurisdiction(jurisdiction) && country) return 'country';
+  if (jurisdiction === 'South America' && country) return 'country';
+  if (jurisdiction === 'North America' && (country === 'Canada' || country === 'United States')) return 'country';
+  
+  // Regional — multi-country region with no specific country (EU-wide, Asia-Pacific-wide, etc.)
   if (['EU', 'Asia-Pacific', 'South America', 'North America'].includes(jurisdiction) || country === 'European Union') {
     return 'regional';
   }
   
-  // State/Province — sub-national
-  if (usStates.includes(jurisdiction) || canadianProvinces.includes(jurisdiction) || germanStates.includes(jurisdiction)) {
-    return 'state';
-  }
-  
-  // National — country-level
+  // National — country-level (France, Germany, Japan, etc.)
   return 'country';
 };
 
@@ -471,15 +463,27 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
       if (primary) locations.add(primary);
     });
 
-    // 2. Only show the most specific pin: remove parent when a subsidiary exists
-    if (usStates.some(s => locations.has(s))) {
-      locations.delete('United States');
+    // 2. Only show the most specific pin: remove parent when a subsidiary exists (using global hierarchy)
+    for (const loc of locations) {
+      const meta = locationHierarchy[loc];
+      if (meta?.parentCountry === 'United States') {
+        locations.delete('United States');
+        break;
+      }
     }
-    if (canadianProvinces.some(p => locations.has(p))) {
-      locations.delete('Canada');
+    for (const loc of locations) {
+      const meta = locationHierarchy[loc];
+      if (meta?.parentCountry === 'Canada') {
+        locations.delete('Canada');
+        break;
+      }
     }
-    if (germanStates.some(s => locations.has(s))) {
-      locations.delete('Germany');
+    for (const loc of locations) {
+      const meta = locationHierarchy[loc];
+      if (meta?.parentCountry === 'Germany') {
+        locations.delete('Germany');
+        break;
+      }
     }
 
     // 3. For each remaining location, get ALL applicable regulations (hierarchical)
