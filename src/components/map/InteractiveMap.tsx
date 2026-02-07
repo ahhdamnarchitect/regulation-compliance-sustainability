@@ -453,14 +453,41 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     }
   }, [mapRef]);
 
-  // Fit world to container on load so there's no empty space when zoomed out; set minZoom to prevent zooming out past that
+  // Fit world to container on load and when zoomed all the way out; set minZoom to prevent zooming out past that
   const WORLD_BOUNDS: [[number, number], [number, number]] = [[-85, -180], [85, 180]];
+  const fitWorld = useCallback((map: any) => {
+    map.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
+    const zoomAfterFit = map.getZoom();
+    map.setMinZoom(zoomAfterFit);
+  }, []);
+
   useEffect(() => {
     if (!mapRef) return;
-    mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
-    const zoomAfterFit = mapRef.getZoom();
-    mapRef.setMinZoom(zoomAfterFit);
-  }, [mapRef]);
+    fitWorld(mapRef);
+    // Re-fit after a short delay so container has final size (removes sliver on first load)
+    const t = setTimeout(() => fitWorld(mapRef), 100);
+
+    const onZoomEnd = () => {
+      if (mapRef.getZoom() === mapRef.getMinZoom()) {
+        mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
+      }
+    };
+    const onResize = () => {
+      mapRef.invalidateSize();
+      if (mapRef.getZoom() === mapRef.getMinZoom()) {
+        mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
+      }
+    };
+
+    mapRef.on('zoomend', onZoomEnd);
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      clearTimeout(t);
+      mapRef.off('zoomend', onZoomEnd);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [mapRef, fitWorld]);
 
   useEffect(() => {
     // 1. Pin only where there's a local regulation: use primary location per regulation (no EU-wide or Global pins)
