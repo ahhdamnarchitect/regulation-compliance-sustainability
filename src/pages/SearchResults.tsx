@@ -73,12 +73,12 @@ export default function SearchResults() {
   };
 
   type FilterKey = 'region' | 'sector' | 'framework' | 'status';
-  const handleFilterToggle = (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => {
-    if (value === '__clear__' && key === 'region' && clearScope) {
-      const scopeSet = new Set<string>(
-        clearScope === 'region' ? REGION_LEVEL_NAMES : clearScope === 'country' ? getCountryNames() : getStateNames()
-      );
-      const nextRegion = (filters.region ?? []).filter((v) => !scopeSet.has(v));
+  const handleFilterToggle = (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope, optionsToRemove?: string[]) => {
+    if (value === '__clear__' && key === 'region' && (clearScope || optionsToRemove?.length)) {
+      const toRemove = optionsToRemove && optionsToRemove.length > 0
+        ? new Set(optionsToRemove)
+        : new Set<string>(clearScope === 'region' ? REGION_LEVEL_NAMES : clearScope === 'country' ? getCountryNames() : getStateNames());
+      const nextRegion = (filters.region ?? []).filter((v) => !toRemove.has(v));
       setFilters(prev => ({ ...prev, region: nextRegion }));
       setSearchParams(prev => {
         const next = new URLSearchParams(prev);

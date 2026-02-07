@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { ChevronDown, ChevronUp, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import {
   locationHierarchy,
   getLocationsInRegion,
@@ -11,7 +11,7 @@ import {
 import { SearchFilters } from '@/types/regulation';
 import { formatStatus } from '@/lib/utils';
 
-const DEFAULT_VISIBLE = 5;
+const FILTER_SECTION_MAX_HEIGHT = '12rem';
 
 const REGION_OPTIONS = [...REGION_LEVEL_NAMES];
 
@@ -87,13 +87,12 @@ interface FilterSectionProps {
   options: string[];
   filterKey: FilterKey;
   selectedValues: string[];
-  onToggle: (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => void;
-  defaultVisible?: number;
+  onToggle: (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope, optionsToRemove?: string[]) => void;
   useDisplayValue?: boolean;
   clearScope?: LocationClearScope;
   /** When true, show a "Clear" button for this section. */
   showClear?: boolean;
-  /** When set, use this instead of selectedValues.length > 0 to show Clear (e.g. for Region/Country/State so Clear only shows when that scope has selections). */
+  /** When set, use this instead of selectedValues.length > 0 to show Clear (e.g. for Region/Country/State). */
   hasSelectionInSectionOverride?: boolean;
 }
 
@@ -103,16 +102,11 @@ function FilterSection({
   filterKey,
   selectedValues,
   onToggle,
-  defaultVisible = DEFAULT_VISIBLE,
   useDisplayValue = false,
   clearScope,
   showClear = false,
   hasSelectionInSectionOverride,
 }: FilterSectionProps) {
-  const [expanded, setExpanded] = useState(false);
-  const showCount = expanded ? options.length : Math.min(defaultVisible, options.length);
-  const hasMore = options.length > defaultVisible;
-  const visibleOptions = options.slice(0, showCount);
   const hasSelectionInSection = hasSelectionInSectionOverride !== undefined ? hasSelectionInSectionOverride : selectedValues.length > 0;
 
   if (options.length === 0) return null;
@@ -121,7 +115,7 @@ function FilterSection({
     useDisplayValue ? opt : opt.toLowerCase().replace(/\s+/g, '-');
 
   const handleClearSection = () => {
-    onToggle(filterKey, '__clear__', false, clearScope);
+    onToggle(filterKey, '__clear__', false, clearScope, options);
   };
 
   return (
@@ -138,53 +132,37 @@ function FilterSection({
           </button>
         )}
       </div>
-      <ul className="space-y-1 text-sm">
-        {visibleOptions.map((opt) => {
-          const value = toFilterValue(opt);
-          const isSelected = selectedValues.includes(value) || selectedValues.includes(opt);
-          const displayLabel = filterKey === 'status' ? formatStatus(opt) : opt;
-          return (
-            <li key={opt}>
-              <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-earth-sand/50 cursor-pointer">
-                <Checkbox
-                  checked={!!isSelected}
-                  onCheckedChange={(checked) => onToggle(filterKey, value, !!checked)}
-                  className="border-earth-text/50 data-[state=checked]:bg-earth-primary data-[state=checked]:border-earth-primary"
-                />
-                <span className={isSelected ? 'text-earth-primary font-medium' : 'text-earth-text/90'}>{displayLabel}</span>
-              </label>
-            </li>
-          );
-        })}
-        {hasMore && (
-          <li>
-            <button
-              type="button"
-              onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-earth-primary hover:underline text-sm px-2 py-1"
-            >
-              {expanded ? (
-                <>
-                  <ChevronUp className="w-3.5 h-3.5" />
-                  See less
-                </>
-              ) : (
-                <>
-                  <ChevronDown className="w-3.5 h-3.5" />
-                  See more
-                </>
-              )}
-            </button>
-          </li>
-        )}
-      </ul>
+      <div
+        className="overflow-y-auto overscroll-contain pr-1 -mr-1 space-y-1 text-sm"
+        style={{ maxHeight: FILTER_SECTION_MAX_HEIGHT }}
+      >
+        <ul className="space-y-1">
+          {options.map((opt) => {
+            const value = toFilterValue(opt);
+            const isSelected = selectedValues.includes(value) || selectedValues.includes(opt);
+            const displayLabel = filterKey === 'status' ? formatStatus(opt) : opt;
+            return (
+              <li key={opt}>
+                <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-earth-sand/50 cursor-pointer">
+                  <Checkbox
+                    checked={!!isSelected}
+                    onCheckedChange={(checked) => onToggle(filterKey, value, !!checked)}
+                    className="border-earth-text/50 data-[state=checked]:bg-earth-primary data-[state=checked]:border-earth-primary"
+                  />
+                  <span className={isSelected ? 'text-earth-primary font-medium' : 'text-earth-text/90'}>{displayLabel}</span>
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
     </div>
   );
 }
 
 interface FilterSidebarProps {
   filters: SearchFilters;
-  onFilterToggle: (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => void;
+  onFilterToggle: (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope, optionsToRemove?: string[]) => void;
   onClearFilters: () => void;
   hasActiveFilters: boolean;
   /** Sector options from current filtered results; when set, only these are shown. */
@@ -231,9 +209,9 @@ export function FilterSidebar({
     [selectedRegions, selectedCountries]
   );
 
-  const handleToggle = (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope) => {
+  const handleToggle = (key: FilterKey, value: string, checked: boolean, clearScope?: LocationClearScope, optionsToRemove?: string[]) => {
     if (value === '__clear__') {
-      onFilterToggle(key, '', false, clearScope);
+      onFilterToggle(key, '', false, clearScope, optionsToRemove);
       return;
     }
     onFilterToggle(key, value, checked);
@@ -262,7 +240,6 @@ export function FilterSidebar({
         filterKey="region"
         selectedValues={regionValues}
         onToggle={handleToggle}
-        defaultVisible={6}
         useDisplayValue
         clearScope="region"
         showClear
@@ -316,7 +293,6 @@ export function FilterSidebar({
         filterKey="status"
         selectedValues={statusValues}
         onToggle={handleToggle}
-        defaultVisible={10}
         showClear
       />
     </aside>

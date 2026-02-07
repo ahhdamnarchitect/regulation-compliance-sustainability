@@ -101,16 +101,31 @@ export default function Index() {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 container mx-auto px-2 sm:px-4 py-8 max-w-full overflow-x-hidden">
-        {/* Hero Section */}
-        <div className="text-center mb-6 md:mb-8">
-          <h1 className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-3 md:mb-4 text-[rgb(25,89,8)] tracking-tight">
-            MSRB
-          </h1>
-          <p className="font-title text-lg sm:text-xl md:text-2xl text-earth-text mb-6 md:mb-8 px-4 font-medium">
-            Sustainability Regulation Database
-          </p>
+      <div className="flex-1 max-w-full overflow-x-hidden">
+        {/* Hero Section - full-width background image with floating text */}
+        <div className="relative w-full overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: 'url(/MSRB.png)' }}
+          />
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="relative min-h-[200px] sm:min-h-[260px] md:min-h-[320px] flex flex-col items-center justify-center px-4 py-10 md:py-14">
+            <h1
+              className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-2 md:mb-3 text-white tracking-tight drop-shadow-lg"
+              style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5), 0 0 24px rgba(0,0,0,0.3)' }}
+            >
+              MSRB
+            </h1>
+            <p
+              className="font-title text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 font-medium px-4 text-center max-w-2xl"
+              style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6), 0 0 16px rgba(0,0,0,0.25)' }}
+            >
+              Sustainability Regulation Database
+            </p>
+          </div>
         </div>
+
+        <div className="container mx-auto px-2 sm:px-4 py-8">
 
         {/* Interactive Map - More contained like earthday.org */}
         <div className="mb-6 md:mb-8 max-w-5xl mx-auto">

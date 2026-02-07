@@ -51,8 +51,8 @@ export const Header = () => {
           )}
         </nav>
 
-        {/* Mobile Navigation */}
-        <nav className="md:hidden flex items-center space-x-1">
+        {/* Mobile Navigation - centered with page title */}
+        <nav className="md:hidden flex flex-1 justify-center items-center space-x-4">
           {/* Search icon for mobile */}
           <button 
             onClick={() => {
