@@ -81,19 +81,37 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session: sess } }) => {
-      setSession(sess);
       if (sess?.user?.id) {
-        fetchProfile(sess.user.id).then((profile) => {
-          if (profile) setUser(profileToUser(profile));
-          else setUser(null);
-        }).finally(() => setLoading(false));
+        supabase.auth.setSession({ access_token: sess.access_token, refresh_token: sess.refresh_token ?? '' }).then(() => {
+          fetchProfile(sess.user.id).then((profile) => {
+            if (profile) {
+              setSession(sess);
+              setUser(profileToUser(profile));
+            } else {
+              setSession(null);
+              setUser(null);
+            }
+          }).finally(() => setLoading(false));
+        }).catch(() => {
+          setSession(null);
+          setUser(null);
+          setLoading(false);
+        });
       } else {
+        setSession(null);
         setUser(null);
         setLoading(false);
       }
+    }).catch(() => {
+      setSession(null);
+      setUser(null);
+      setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, sess) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, sess) => {
+      if (event === 'INITIAL_SESSION' && !sess) {
+        return;
+      }
       await setUserFromSession(sess);
     });
 
