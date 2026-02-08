@@ -210,14 +210,16 @@ export default function RegulationDetail() {
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Not specified';
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return 'Not specified';
     try {
-      return new Date(dateString).toLocaleDateString('en-US', {
+      return date.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
       });
     } catch {
-      return dateString;
+      return 'Not specified';
     }
   };
 

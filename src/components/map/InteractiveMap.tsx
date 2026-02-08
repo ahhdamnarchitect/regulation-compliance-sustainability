@@ -459,7 +459,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   // Fit world to container on load and when zoomed all the way out; set minZoom to prevent zooming out past that
   const WORLD_BOUNDS: [[number, number], [number, number]] = [[-85, -180], [85, 180]];
   const fitWorld = useCallback((map: any) => {
-    map.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
+    map.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 1 });
     const zoomAfterFit = map.getZoom();
     map.setMinZoom(zoomAfterFit);
   }, []);
@@ -476,13 +476,13 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
 
     const onZoomEnd = () => {
       if (mapRef.getZoom() === mapRef.getMinZoom()) {
-        mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
+        mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 1 });
       }
     };
     const onResize = () => {
       mapRef.invalidateSize();
       if (mapRef.getZoom() === mapRef.getMinZoom()) {
-        mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 2 });
+        mapRef.fitBounds(WORLD_BOUNDS, { padding: [0, 0], maxZoom: 1 });
       }
     };
     const onPopupClose = () => {
@@ -595,7 +595,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
       
       <MapContainer
         center={[20, 0]}
-        zoom={2}
+        zoom={1}
         style={{ 
           height: '100%', 
           width: '100%',

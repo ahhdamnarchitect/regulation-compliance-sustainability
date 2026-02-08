@@ -71,10 +71,12 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'Not specified';
+    const date = new Date(dateString);
+    if (Number.isNaN(date.getTime())) return 'Not specified';
     try {
-      return new Date(dateString).toLocaleDateString();
+      return date.toLocaleDateString();
     } catch {
-      return dateString;
+      return 'Not specified';
     }
   };
 

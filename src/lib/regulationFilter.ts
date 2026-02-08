@@ -55,7 +55,13 @@ function getRegulationTarget(regulation: Regulation): RegulationTarget {
   if (jurisdiction === 'US') return { type: 'location', name: 'United States' };
   if (jurisdiction === 'UK') return { type: 'location', name: 'United Kingdom' };
 
-  const candidate = jurisdiction || country;
+  const JURISDICTION_ALIASES: Record<string, string> = {
+    UAE: 'United Arab Emirates',
+  };
+  const resolve = (key: string) => JURISDICTION_ALIASES[key] ?? JURISDICTION_ALIASES[key?.toUpperCase()] ?? key;
+  const resolvedJurisdiction = resolve(jurisdiction);
+  const resolvedCountry = resolve(country);
+  const candidate = resolvedJurisdiction || resolvedCountry;
   if (candidate && countryCoordinates[candidate as keyof typeof countryCoordinates]) return { type: 'location', name: candidate };
 
   return { type: 'global' };
