@@ -83,6 +83,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, sess) => {
       await setUserFromSession(sess);
       if (event === 'INITIAL_SESSION') {
+        if (!sess) {
+          const { data: { session: fallback } } = await supabase.auth.getSession();
+          if (fallback) await setUserFromSession(fallback);
+        }
         setLoading(false);
       }
     });
