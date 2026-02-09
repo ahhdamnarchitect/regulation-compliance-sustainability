@@ -65,11 +65,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const setUserFromSession = useCallback(async (sess: Session | null) => {
     if (!sess?.user?.id) {
-      console.log('[Auth] setUserFromSession clearing user (sess null or no user)');
       setUser(null);
       setSession(null);
       return;
     }
+    await supabase.auth.setSession({
+      access_token: sess.access_token,
+      refresh_token: sess.refresh_token ?? '',
+    }).catch(() => {});
     const profile = await fetchProfile(sess.user.id);
     if (!profile) {
       setUser(null);
@@ -84,7 +87,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     (async () => {
       try {
         const { data: { session: sess } } = await supabase.auth.getSession();
-        await setUserFromSession(sess ?? null);
+        if (sess) await setUserFromSession(sess);
       } catch {
         // only end loading; do not clear user
       } finally {
@@ -93,7 +96,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     })();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, sess) => {
-      console.log('[Auth] onAuthStateChange', event, sess ? 'has session' : 'NULL');
       if (event === 'INITIAL_SESSION') return;
       if (event === 'SIGNED_OUT') {
         await setUserFromSession(null);
