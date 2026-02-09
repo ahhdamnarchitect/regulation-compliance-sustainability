@@ -65,6 +65,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const setUserFromSession = useCallback(async (sess: Session | null) => {
     if (!sess?.user?.id) {
+      console.log('[Auth] setUserFromSession clearing user (sess null or no user)');
       setUser(null);
       setSession(null);
       return;
@@ -92,7 +93,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     })();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, sess) => {
+      console.log('[Auth] onAuthStateChange', event, sess ? 'has session' : 'NULL');
       if (event === 'INITIAL_SESSION') return;
+      if (event === 'SIGNED_OUT') {
+        await setUserFromSession(null);
+        return;
+      }
+      if (!sess) return;
       await setUserFromSession(sess);
     });
 
