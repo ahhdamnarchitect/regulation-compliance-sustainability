@@ -63,16 +63,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const setUserFromSession = useCallback(async (sess: Session | null) => {
+  const setUserFromSession = useCallback(async (
+    sess: Session | null,
+    options?: { skipClientSetSession?: boolean }
+  ) => {
     if (!sess?.user?.id) {
       setUser(null);
       setSession(null);
       return;
     }
-    await supabase.auth.setSession({
-      access_token: sess.access_token,
-      refresh_token: sess.refresh_token ?? '',
-    }).catch(() => {});
+    if (!options?.skipClientSetSession) {
+      await supabase.auth.setSession({
+        access_token: sess.access_token,
+        refresh_token: sess.refresh_token ?? '',
+      }).catch(() => {});
+    }
     const profile = await fetchProfile(sess.user.id);
     if (!profile) {
       setUser(null);
@@ -116,7 +121,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       throw new Error(error.message || 'Sign in failed');
     }
-    if (data.session) await setUserFromSession(data.session);
+    if (data.session) await setUserFromSession(data.session, { skipClientSetSession: true });
   };
 
   const register = async (email: string, password: string, name: string, region: string): Promise<void> => {
@@ -136,7 +141,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (data.user && !data.session) {
       throw new Error('Please check your email to confirm your account.');
     }
-    if (data.session) await setUserFromSession(data.session);
+    if (data.session) await setUserFromSession(data.session, { skipClientSetSession: true });
   };
 
   const logout = async (): Promise<void> => {
