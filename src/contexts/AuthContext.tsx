@@ -72,7 +72,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setSession(null);
       return;
     }
-    if (!options?.skipClientSetSession) {
+    if (options?.skipClientSetSession) {
+      // Fire-and-forget: set session so the client has the JWT for fetchProfile, but don't await (avoids hang).
+      void supabase.auth.setSession({
+        access_token: sess.access_token,
+        refresh_token: sess.refresh_token ?? '',
+      }).catch(() => {});
+    } else {
       await supabase.auth.setSession({
         access_token: sess.access_token,
         refresh_token: sess.refresh_token ?? '',
