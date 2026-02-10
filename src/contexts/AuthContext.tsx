@@ -26,6 +26,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Set to true to debug auth on production (Vercel). Filter console by "[Auth]".
+const AUTH_DEBUG = true;
+const LOG = (msg: string, ...args: unknown[]) => {
+  if (typeof window !== 'undefined' && AUTH_DEBUG) {
+    console.log('[Auth]', msg, ...args);
+  }
+};
+
 function profileToUser(profile: ProfileRow): AppUser {
   return {
     id: profile.id,
@@ -41,12 +49,21 @@ function profileToUser(profile: ProfileRow): AppUser {
 }
 
 async function fetchProfile(userId: string): Promise<ProfileRow | null> {
+  LOG('fetchProfile start', { userId });
   const { data, error } = await supabase
     .from('profiles')
     .select('id, email, full_name, role, plan, region, trial_used_at, created_at')
     .eq('id', userId)
     .single();
-  if (error || !data) return null;
+  if (error) {
+    LOG('fetchProfile error', { message: error.message, code: error.code, details: error.details });
+    return null;
+  }
+  if (!data) {
+    LOG('fetchProfile no data');
+    return null;
+  }
+  LOG('fetchProfile ok', { id: data.id, email: data.email });
   return data as ProfileRow;
 }
 
@@ -67,67 +84,89 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     sess: Session | null,
     options?: { skipClientSetSession?: boolean }
   ) => {
+    LOG('setUserFromSession called', { hasSession: !!sess, userId: sess?.user?.id, skipClientSetSession: options?.skipClientSetSession });
     if (!sess?.user?.id) {
+      LOG('setUserFromSession: no session/user, clearing state');
       setUser(null);
       setSession(null);
       return;
     }
     if (options?.skipClientSetSession) {
-      // Fire-and-forget: set session so the client has the JWT for fetchProfile, but don't await (avoids hang).
+      LOG('setUserFromSession: fire-and-forget setSession');
       void supabase.auth.setSession({
         access_token: sess.access_token,
         refresh_token: sess.refresh_token ?? '',
-      }).catch(() => {});
+      }).catch((e) => LOG('setSession catch', e));
     } else {
+      LOG('setUserFromSession: awaiting setSession');
       await supabase.auth.setSession({
         access_token: sess.access_token,
         refresh_token: sess.refresh_token ?? '',
-      }).catch(() => {});
+      }).catch((e) => LOG('setSession catch', e));
     }
+    LOG('setUserFromSession: calling fetchProfile');
     const profile = await fetchProfile(sess.user.id);
     if (!profile) {
+      LOG('setUserFromSession: no profile, clearing state');
       setUser(null);
       setSession(null);
       return;
     }
+    LOG('setUserFromSession: setting user/session state');
     setSession(sess);
     setUser(profileToUser(profile));
+    LOG('setUserFromSession done');
   }, []);
 
   useEffect(() => {
     (async () => {
       try {
+        LOG('initial getSession');
         const { data: { session: sess } } = await supabase.auth.getSession();
+        LOG('initial getSession result', { hasSession: !!sess });
         if (sess) await setUserFromSession(sess);
-      } catch {
-        // only end loading; do not clear user
+      } catch (e) {
+        LOG('initial getSession catch', e);
       } finally {
         setLoading(false);
       }
     })();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, sess) => {
+      LOG('onAuthStateChange', { event, hasSession: !!sess });
       if (event === 'INITIAL_SESSION') return;
       if (event === 'SIGNED_OUT') {
         await setUserFromSession(null);
         return;
       }
       if (!sess) return;
+      LOG('onAuthStateChange calling setUserFromSession', { event });
       await setUserFromSession(sess);
+      LOG('onAuthStateChange setUserFromSession returned', { event });
     });
 
     return () => subscription.unsubscribe();
   }, [setUserFromSession]);
 
   const login = async (email: string, password: string): Promise<void> => {
+    LOG('login start', { email });
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      LOG('login signInWithPassword error', { message: error.message });
       if (error.message?.toLowerCase().includes('invalid') || error.message?.toLowerCase().includes('credentials')) {
         throw new Error('Invalid email or password');
       }
       throw new Error(error.message || 'Sign in failed');
     }
-    if (data.session) await setUserFromSession(data.session, { skipClientSetSession: true });
+    LOG('login signInWithPassword ok', { hasSession: !!data.session, userId: data.session?.user?.id });
+    if (data.session) {
+      LOG('login calling setUserFromSession');
+      await setUserFromSession(data.session, { skipClientSetSession: true });
+      LOG('login setUserFromSession returned');
+    } else {
+      LOG('login no session in response');
+    }
+    LOG('login done');
   };
 
   const register = async (email: string, password: string, name: string, region: string): Promise<void> => {
@@ -147,7 +186,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (data.user && !data.session) {
       throw new Error('Please check your email to confirm your account.');
     }
-    if (data.session) await setUserFromSession(data.session, { skipClientSetSession: true });
+    if (data.session) {
+      LOG('register calling setUserFromSession');
+      await setUserFromSession(data.session, { skipClientSetSession: true });
+      LOG('register setUserFromSession returned');
+    }
+    LOG('register done');
   };
 
   const logout = async (): Promise<void> => {
