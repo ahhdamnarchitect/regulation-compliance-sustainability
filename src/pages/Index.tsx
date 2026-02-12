@@ -111,7 +111,7 @@ export default function Index() {
         {/* Hero Section - full-width background image with floating text */}
         <div className="relative w-full overflow-hidden">
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            className="absolute inset-0 bg-cover bg-top bg-no-repeat"
             style={{ backgroundImage: 'url(/MSRD1.jpg)' }}
           />
           <div className="absolute inset-0 bg-black/35" />
