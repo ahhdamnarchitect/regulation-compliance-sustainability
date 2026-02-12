@@ -19,7 +19,7 @@ const PROFESSIONAL_FEATURES = [
 const MONTHLY_PRICE = 39.99;
 const YEARLY_PRICE = 399.99;
 const MONTHLY_PER_YEAR = MONTHLY_PRICE * 12;
-const YEARLY_SAVINGS = MONTHLY_PER_YEAR - YEARLY_PRICE;
+const YEARLY_SAVINGS_PERCENT = Math.round(((MONTHLY_PER_YEAR - YEARLY_PRICE) / MONTHLY_PER_YEAR) * 100);
 
 type BillingInterval = 'monthly' | 'yearly';
 
@@ -78,7 +78,7 @@ export default function Checkout() {
             onClick={() => setInterval('yearly')}
           >
             <div className="absolute -top-2 right-4 bg-earth-primary text-white text-xs font-semibold px-2 py-0.5 rounded">
-              Save ${YEARLY_SAVINGS}
+              Save {YEARLY_SAVINGS_PERCENT}%
             </div>
             <CardHeader className="pb-2">
               <CardTitle className="text-earth-primary">Yearly</CardTitle>
