@@ -84,8 +84,6 @@ export const useAuth = () => {
   return context;
 };
 
-const SET_SESSION_TIMEOUT_MS = 3000;
-
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AppUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -104,16 +102,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     if (options?.skipClientSetSession) {
-      LOG('setUserFromSession: setSession with timeout', SET_SESSION_TIMEOUT_MS, 'ms');
-      await Promise.race([
-        supabase.auth.setSession({
-          access_token: sess.access_token,
-          refresh_token: sess.refresh_token ?? '',
-        }),
-        new Promise<never>((_, reject) =>
-          setTimeout(() => reject(new Error('setSession timeout')), SET_SESSION_TIMEOUT_MS)
-        ),
-      ]).catch((e) => LOG('setSession catch/timeout', e));
+      LOG('setUserFromSession: fire-and-forget setSession');
+      void supabase.auth.setSession({
+        access_token: sess.access_token,
+        refresh_token: sess.refresh_token ?? '',
+      }).catch((e) => LOG('setSession catch', e));
     } else {
       LOG('setUserFromSession: awaiting setSession');
       await supabase.auth.setSession({
@@ -143,7 +136,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         LOG('initial getSession result', { hasSession: !!sess, userId: sess?.user?.id });
         if (sess) {
           LOG('initial restore: calling setUserFromSession');
-          await setUserFromSession(sess);
+          await setUserFromSession(sess, { skipClientSetSession: true });
           LOG('initial restore: setUserFromSession returned');
         } else {
           LOG('initial restore: no session (user will appear logged out)');
