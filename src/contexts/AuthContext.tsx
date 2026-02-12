@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { User as AppUser } from '@/types/regulation';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseUrl, supabaseKey } from '@/lib/supabase';
 import type { Session } from '@supabase/supabase-js';
 
 interface ProfileRow {
@@ -48,23 +48,32 @@ function profileToUser(profile: ProfileRow): AppUser {
   };
 }
 
-async function fetchProfile(userId: string): Promise<ProfileRow | null> {
-  LOG('fetchProfile start', { userId });
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('id, email, full_name, role, plan, region, trial_used_at, created_at')
-    .eq('id', userId)
-    .single();
-  if (error) {
-    LOG('fetchProfile error', { message: error.message, code: error.code, details: error.details });
+const PROFILE_SELECT = 'id,email,full_name,role,plan,region,trial_used_at,created_at';
+
+/** Fetch profile using access token directly (works even when setSession times out on restore). */
+async function fetchProfileWithToken(userId: string, accessToken: string): Promise<ProfileRow | null> {
+  LOG('fetchProfileWithToken start', { userId });
+  const url = `${supabaseUrl}/rest/v1/profiles?id=eq.${encodeURIComponent(userId)}&select=${encodeURIComponent(PROFILE_SELECT)}`;
+  const res = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      apikey: supabaseKey,
+      'Content-Type': 'application/json',
+    },
+  });
+  if (!res.ok) {
+    LOG('fetchProfileWithToken error', { status: res.status, statusText: res.statusText });
     return null;
   }
-  if (!data) {
-    LOG('fetchProfile no data');
+  const data = await res.json();
+  const row = Array.isArray(data) ? data[0] : data;
+  if (!row) {
+    LOG('fetchProfileWithToken no data');
     return null;
   }
-  LOG('fetchProfile ok', { id: data.id, email: data.email });
-  return data as ProfileRow;
+  LOG('fetchProfileWithToken ok', { id: row.id, email: row.email });
+  return row as ProfileRow;
 }
 
 export const useAuth = () => {
@@ -112,8 +121,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         refresh_token: sess.refresh_token ?? '',
       }).catch((e) => LOG('setSession catch', e));
     }
-    LOG('setUserFromSession: calling fetchProfile');
-    const profile = await fetchProfile(sess.user.id);
+    LOG('setUserFromSession: calling fetchProfileWithToken');
+    const profile = await fetchProfileWithToken(sess.user.id, sess.access_token);
     if (!profile) {
       LOG('setUserFromSession: no profile, clearing state');
       setUser(null);
