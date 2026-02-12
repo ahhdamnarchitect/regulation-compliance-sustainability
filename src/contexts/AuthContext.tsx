@@ -121,14 +121,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     (async () => {
       try {
-        LOG('initial getSession');
+        LOG('initial getSession (restore on load/refresh)');
         const { data: { session: sess } } = await supabase.auth.getSession();
-        LOG('initial getSession result', { hasSession: !!sess });
-        if (sess) await setUserFromSession(sess);
+        LOG('initial getSession result', { hasSession: !!sess, userId: sess?.user?.id });
+        if (sess) {
+          LOG('initial restore: calling setUserFromSession');
+          await setUserFromSession(sess);
+          LOG('initial restore: setUserFromSession returned');
+        } else {
+          LOG('initial restore: no session (user will appear logged out)');
+        }
       } catch (e) {
         LOG('initial getSession catch', e);
       } finally {
         setLoading(false);
+        LOG('initial auth loading complete');
       }
     })();
 
@@ -141,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       if (!sess) return;
       LOG('onAuthStateChange calling setUserFromSession', { event });
-      await setUserFromSession(sess);
+      await setUserFromSession(sess, { skipClientSetSession: true });
       LOG('onAuthStateChange setUserFromSession returned', { event });
     });
 
