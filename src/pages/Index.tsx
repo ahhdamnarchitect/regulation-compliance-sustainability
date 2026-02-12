@@ -111,8 +111,11 @@ export default function Index() {
         {/* Hero Section - full-width background image with floating text */}
         <div className="relative w-full overflow-hidden">
           <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: 'url(/green-city-solar-panels-header.webp)' }}
+            className="absolute inset-0 bg-cover bg-no-repeat"
+            style={{
+              backgroundImage: 'url(/green-city-solar-panels-header.webp)',
+              backgroundPosition: '50% 38%',
+            }}
           />
           <div className="absolute inset-0 bg-black/35" />
           <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[360px] lg:min-h-[400px] flex flex-col items-center justify-center px-4 py-10 md:py-16">
