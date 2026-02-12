@@ -57,6 +57,7 @@ export default function Index() {
     try {
       await register(email, password, name, 'Global');
       setShowLogin(false);
+      openUpgrade();
     } catch (err) {
       setLoginError(err instanceof Error ? err.message : 'Failed to create account');
     } finally {

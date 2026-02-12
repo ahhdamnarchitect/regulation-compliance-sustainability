@@ -91,8 +91,7 @@ export default function AccountSettings() {
   };
 
   const handleUpgrade = () => {
-    // Placeholder for payment integration
-    setMessage({ type: 'success', text: 'Payment integration coming soon! For now, contact support to upgrade.' });
+    navigate('/checkout');
   };
 
   const handleLogout = () => {

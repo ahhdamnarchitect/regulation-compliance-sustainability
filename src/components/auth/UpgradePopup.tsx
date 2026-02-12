@@ -21,7 +21,7 @@ export const UpgradePopup: React.FC<UpgradePopupProps> = ({ open, onClose }) => 
 
   const handleUpgrade = () => {
     onClose();
-    navigate('/#pricing');
+    navigate('/checkout');
   };
 
   if (!open) return null;
@@ -38,6 +38,9 @@ export const UpgradePopup: React.FC<UpgradePopupProps> = ({ open, onClose }) => 
           </CardTitle>
           <p className="text-earth-text text-sm mt-2">
             You're on the Free plan. Unlock full access with a 7-day free trial.
+          </p>
+          <p className="text-earth-text font-semibold mt-2">
+            $39.99/month or $399.99/year — save over $80 with annual billing.
           </p>
         </CardHeader>
 
