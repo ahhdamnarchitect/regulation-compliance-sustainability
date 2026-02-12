@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { User as AppUser } from '@/types/regulation';
 import { supabase } from '@/lib/supabase';
 import type { Session } from '@supabase/supabase-js';
@@ -75,10 +75,13 @@ export const useAuth = () => {
   return context;
 };
 
+const SET_SESSION_TIMEOUT_MS = 3000;
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AppUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastSignedInTokenRef = useRef<string | null>(null);
 
   const setUserFromSession = useCallback(async (
     sess: Session | null,
@@ -92,11 +95,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
     if (options?.skipClientSetSession) {
-      LOG('setUserFromSession: fire-and-forget setSession');
-      void supabase.auth.setSession({
-        access_token: sess.access_token,
-        refresh_token: sess.refresh_token ?? '',
-      }).catch((e) => LOG('setSession catch', e));
+      LOG('setUserFromSession: setSession with timeout', SET_SESSION_TIMEOUT_MS, 'ms');
+      await Promise.race([
+        supabase.auth.setSession({
+          access_token: sess.access_token,
+          refresh_token: sess.refresh_token ?? '',
+        }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error('setSession timeout')), SET_SESSION_TIMEOUT_MS)
+        ),
+      ]).catch((e) => LOG('setSession catch/timeout', e));
     } else {
       LOG('setUserFromSession: awaiting setSession');
       await supabase.auth.setSession({
@@ -143,10 +151,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       LOG('onAuthStateChange', { event, hasSession: !!sess });
       if (event === 'INITIAL_SESSION') return;
       if (event === 'SIGNED_OUT') {
+        lastSignedInTokenRef.current = null;
         await setUserFromSession(null);
         return;
       }
       if (!sess) return;
+      if (event === 'SIGNED_IN') {
+        const token = sess.access_token;
+        if (lastSignedInTokenRef.current === token) {
+          LOG('onAuthStateChange: skipping duplicate SIGNED_IN for same session');
+          return;
+        }
+        lastSignedInTokenRef.current = token;
+      }
       LOG('onAuthStateChange calling setUserFromSession', { event });
       await setUserFromSession(sess, { skipClientSetSession: true });
       LOG('onAuthStateChange setUserFromSession returned', { event });
@@ -167,9 +184,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
     LOG('login signInWithPassword ok', { hasSession: !!data.session, userId: data.session?.user?.id });
     if (data.session) {
-      LOG('login calling setUserFromSession');
-      await setUserFromSession(data.session, { skipClientSetSession: true });
-      LOG('login setUserFromSession returned');
+      if (lastSignedInTokenRef.current === data.session.access_token) {
+        LOG('login: skipping setUserFromSession, already handled by listener');
+      } else {
+        lastSignedInTokenRef.current = data.session.access_token;
+        LOG('login calling setUserFromSession');
+        await setUserFromSession(data.session, { skipClientSetSession: true });
+        LOG('login setUserFromSession returned');
+      }
     } else {
       LOG('login no session in response');
     }
@@ -194,9 +216,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       throw new Error('Please check your email to confirm your account.');
     }
     if (data.session) {
-      LOG('register calling setUserFromSession');
-      await setUserFromSession(data.session, { skipClientSetSession: true });
-      LOG('register setUserFromSession returned');
+      if (lastSignedInTokenRef.current === data.session.access_token) {
+        LOG('register: skipping setUserFromSession, already handled by listener');
+      } else {
+        lastSignedInTokenRef.current = data.session.access_token;
+        LOG('register calling setUserFromSession');
+        await setUserFromSession(data.session, { skipClientSetSession: true });
+        LOG('register setUserFromSession returned');
+      }
     }
     LOG('register done');
   };
