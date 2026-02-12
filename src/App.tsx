@@ -15,7 +15,9 @@ import RegulationDetail from "./pages/RegulationDetail";
 import AccountSettings from "./pages/AccountSettings";
 import Checkout from "./pages/Checkout";
 import About from "./pages/About";
-import Legal from "./pages/Legal";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -50,7 +52,10 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/about" element={<About />} />
-              <Route path="/legal" element={<Legal />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
+              <Route path="/legal" element={<Navigate to="/terms" replace />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             </UpgradeProvider>
