@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
@@ -52,14 +51,6 @@ export default function Privacy() {
             </li>
           </ol>
         </div>
-
-        <p className="mt-8 text-earth-text/70 text-xs">
-          <Link to="/terms" className="text-earth-primary hover:underline">Terms of Use</Link>
-          {' · '}
-          <Link to="/disclaimer" className="text-earth-primary hover:underline">Regulatory Disclaimer</Link>
-          {' · '}
-          <Link to="/about" className="text-earth-primary hover:underline">About</Link>
-        </p>
       </main>
       <Footer />
     </div>

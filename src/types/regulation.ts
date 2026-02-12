@@ -9,7 +9,7 @@ export interface Regulation {
   summary?: string;
   complianceDeadline?: string;
   reporting_date?: string;
-  status: 'proposed' | 'active' | 'repealed';
+  status: 'proposed' | 'active' | 'enacted';
   source_url?: string;
   tags: string[];
   dateAdded?: string;

@@ -17,7 +17,7 @@ const REGION_OPTIONS = [...REGION_LEVEL_NAMES];
 
 const SECTORS_DEFAULT = ['Finance', 'Energy', 'Consumer Goods', 'Technology', 'Healthcare'].sort((a, b) => a.localeCompare(b));
 const FRAMEWORKS_DEFAULT = ['CSRD', 'TCFD', 'ISSB', 'GRI', 'SEC', 'SASB'].sort((a, b) => a.localeCompare(b));
-const STATUS_VALUES = ['active', 'proposed', 'repealed'].sort((a, b) => a.localeCompare(b));
+const STATUS_VALUES = ['proposed', 'enacted'];
 
 export type LocationClearScope = 'region' | 'country' | 'state';
 

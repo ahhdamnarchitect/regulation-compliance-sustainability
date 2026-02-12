@@ -244,6 +244,7 @@ export const countryAliases: Record<string, string> = {
   'Türkiye': 'Turkey',
   'ישראל': 'Israel',
   'المملكة العربية السعودية': 'Saudi Arabia',
+  'UAE': 'United Arab Emirates',
   'الإمارات العربية المتحدة': 'United Arab Emirates',
   'Россия': 'Russia',
   

@@ -107,6 +107,8 @@ const Admin = () => {
 
   const handleEdit = (regulation: DatabaseRegulation) => {
     setEditingRegulation(regulation);
+    const rawStatus = regulation.status || 'proposed';
+    const status = rawStatus === 'proposed' ? 'proposed' : 'enacted';
     setFormData({
       title: regulation.title || '',
       region: regulation.region || '',
@@ -115,7 +117,7 @@ const Admin = () => {
       sector: regulation.sector || '',
       description: regulation.description || '',
       reporting_year: regulation.reporting_year?.toString() || '',
-      status: regulation.status || 'proposed',
+      status,
       source_url: regulation.source_url || '',
       tags: regulation.tags || ''
     });
@@ -246,8 +248,7 @@ const Admin = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="proposed">Proposed</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="repealed">Repealed</SelectItem>
+                      <SelectItem value="enacted">Enacted</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -316,7 +317,7 @@ const Admin = () => {
                 <td className="p-3">{r.sector || "—"}</td>
                 <td className="p-3">{r.reporting_year || "—"}</td>
                 <td className="p-3">
-                  <Badge variant={r.status === 'active' ? 'default' : r.status === 'proposed' ? 'secondary' : 'destructive'}>
+                  <Badge variant={r.status === 'proposed' ? 'secondary' : 'default'}>
                     {formatStatus(r.status || '') || "—"}
                   </Badge>
                 </td>

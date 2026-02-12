@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
@@ -58,14 +57,6 @@ export default function Terms() {
             <p>Cancellation prevents future charges but does not result in refunds for prior billing periods.</p>
           </div>
         </div>
-
-        <p className="mt-8 text-earth-text/70 text-xs">
-          <Link to="/privacy" className="text-earth-primary hover:underline">Privacy Policy</Link>
-          {' · '}
-          <Link to="/disclaimer" className="text-earth-primary hover:underline">Regulatory Disclaimer</Link>
-          {' · '}
-          <Link to="/about" className="text-earth-primary hover:underline">About</Link>
-        </p>
       </main>
       <Footer />
     </div>

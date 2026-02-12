@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 
@@ -16,14 +15,6 @@ export default function Disclaimer() {
           <p>Users are solely responsible for evaluating and meeting their regulatory obligations.</p>
           <p>Use of this Platform does not guarantee compliance or regulatory outcomes.</p>
         </div>
-
-        <p className="mt-8 text-earth-text/70 text-xs">
-          <Link to="/terms" className="text-earth-primary hover:underline">Terms of Use</Link>
-          {' · '}
-          <Link to="/privacy" className="text-earth-primary hover:underline">Privacy Policy</Link>
-          {' · '}
-          <Link to="/about" className="text-earth-primary hover:underline">About</Link>
-        </p>
       </main>
       <Footer />
     </div>

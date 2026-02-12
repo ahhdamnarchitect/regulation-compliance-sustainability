@@ -112,10 +112,10 @@ export default function Index() {
         <div className="relative w-full overflow-hidden">
           <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: 'url(/MSRD.png)' }}
+            style={{ backgroundImage: 'url(/MSRD1.jpg)' }}
           />
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="relative min-h-[200px] sm:min-h-[260px] md:min-h-[320px] flex flex-col items-center justify-center px-4 py-10 md:py-14">
+          <div className="absolute inset-0 bg-black/35" />
+          <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[360px] lg:min-h-[400px] flex flex-col items-center justify-center px-4 py-10 md:py-16">
             <h1
               className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-2 md:mb-3 text-white tracking-tight drop-shadow-lg"
               style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5), 0 0 24px rgba(0,0,0,0.3)' }}

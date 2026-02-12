@@ -5,8 +5,19 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-/** Capitalize status for display: "active" → "Active", "proposed" → "Proposed", etc. */
+/** Display status: only "Proposed" or "Enacted". Active/enacted map to Enacted. */
 export function formatStatus(status: string): string {
-  if (!status) return status
-  return status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
+  if (!status) return status;
+  const s = status.toLowerCase();
+  if (s === 'proposed') return 'Proposed';
+  return 'Enacted'; // active, enacted → Enacted
+}
+
+/** True if regulation status matches the filter value (Proposed/Enacted). */
+export function statusMatchesFilter(regStatus: string, filterValue: string): boolean {
+  const f = filterValue?.toLowerCase();
+  const r = regStatus?.toLowerCase();
+  if (f === 'proposed') return r === 'proposed';
+  if (f === 'enacted') return r === 'active' || r === 'enacted';
+  return false;
 }

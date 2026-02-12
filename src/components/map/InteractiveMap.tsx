@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { ExternalLink, Calendar, MapPin } from 'lucide-react';
 import { Regulation } from '@/types/regulation';
 import { formatStatus } from '@/lib/utils';
-import { countryCoordinates } from '@/data/countryMapping';
+import { countryCoordinates, countryAliases } from '@/data/countryMapping';
 import {
   getAncestors as getHierarchyAncestors,
   getRegionForLocation,
@@ -191,7 +191,8 @@ const earthThemeColors = {
 type RegulationTarget =
   | { type: 'location'; name: string }
   | { type: 'region'; region: 'EU' | 'Asia-Pacific' | 'North America' | 'South America' }
-  | { type: 'global' };
+  | { type: 'global' }
+  | { type: 'other' };
 
 const mapRegion = (r: RegionCode): RegulationTarget['region'] | null =>
   r === 'EU' || r === 'Asia-Pacific' || r === 'North America' || r === 'South America' ? r : null;
@@ -296,11 +297,14 @@ const getRegulationTarget = (regulation: Regulation): RegulationTarget => {
   if (jurisdiction === 'US') return { type: 'location', name: 'United States' };
   if (jurisdiction === 'UK') return { type: 'location', name: 'United Kingdom' };
 
-  // Country-level (France, Germany, Japan, etc.)
-  const candidate = jurisdiction || country;
+  // Country-level (France, Germany, Japan, UAE, etc.) — resolve aliases so e.g. "UAE" → "United Arab Emirates"
+  const resolvedJurisdiction = countryAliases[jurisdiction] || jurisdiction;
+  const resolvedCountry = countryAliases[country] || country;
+  const candidate = resolvedJurisdiction || resolvedCountry;
   if (candidate && countryCoordinates[candidate as keyof typeof countryCoordinates]) return { type: 'location', name: candidate };
 
-  return { type: 'global' };
+  // Unrecognized jurisdiction: do not treat as global (would show on every pin)
+  return { type: 'other' };
 };
 
 // Ancestors of a pin location (from global hierarchy; includes parent country and region).
@@ -325,7 +329,9 @@ const getApplicableRegulations = (locationName: string, allRegulations: Regulati
     const target = getRegulationTarget(regulation);
 
     let applies = false;
-    if (target.type === 'global') {
+    if (target.type === 'other') {
+      applies = false;
+    } else if (target.type === 'global') {
       applies = true;
     } else if (target.type === 'location') {
       applies = target.name === locationName || ancestors.includes(target.name);
@@ -692,9 +698,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                                     <div className="flex items-center gap-1.5 flex-wrap">
                                       <Badge 
                                         className={`text-[10px] px-1.5 py-0 ${
-                                          regulation.status === 'active' ? 'bg-green-100 text-green-800' :
                                           regulation.status === 'proposed' ? 'bg-yellow-100 text-yellow-800' :
-                                          'bg-red-100 text-red-800'
+                                          'bg-green-100 text-green-800'
                                         }`}
                                       >
                                         {formatStatus(regulation.status)}

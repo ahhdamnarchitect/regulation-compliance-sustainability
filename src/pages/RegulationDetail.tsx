@@ -21,7 +21,6 @@ import {
   Bookmark,
   Download,
   Share2,
-  AlertCircle,
   CheckCircle,
   Clock
 } from 'lucide-react';
@@ -50,7 +49,7 @@ export default function RegulationDetail() {
     // Status and Framework badges
     doc.setFontSize(11);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Status: ${formatStatus(regulation.status)} | Framework: ${regulation.framework}`, 20, y + 5);
+    doc.text(`Status: ${formatStatus(regulation.status)} | Framework: ${regulation.framework || 'N/A'}`, 20, y + 5);
     y += 15;
     
     // Separator
@@ -190,20 +189,20 @@ export default function RegulationDetail() {
     setIsBookmarked(!isBookmarked);
   };
 
+  // Display only Proposed or Enacted; active/enacted → Enacted
+  const displayStatus = regulation?.status === 'proposed' ? 'proposed' : 'enacted';
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active': return <CheckCircle className="w-5 h-5 text-green-600" />;
+      case 'enacted': return <CheckCircle className="w-5 h-5 text-green-600" />;
       case 'proposed': return <Clock className="w-5 h-5 text-yellow-600" />;
-      case 'repealed': return <AlertCircle className="w-5 h-5 text-red-600" />;
       default: return <Clock className="w-5 h-5 text-gray-600" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800 border-green-200';
+      case 'enacted': return 'bg-green-100 text-green-800 border-green-200';
       case 'proposed': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'repealed': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
@@ -265,8 +264,8 @@ export default function RegulationDetail() {
                     </CardTitle>
                     
                     <div className="flex items-center gap-4 mb-4">
-                      <Badge className={`${getStatusColor(regulation.status)} flex items-center gap-2`}>
-                        {getStatusIcon(regulation.status)}
+                      <Badge className={`${getStatusColor(displayStatus)} flex items-center gap-2`}>
+                        {getStatusIcon(displayStatus)}
                         {formatStatus(regulation.status)}
                       </Badge>
                       <Badge variant="outline" className="border-earth-primary text-earth-primary">
@@ -433,6 +432,27 @@ export default function RegulationDetail() {
                     </Button>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+
+            {/* Status Definitions */}
+            <Card className="border-earth-sand">
+              <CardHeader>
+                <CardTitle className="text-lg text-earth-text">Status Definitions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm">
+                <div>
+                  <p className="font-medium text-earth-text mb-1">Proposed</p>
+                  <p className="text-earth-text/80">
+                    A regulation that has been formally introduced, but has not been enacted into law.
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-earth-text mb-1">Enacted</p>
+                  <p className="text-earth-text/80">
+                    A regulation that has completed the legislative or regulatory approval process and is legally valid.
+                  </p>
+                </div>
               </CardContent>
             </Card>
 

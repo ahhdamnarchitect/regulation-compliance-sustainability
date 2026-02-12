@@ -53,7 +53,7 @@ export const useRegulations = () => {
     framework: dbReg.framework || 'Unknown',
     description: dbReg.description || '',
     complianceDeadline: dbReg.reporting_year?.toString(),
-    status: (dbReg.status as 'proposed' | 'active' | 'repealed') || 'proposed',
+    status: (dbReg.status as 'proposed' | 'active' | 'enacted') || 'proposed',
     source_url: dbReg.source_url,
     tags: dbReg.tags ? dbReg.tags.split(',').map(tag => tag.trim()) : [],
     created_at: dbReg.created_at,
@@ -136,7 +136,9 @@ export const useRegulations = () => {
           filteredData = filteredData.filter(reg => frameworkArr.some((f: string) => normFw(reg.framework) === normFw(f)));
         }
         if (statusArr.length > 0) {
-          filteredData = filteredData.filter(reg => statusArr.includes(reg.status));
+          filteredData = filteredData.filter(reg =>
+            statusArr.some(s => s === 'proposed' ? reg.status === 'proposed' : (s === 'enacted' && (reg.status === 'active' || reg.status === 'enacted')))
+          );
         }
         
         setRegulations(filteredData);

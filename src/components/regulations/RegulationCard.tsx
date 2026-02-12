@@ -44,20 +44,20 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
   const { user } = useAuth();
   const [imageError, setImageError] = useState(false);
   
+  // Display only Proposed or Enacted; active → Enacted
+  const displayStatus = regulation.status === 'proposed' ? 'proposed' : 'enacted';
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800 border-green-200';
+      case 'enacted': return 'bg-green-100 text-green-800 border-green-200';
       case 'proposed': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'repealed': return 'bg-red-100 text-red-800 border-red-200';
       default: return 'bg-gray-100 text-gray-800 border-gray-200';
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'active': return '🟢';
+      case 'enacted': return '🟢';
       case 'proposed': return '🟡';
-      case 'repealed': return '🔴';
       default: return '⚪';
     }
   };
@@ -148,8 +148,8 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
         </p>
         
         <div className="flex flex-wrap gap-2 mb-4">
-          <Badge className={getStatusColor(regulation.status)}>
-            {getStatusIcon(regulation.status)} {formatStatus(regulation.status)}
+          <Badge className={getStatusColor(displayStatus)}>
+            {getStatusIcon(displayStatus)} {formatStatus(regulation.status)}
           </Badge>
           <Badge variant="outline" className="border-blue-200 text-blue-700">
             {regulation.framework}

@@ -10,6 +10,7 @@ import { useRegulations } from '@/hooks/useRegulations';
 import { SearchFilters } from '@/types/regulation';
 import { useAuth } from '@/contexts/AuthContext';
 import { regulationAppliesToLocationFilter } from '@/lib/regulationFilter';
+import { statusMatchesFilter } from '@/lib/utils';
 import {
   REGION_LEVEL_NAMES,
   getCountryNames,
@@ -210,7 +211,7 @@ export default function SearchResults() {
     if (frameworks.length > 0 && !frameworks.some((f) => norm(regulation.framework) === norm(f))) {
       return false;
     }
-    if (statuses.length > 0 && !statuses.includes(regulation.status)) {
+    if (statuses.length > 0 && !statuses.some((s) => statusMatchesFilter(regulation.status, s))) {
       return false;
     }
     return true;
@@ -223,7 +224,7 @@ export default function SearchResults() {
     ? [...new Set(filteredRegulations.map((r) => r.framework).filter(Boolean))] as string[]
     : undefined;
   const availableStatuses = filteredRegulations.length > 0
-    ? [...new Set(filteredRegulations.map((r) => r.status).filter(Boolean))] as string[]
+    ? [...new Set(filteredRegulations.map((r) => (r.status === 'proposed' ? 'proposed' : 'enacted')))] as string[]
     : undefined;
 
   const sidebarContent = (
