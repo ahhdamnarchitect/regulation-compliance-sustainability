@@ -114,7 +114,7 @@ export default function Index() {
             className="absolute inset-0 bg-cover bg-no-repeat"
             style={{
               backgroundImage: 'url(/green-city-solar-panels-header.webp)',
-              backgroundPosition: '50% 38%',
+              backgroundPosition: '50% 30%',
             }}
           />
           <div className="absolute inset-0 bg-black/35" />

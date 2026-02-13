@@ -11,6 +11,7 @@ interface ProfileRow {
   plan: string;
   region: string | null;
   trial_used_at: string | null;
+  bookmarks: string[] | null;
   created_at?: string;
 }
 
@@ -21,6 +22,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string, region: string) => Promise<void>;
   logout: () => Promise<void>;
+  updateBookmarks: (bookmarks: string[]) => Promise<void>;
   isAdmin: boolean;
 }
 
@@ -40,7 +42,7 @@ function profileToUser(profile: ProfileRow): AppUser {
     email: profile.email,
     full_name: profile.full_name ?? undefined,
     role: (profile.role === 'admin' ? 'admin' : 'user') as AppUser['role'],
-    bookmarks: [],
+    bookmarks: Array.isArray(profile.bookmarks) ? profile.bookmarks : [],
     plan: (profile.plan as AppUser['plan']) ?? 'free',
     region: profile.region ?? 'Global',
     trial_used_at: profile.trial_used_at ?? undefined,
@@ -48,7 +50,7 @@ function profileToUser(profile: ProfileRow): AppUser {
   };
 }
 
-const PROFILE_SELECT = 'id,email,full_name,role,plan,region,trial_used_at,created_at';
+const PROFILE_SELECT = 'id,email,full_name,role,plan,region,trial_used_at,bookmarks,created_at';
 
 /** Fetch profile using access token directly (works even when setSession times out on restore). */
 async function fetchProfileWithToken(userId: string, accessToken: string): Promise<ProfileRow | null> {
@@ -237,6 +239,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = '/';
   };
 
+  const updateBookmarks = useCallback(async (nextBookmarks: string[]) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from('profiles')
+      .update({ bookmarks: nextBookmarks, updated_at: new Date().toISOString() })
+      .eq('id', user.id);
+    if (error) {
+      console.warn('[Auth] updateBookmarks failed', error);
+      return;
+    }
+    setUser((prev) => (prev ? { ...prev, bookmarks: nextBookmarks } : null));
+  }, [user?.id]);
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -245,6 +260,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       login,
       register,
       logout,
+      updateBookmarks,
       isAdmin: user?.role === 'admin',
     }}>
       {children}

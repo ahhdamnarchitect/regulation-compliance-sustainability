@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUpgrade } from '@/contexts/UpgradeContext';
 import { useNavigate } from 'react-router-dom';
@@ -7,36 +7,30 @@ import { Footer } from '@/components/layout/Footer';
 import { RegulationCard } from '@/components/regulations/RegulationCard';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { mockRegulations } from '@/data/mockRegulations';
+import { useRegulations } from '@/hooks/useRegulations';
 import { Regulation } from '@/types/regulation';
 import { formatStatus } from '@/lib/utils';
 import { Download, BookmarkX, FileText, Bookmark } from 'lucide-react';
 import jsPDF from 'jspdf';
 
 export default function Dashboard() {
-  const { user } = useAuth();
+  const { user, updateBookmarks } = useAuth();
   const { openUpgrade } = useUpgrade();
   const navigate = useNavigate();
-  const [bookmarkedRegulations, setBookmarkedRegulations] = useState<Regulation[]>([]);
+  const { regulations, loading: regulationsLoading } = useRegulations();
   const [exportFormat, setExportFormat] = useState<'csv' | 'pdf'>('csv');
 
-  useEffect(() => {
-    if (user) {
-      const bookmarks = JSON.parse(localStorage.getItem(`bookmarks_${user.id}`) || '[]');
-      const bookmarkedRegs = mockRegulations.filter(reg => bookmarks.includes(reg.id));
-      setBookmarkedRegulations(bookmarkedRegs);
-    }
-  }, [user]);
+  const bookmarkIds = user?.bookmarks ?? [];
+  const bookmarkedRegulations = useMemo(
+    () => regulations.filter((reg) => bookmarkIds.includes(reg.id)),
+    [regulations, bookmarkIds]
+  );
 
   const handleRemoveBookmark = (e: React.MouseEvent, regulationId: string) => {
     e.stopPropagation();
     if (!user) return;
-    
-    const currentBookmarks = JSON.parse(localStorage.getItem(`bookmarks_${user.id}`) || '[]');
-    const updatedBookmarks = currentBookmarks.filter((id: string) => id !== regulationId);
-    localStorage.setItem(`bookmarks_${user.id}`, JSON.stringify(updatedBookmarks));
-    
-    setBookmarkedRegulations(prev => prev.filter(reg => reg.id !== regulationId));
+    const updatedBookmarks = bookmarkIds.filter((id) => id !== regulationId);
+    updateBookmarks(updatedBookmarks);
   };
 
   const exportToCSV = () => {
@@ -166,7 +160,12 @@ export default function Dashboard() {
           )}
         </div>
 
-        {bookmarkedRegulations.length === 0 ? (
+        {regulationsLoading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-earth-primary mx-auto mb-4" />
+            <p className="text-earth-text">Loading your bookmarks...</p>
+          </div>
+        ) : bookmarkedRegulations.length === 0 ? (
           <div className="text-center py-12">
             <BookmarkX className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">No bookmarks yet</h3>

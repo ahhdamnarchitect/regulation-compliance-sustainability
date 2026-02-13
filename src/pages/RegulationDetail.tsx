@@ -28,11 +28,11 @@ import {
 export default function RegulationDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateBookmarks } = useAuth();
   const { regulations } = useRegulations();
   const { toast } = useToast();
   const [regulation, setRegulation] = useState<any>(null);
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const isBookmarked = !!regulation && (user?.bookmarks ?? []).includes(regulation.id);
 
   const handleExportPDF = () => {
     if (!regulation) return;
@@ -170,23 +170,13 @@ export default function RegulationDetail() {
     }
   }, [id, regulations]);
 
-  useEffect(() => {
-    if (user && regulation) {
-      const bookmarks = JSON.parse(localStorage.getItem(`bookmarks_${user.id}`) || '[]');
-      setIsBookmarked(bookmarks.includes(regulation.id));
-    }
-  }, [user, regulation]);
-
   const handleBookmark = () => {
     if (!user || !regulation) return;
-
-    const bookmarks = JSON.parse(localStorage.getItem(`bookmarks_${user.id}`) || '[]');
+    const current = user.bookmarks ?? [];
     const updatedBookmarks = isBookmarked
-      ? bookmarks.filter((b: string) => b !== regulation.id)
-      : [...bookmarks, regulation.id];
-    
-    localStorage.setItem(`bookmarks_${user.id}`, JSON.stringify(updatedBookmarks));
-    setIsBookmarked(!isBookmarked);
+      ? current.filter((b: string) => b !== regulation.id)
+      : [...current, regulation.id];
+    updateBookmarks(updatedBookmarks);
   };
 
   // Display only Proposed or Enacted; active/enacted → Enacted

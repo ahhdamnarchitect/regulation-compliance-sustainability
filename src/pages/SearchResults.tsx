@@ -46,7 +46,7 @@ const parseArrayParam = (s: string | null): string[] =>
 export default function SearchResults() {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateBookmarks } = useAuth();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [filters, setFilters] = useState<SearchFilters>(() => ({
     query: searchParams.get('q') || '',
@@ -56,16 +56,9 @@ export default function SearchResults() {
     status: parseArrayParam(searchParams.get('status')),
   }));
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
-  const [bookmarks, setBookmarks] = useState<string[]>([]);
+  const bookmarks = user?.bookmarks ?? [];
 
   const { regulations, loading, error, refetch } = useRegulations();
-
-  useEffect(() => {
-    if (user) {
-      const userBookmarks = JSON.parse(localStorage.getItem(`bookmarks_${user.id}`) || '[]');
-      setBookmarks(userBookmarks);
-    }
-  }, [user]);
 
   useEffect(() => {
     refetch(filters);
@@ -158,19 +151,12 @@ export default function SearchResults() {
 
   const handleBookmark = (regulationId: string) => {
     if (!user) return;
-
-    const currentBookmarks = JSON.parse(localStorage.getItem(`bookmarks_${user.id}`) || '[]');
+    const currentBookmarks = user.bookmarks ?? [];
     const isBookmarked = currentBookmarks.includes(regulationId);
-    
-    let updatedBookmarks;
-    if (isBookmarked) {
-      updatedBookmarks = currentBookmarks.filter((id: string) => id !== regulationId);
-    } else {
-      updatedBookmarks = [...currentBookmarks, regulationId];
-    }
-    
-    localStorage.setItem(`bookmarks_${user.id}`, JSON.stringify(updatedBookmarks));
-    setBookmarks(updatedBookmarks);
+    const updatedBookmarks = isBookmarked
+      ? currentBookmarks.filter((id: string) => id !== regulationId)
+      : [...currentBookmarks, regulationId];
+    updateBookmarks(updatedBookmarks);
   };
 
   const norm = (s: string | undefined) => (s ?? '').toLowerCase().trim().replace(/\s+/g, '-');
