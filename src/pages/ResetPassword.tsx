@@ -9,10 +9,11 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
-import { Lock, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { setRecoveryPending } from '@/lib/recoveryMode';
+import { Lock, Eye, EyeOff, CheckCircle, X } from 'lucide-react';
 
 export default function ResetPassword() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, logout } = useAuth();
   const navigate = useNavigate();
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -23,7 +24,11 @@ export default function ResetPassword() {
   const [submitting, setSubmitting] = useState(false);
   const [recoveryChecked, setRecoveryChecked] = useState(false);
 
+  // Mark recovery pending as soon as we see type=recovery in the URL (from reset link)
   useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.hash.includes('type=recovery')) {
+      setRecoveryPending(true);
+    }
     const timer = setTimeout(() => setRecoveryChecked(true), 500);
     return () => clearTimeout(timer);
   }, []);
@@ -43,6 +48,7 @@ export default function ResetPassword() {
     try {
       const { error: updateError } = await supabase.auth.updateUser({ password: newPassword });
       if (updateError) throw updateError;
+      setRecoveryPending(false);
       setSuccess(true);
       setTimeout(() => navigate('/', { replace: true }), 2000);
     } catch (err) {
@@ -81,7 +87,10 @@ export default function ResetPassword() {
                 <Button
                   type="button"
                   className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
-                  onClick={() => navigate('/', { replace: true })}
+                  onClick={() => {
+                    setRecoveryPending(false);
+                    navigate('/', { replace: true });
+                  }}
                 >
                   Back to home
                 </Button>
@@ -154,6 +163,20 @@ export default function ResetPassword() {
                   disabled={submitting}
                 >
                   {submitting ? 'Updating...' : 'Update password'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full border-earth-sand text-earth-text"
+                  disabled={submitting}
+                  onClick={async () => {
+                    setRecoveryPending(false);
+                    await logout();
+                    navigate('/', { replace: true });
+                  }}
+                >
+                  <X className="w-4 h-4 mr-2" />
+                  Cancel
                 </Button>
               </form>
             ) : null}

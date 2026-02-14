@@ -1,6 +1,8 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import { useUpgrade } from "@/contexts/UpgradeContext";
+import { getRecoveryPending, RECOVERY_PENDING_EVENT } from "@/lib/recoveryMode";
 import { LogOut, User, Shield } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -8,6 +10,25 @@ export const Header = () => {
   const { user, logout, isAdmin } = useAuth();
   const { openUpgrade } = useUpgrade();
   const navigate = useNavigate();
+  const [recoveryPending, setRecoveryPending] = useState(() => getRecoveryPending());
+
+  useEffect(() => {
+    const handler = () => setRecoveryPending(getRecoveryPending());
+    window.addEventListener(RECOVERY_PENDING_EVENT, handler);
+    return () => window.removeEventListener(RECOVERY_PENDING_EVENT, handler);
+  }, []);
+
+  if (recoveryPending) {
+    return (
+      <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-center">
+          <span className="font-title text-lg sm:text-xl font-semibold text-[rgb(25,89,8)]">
+            Complete password reset
+          </span>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
