@@ -13,6 +13,7 @@ import Admin from "./pages/Admin";
 import SearchResults from "./pages/SearchResults";
 import RegulationDetail from "./pages/RegulationDetail";
 import AccountSettings from "./pages/AccountSettings";
+import ResetPassword from "./pages/ResetPassword";
 import Checkout from "./pages/Checkout";
 import About from "./pages/About";
 import Terms from "./pages/Terms";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/regulation/:id" element={<RegulationDetail />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/account" element={<AccountSettings />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/about" element={<About />} />

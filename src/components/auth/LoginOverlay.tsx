@@ -5,8 +5,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react';
 import { isValidEmail } from '@/lib/validation';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface LoginOverlayProps {
   onLogin: (email: string, password: string) => void;
@@ -21,10 +22,16 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
   error, 
   loading = false 
 }) => {
+  const { resetPasswordForEmail } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({ email: '', password: '', name: '' });
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotSuccess, setForgotSuccess] = useState(false);
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotError, setForgotError] = useState<string | null>(null);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +53,24 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
     onRegister(registerData.email, registerData.password, registerData.name);
   };
 
+  const handleForgotSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setForgotError(null);
+    if (!isValidEmail(forgotEmail)) {
+      setForgotError('Please enter a valid email address.');
+      return;
+    }
+    setForgotLoading(true);
+    try {
+      await resetPasswordForEmail(forgotEmail);
+      setForgotSuccess(true);
+    } catch (err) {
+      setForgotError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
       <Card className="w-full max-w-md bg-white shadow-2xl border-earth-sand max-h-[90vh] overflow-y-auto">
@@ -62,6 +87,71 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
         </CardHeader>
         
         <CardContent className="px-4 sm:px-6 pb-6">
+          {showForgotPassword ? (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-earth-primary">Reset password</h3>
+              <p className="text-sm text-earth-text">
+                Enter your email and we&apos;ll send you a link to reset your password.
+              </p>
+              {forgotSuccess ? (
+                <>
+                  <Alert className="border-green-200 bg-green-50">
+                    <AlertDescription className="text-green-800">
+                      If an account exists for that email, we&apos;ve sent a link to reset your password. Check your inbox and spam folder.
+                    </AlertDescription>
+                  </Alert>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full border-earth-sand text-earth-primary"
+                    onClick={() => { setShowForgotPassword(false); setForgotSuccess(false); setForgotEmail(''); }}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to sign in
+                  </Button>
+                </>
+              ) : (
+                <form onSubmit={handleForgotSubmit} className="space-y-4">
+                  <div>
+                    <Label htmlFor="forgot-email" className="text-earth-text font-medium">Email</Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                      <Input
+                        id="forgot-email"
+                        type="email"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                        placeholder="Enter your email"
+                        className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                        required
+                      />
+                    </div>
+                  </div>
+                  {forgotError && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{forgotError}</AlertDescription>
+                    </Alert>
+                  )}
+                  <Button
+                    type="submit"
+                    className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
+                    disabled={forgotLoading}
+                  >
+                    {forgotLoading ? 'Sending...' : 'Send reset link'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="w-full text-earth-text"
+                    onClick={() => { setShowForgotPassword(false); setForgotError(null); }}
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to sign in
+                  </Button>
+                </form>
+              )}
+            </div>
+          ) : (
           <Tabs defaultValue="register" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-6">
               <TabsTrigger value="register">Create Account</TabsTrigger>
@@ -205,10 +295,19 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                 >
                   {loading ? 'Signing In...' : 'Sign In'}
                 </Button>
+                <p className="text-center text-sm">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="text-earth-primary hover:underline"
+                  >
+                    Forgot password?
+                  </button>
+                </p>
               </form>
             </TabsContent>
           </Tabs>
-          
+          )}
         </CardContent>
       </Card>
     </div>

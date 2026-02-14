@@ -22,6 +22,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, name: string, region: string) => Promise<void>;
   logout: () => Promise<void>;
+  resetPasswordForEmail: (email: string) => Promise<void>;
   updateBookmarks: (bookmarks: string[]) => Promise<void>;
   isAdmin: boolean;
 }
@@ -239,6 +240,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = '/';
   };
 
+  const resetPasswordForEmail = async (email: string): Promise<void> => {
+    const redirectTo = `${typeof window !== 'undefined' ? window.location.origin : ''}/reset-password`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    if (error) throw error;
+  };
+
   const updateBookmarks = useCallback(async (nextBookmarks: string[]) => {
     if (!user) return;
     const { error } = await supabase
@@ -260,6 +267,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       login,
       register,
       logout,
+      resetPasswordForEmail,
       updateBookmarks,
       isAdmin: user?.role === 'admin',
     }}>
