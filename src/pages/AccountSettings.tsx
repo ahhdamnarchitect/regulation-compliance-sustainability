@@ -21,7 +21,6 @@ import {
   AlertCircle,
   ArrowLeft,
   Crown,
-  Globe,
   Eye,
   EyeOff
 } from 'lucide-react';
@@ -35,15 +34,14 @@ export default function AccountSettings() {
   // Profile form state
   const [profileData, setProfileData] = useState({
     name: user?.full_name || '',
-    email: user?.email || '',
-    region: user?.region || ''
+    email: user?.email || ''
   });
 
   useEffect(() => {
     if (user) {
-      setProfileData({ name: user.full_name || '', email: user.email || '', region: user.region || '' });
+      setProfileData({ name: user.full_name || '', email: user.email || '' });
     }
-  }, [user?.id, user?.full_name, user?.email, user?.region]);
+  }, [user?.id, user?.full_name, user?.email]);
   
   // Password form state
   const [passwordData, setPasswordData] = useState({
@@ -63,7 +61,7 @@ export default function AccountSettings() {
     try {
       const { error } = await supabase
         .from('profiles')
-        .update({ full_name: profileData.name, region: profileData.region || null, updated_at: new Date().toISOString() })
+        .update({ full_name: profileData.name, updated_at: new Date().toISOString() })
         .eq('id', user.id);
       if (error) throw error;
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
@@ -162,15 +160,6 @@ export default function AccountSettings() {
                     )}
                   </div>
                 </div>
-                {user?.region && (
-                  <div>
-                    <Label className="text-sm font-medium text-earth-text/70">Region</Label>
-                    <p className="text-earth-text flex items-center">
-                      <Globe className="w-4 h-4 mr-1" />
-                      {user.region}
-                    </p>
-                  </div>
-                )}
                 <div className="pt-4 border-t border-earth-sand">
                   <Button 
                     variant="outline" 
@@ -231,20 +220,6 @@ export default function AccountSettings() {
                           onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
                           className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
                           required
-                        />
-                      </div>
-                      
-                      <div>
-                        <Label htmlFor="region" className="text-earth-text font-medium">
-                          Region
-                        </Label>
-                        <Input
-                          id="region"
-                          type="text"
-                          value={profileData.region}
-                          onChange={(e) => setProfileData(prev => ({ ...prev, region: e.target.value }))}
-                          className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
-                          placeholder="Your region"
                         />
                       </div>
                       
