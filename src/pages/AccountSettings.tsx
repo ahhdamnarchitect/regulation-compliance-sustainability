@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/lib/supabase';
+import { isValidEmail } from '@/lib/validation';
 import { 
   User, 
   Mail, 
@@ -43,6 +44,10 @@ export default function AccountSettings() {
     }
   }, [user?.id, user?.full_name, user?.email]);
   
+  // Profile re-auth (confirm password to save profile)
+  const [profileConfirmPassword, setProfileConfirmPassword] = useState('');
+  const [showProfilePassword, setShowProfilePassword] = useState(false);
+
   // Password form state
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -56,15 +61,46 @@ export default function AccountSettings() {
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
-    setLoading(true);
     setMessage(null);
+    if (!isValidEmail(profileData.email)) {
+      setMessage({ type: 'error', text: 'Please enter a valid email address.' });
+      return;
+    }
+    if (!profileConfirmPassword.trim()) {
+      setMessage({ type: 'error', text: 'Please enter your password to confirm changes.' });
+      return;
+    }
+    setLoading(true);
     try {
+      const { error: reAuthError } = await supabase.auth.signInWithPassword({
+        email: user.email,
+        password: profileConfirmPassword,
+      });
+      if (reAuthError) {
+        setMessage({ type: 'error', text: 'Incorrect password. Please try again.' });
+        setLoading(false);
+        return;
+      }
+      const emailChanged = profileData.email.trim() !== (user.email ?? '');
+      if (emailChanged) {
+        const { error: updateAuthError } = await supabase.auth.updateUser({ email: profileData.email.trim() });
+        if (updateAuthError) {
+          setMessage({ type: 'error', text: updateAuthError.message || 'Failed to update email. Please try again.' });
+          setLoading(false);
+          return;
+        }
+      }
       const { error } = await supabase
         .from('profiles')
-        .update({ full_name: profileData.name, updated_at: new Date().toISOString() })
+        .update({
+          full_name: profileData.name.trim(),
+          email: profileData.email.trim(),
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', user.id);
       if (error) throw error;
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      setProfileConfirmPassword('');
     } catch (error) {
       setMessage({ type: 'error', text: 'Failed to update profile. Please try again.' });
     } finally {
@@ -221,6 +257,31 @@ export default function AccountSettings() {
                           className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
                           required
                         />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="profileConfirmPassword" className="text-earth-text font-medium">
+                          Confirm your password
+                        </Label>
+                        <div className="relative">
+                          <Input
+                            id="profileConfirmPassword"
+                            type={showProfilePassword ? 'text' : 'password'}
+                            value={profileConfirmPassword}
+                            onChange={(e) => setProfileConfirmPassword(e.target.value)}
+                            placeholder="Enter your password to save changes"
+                            className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary pr-10"
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowProfilePassword((v) => !v)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-earth-text/60 hover:text-earth-text p-1 rounded"
+                            aria-label={showProfilePassword ? 'Hide password' : 'Show password'}
+                          >
+                            {showProfilePassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                          </button>
+                        </div>
                       </div>
                       
                       <Button 

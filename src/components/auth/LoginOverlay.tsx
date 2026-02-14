@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Eye, EyeOff, Mail, Lock, User } from 'lucide-react';
+import { isValidEmail } from '@/lib/validation';
 
 interface LoginOverlayProps {
   onLogin: (email: string, password: string) => void;
@@ -21,16 +22,27 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
   loading = false 
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [validationError, setValidationError] = useState<string | null>(null);
   const [loginData, setLoginData] = useState({ email: '', password: '' });
   const [registerData, setRegisterData] = useState({ email: '', password: '', name: '' });
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
+    if (!isValidEmail(loginData.email)) {
+      setValidationError('Please enter a valid email address.');
+      return;
+    }
     onLogin(loginData.email, loginData.password);
   };
 
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
+    setValidationError(null);
+    if (!isValidEmail(registerData.email)) {
+      setValidationError('Please enter a valid email address.');
+      return;
+    }
     onRegister(registerData.email, registerData.password, registerData.name);
   };
 
@@ -119,9 +131,9 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                   </div>
                 </div>
                 
-                {error && (
+                {(validationError || error) && (
                   <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
+                    <AlertDescription>{validationError || error}</AlertDescription>
                   </Alert>
                 )}
                 
@@ -180,9 +192,9 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                   </div>
                 </div>
                 
-                {error && (
+                {(validationError || error) && (
                   <Alert variant="destructive">
-                    <AlertDescription>{error}</AlertDescription>
+                    <AlertDescription>{validationError || error}</AlertDescription>
                   </Alert>
                 )}
                 
