@@ -49,21 +49,6 @@ function buildSuggestions(regulations: Regulation[], query: string): string[] {
   return out.slice(0, MAX_SUGGESTIONS);
 }
 
-const AUTOCOMPLETE_STORAGE_KEY = 'msrd_search_autocomplete';
-
-export function useSearchAutocompleteEnabled(): [boolean, (enabled: boolean) => void] {
-  const [enabled, setEnabledState] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
-    const stored = localStorage.getItem(AUTOCOMPLETE_STORAGE_KEY);
-    return stored === 'true';
-  });
-  const setEnabled = (v: boolean) => {
-    setEnabledState(v);
-    localStorage.setItem(AUTOCOMPLETE_STORAGE_KEY, String(v));
-  };
-  return [enabled, setEnabled];
-}
-
 export interface SearchInputWithSuggestionsProps {
   value: string;
   onChange: (value: string) => void;

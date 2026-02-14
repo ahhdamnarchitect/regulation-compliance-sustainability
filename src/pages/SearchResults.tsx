@@ -21,9 +21,7 @@ import {
 import type { LocationClearScope } from '@/components/regulations/FilterSidebar';
 import { ArrowLeft, Filter } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { SearchInputWithSuggestions, useSearchAutocompleteEnabled } from '@/components/search/SearchInputWithSuggestions';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
+import { SearchInputWithSuggestions } from '@/components/search/SearchInputWithSuggestions';
 
 // Smart search function that uses word boundary matching for short terms
 const smartSearch = (text: string, query: string): boolean => {
@@ -59,7 +57,6 @@ export default function SearchResults() {
   }));
   const [showFiltersMobile, setShowFiltersMobile] = useState(false);
   const bookmarks = user?.bookmarks ?? [];
-  const [autocompleteEnabled, setAutocompleteEnabled] = useSearchAutocompleteEnabled();
 
   const { regulations, loading, error, refetch } = useRegulations();
 
@@ -259,23 +256,12 @@ export default function SearchResults() {
               onSearch={handleSearch}
               placeholder="Search regulations..."
               regulations={regulations}
-              suggestionsEnabled={autocompleteEnabled}
+              suggestionsEnabled={false}
               inputClassName="border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
             />
             <Button onClick={() => handleSearch()} className="bg-earth-primary hover:bg-earth-primary/90 shrink-0">
               Search
             </Button>
-          </div>
-          <div className="flex items-center gap-2">
-            <Switch
-              id="search-autocomplete"
-              checked={autocompleteEnabled}
-              onCheckedChange={setAutocompleteEnabled}
-              className="data-[state=checked]:bg-earth-primary"
-            />
-            <Label htmlFor="search-autocomplete" className="text-sm text-earth-text/80 cursor-pointer">
-              Search suggestions
-            </Label>
           </div>
           {/* Mobile: filter bar up top with one clear filter-settings button */}
           <div className="flex items-center lg:hidden">
