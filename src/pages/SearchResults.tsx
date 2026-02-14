@@ -5,7 +5,6 @@ import { Footer } from '@/components/layout/Footer';
 import { RegulationCard } from '@/components/regulations/RegulationCard';
 import { FilterSidebar } from '@/components/regulations/FilterSidebar';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useRegulations } from '@/hooks/useRegulations';
 import { SearchFilters } from '@/types/regulation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,8 +19,9 @@ import {
   locationHierarchy,
 } from '@/data/locationHierarchy';
 import type { LocationClearScope } from '@/components/regulations/FilterSidebar';
-import { Search, ArrowLeft, Filter } from 'lucide-react';
+import { ArrowLeft, Filter } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { SearchInputWithSuggestions } from '@/components/search/SearchInputWithSuggestions';
 
 // Smart search function that uses word boundary matching for short terms
 const smartSearch = (text: string, query: string): boolean => {
@@ -85,11 +85,14 @@ export default function SearchResults() {
     }
   }, [filters.region]);
 
-  const handleSearch = () => {
-    setFilters(prev => ({ ...prev, query: searchQuery }));
+  const handleSearch = (term?: string) => {
+    const q = (term ?? searchQuery).trim();
+    setSearchQuery(q);
+    setFilters(prev => ({ ...prev, query: q }));
     setSearchParams(prev => {
       const next = new URLSearchParams(prev);
-      next.set('q', searchQuery);
+      if (q) next.set('q', q);
+      else next.delete('q');
       return next;
     });
   };
@@ -247,17 +250,15 @@ export default function SearchResults() {
         {/* Search bar + Filter bar (filters up top on mobile) */}
         <div className="space-y-3 mb-6">
           <div className="flex gap-2 sm:gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
-              <Input
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                placeholder="Search regulations..."
-                className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
-              />
-            </div>
-            <Button onClick={handleSearch} className="bg-earth-primary hover:bg-earth-primary/90 shrink-0">
+            <SearchInputWithSuggestions
+              value={searchQuery}
+              onChange={setSearchQuery}
+              onSearch={handleSearch}
+              placeholder="Search regulations..."
+              regulations={regulations}
+              inputClassName="border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+            />
+            <Button onClick={() => handleSearch()} className="bg-earth-primary hover:bg-earth-primary/90 shrink-0">
               Search
             </Button>
           </div>

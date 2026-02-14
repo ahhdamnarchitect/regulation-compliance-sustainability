@@ -5,12 +5,12 @@ import { Footer } from '@/components/layout/Footer';
 import { LoginOverlay } from '@/components/auth/LoginOverlay';
 import InteractiveMap from '@/components/map/InteractiveMap';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { SearchInputWithSuggestions } from '@/components/search/SearchInputWithSuggestions';
 import { useRegulations } from '@/hooks/useRegulations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUpgrade } from '@/contexts/UpgradeContext';
-import { Search, MapPin, Globe, Filter } from 'lucide-react';
+import { MapPin, Globe, Filter } from 'lucide-react';
 
 export default function Index() {
   const { user, login, register, loading: authLoading } = useAuth();
@@ -65,17 +65,18 @@ export default function Index() {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = (term?: string) => {
+    const q = (term ?? searchQuery).trim();
+    setSearchQuery(q);
     if (!user) {
       setShowLogin(true);
       return;
     }
-    
     if (user.plan === 'free') {
       openUpgrade();
       return;
     }
-    navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+    navigate(q ? `/search?q=${encodeURIComponent(q)}` : '/search');
   };
 
   const handleRegulationClick = (regulation: any) => {
@@ -167,18 +168,17 @@ export default function Index() {
               
               <div className="max-w-2xl mx-auto">
               <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
-                <div className="flex-1 relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4 md:w-5 md:h-5" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-                    placeholder="Search regulations, countries, frameworks..."
-                    className="pl-9 md:pl-10 h-10 md:h-12 text-base md:text-lg border-earth-sand focus:border-earth-primary focus:ring-earth-primary transition-all duration-200 hover:shadow-md"
-                  />
-                </div>
+                <SearchInputWithSuggestions
+                  value={searchQuery}
+                  onChange={setSearchQuery}
+                  onSearch={handleSearch}
+                  placeholder="Search regulations, countries, frameworks..."
+                  regulations={regulations}
+                  className="flex-1"
+                  inputClassName="h-10 md:h-12 text-base md:text-lg border-earth-sand focus:border-earth-primary focus:ring-earth-primary transition-all duration-200 hover:shadow-md"
+                />
                 <Button 
-                  onClick={handleSearch} 
+                  onClick={() => handleSearch()} 
                   className="h-10 md:h-12 px-6 md:px-8 bg-[rgb(25,89,8)] hover:opacity-90 text-white font-medium text-sm md:text-base"
                 >
                   Search
