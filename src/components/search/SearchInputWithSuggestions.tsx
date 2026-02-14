@@ -49,12 +49,28 @@ function buildSuggestions(regulations: Regulation[], query: string): string[] {
   return out.slice(0, MAX_SUGGESTIONS);
 }
 
+const AUTOCOMPLETE_STORAGE_KEY = 'msrd_search_autocomplete';
+
+export function useSearchAutocompleteEnabled(): [boolean, (enabled: boolean) => void] {
+  const [enabled, setEnabledState] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const stored = localStorage.getItem(AUTOCOMPLETE_STORAGE_KEY);
+    return stored === 'true';
+  });
+  const setEnabled = (v: boolean) => {
+    setEnabledState(v);
+    localStorage.setItem(AUTOCOMPLETE_STORAGE_KEY, String(v));
+  };
+  return [enabled, setEnabled];
+}
+
 export interface SearchInputWithSuggestionsProps {
   value: string;
   onChange: (value: string) => void;
   onSearch: (term?: string) => void;
   placeholder?: string;
   regulations: Regulation[];
+  suggestionsEnabled?: boolean;
   className?: string;
   inputClassName?: string;
   minChars?: number;
@@ -67,6 +83,7 @@ export function SearchInputWithSuggestions({
   onSearch,
   placeholder = 'Search regulations...',
   regulations,
+  suggestionsEnabled = true,
   className = '',
   inputClassName = '',
   minChars = MIN_CHARS,
@@ -77,11 +94,11 @@ export function SearchInputWithSuggestions({
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const suggestions = useMemo(
-    () => buildSuggestions(regulations, value).slice(0, maxSuggestions),
-    [regulations, value, maxSuggestions]
+    () => (suggestionsEnabled ? buildSuggestions(regulations, value).slice(0, maxSuggestions) : []),
+    [regulations, value, maxSuggestions, suggestionsEnabled]
   );
 
-  const shouldShowDropdown = value.length >= minChars && suggestions.length > 0 && showDropdown;
+  const shouldShowDropdown = suggestionsEnabled && value.length >= minChars && suggestions.length > 0 && showDropdown;
 
   // Click outside to close
   useEffect(() => {

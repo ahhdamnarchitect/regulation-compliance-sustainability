@@ -6,7 +6,9 @@ import { LoginOverlay } from '@/components/auth/LoginOverlay';
 import InteractiveMap from '@/components/map/InteractiveMap';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { SearchInputWithSuggestions } from '@/components/search/SearchInputWithSuggestions';
+import { SearchInputWithSuggestions, useSearchAutocompleteEnabled } from '@/components/search/SearchInputWithSuggestions';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { useRegulations } from '@/hooks/useRegulations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUpgrade } from '@/contexts/UpgradeContext';
@@ -21,6 +23,7 @@ export default function Index() {
   const [showLogin, setShowLogin] = useState(!user);
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [autocompleteEnabled, setAutocompleteEnabled] = useSearchAutocompleteEnabled();
   const { regulations, loading, error } = useRegulations();
 
   useEffect(() => {
@@ -174,6 +177,7 @@ export default function Index() {
                   onSearch={handleSearch}
                   placeholder="Search regulations, countries, frameworks..."
                   regulations={regulations}
+                  suggestionsEnabled={autocompleteEnabled}
                   className="flex-1"
                   inputClassName="h-10 md:h-12 text-base md:text-lg border-earth-sand focus:border-earth-primary focus:ring-earth-primary transition-all duration-200 hover:shadow-md"
                 />
@@ -184,7 +188,17 @@ export default function Index() {
                   Search
                 </Button>
               </div>
-              
+              <div className="flex items-center justify-center gap-2 mt-3">
+                <Switch
+                  id="hero-autocomplete"
+                  checked={autocompleteEnabled}
+                  onCheckedChange={setAutocompleteEnabled}
+                  className="data-[state=checked]:bg-[rgb(25,89,8)]"
+                />
+                <Label htmlFor="hero-autocomplete" className="text-sm text-white/90 cursor-pointer">
+                  Search suggestions
+                </Label>
+              </div>
               <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-4 md:mt-6">
                 {['CSRD', 'TCFD', 'ISSB', 'SEC Climate', 'EU Taxonomy', 'SFDR'].map((term) => (
                   <button
