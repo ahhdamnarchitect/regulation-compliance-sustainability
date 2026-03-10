@@ -34,12 +34,48 @@ export default function Checkout() {
     return null;
   }
 
-  const handleSubmit = () => {
-    toast({
-      title: 'Coming soon',
-      description: 'Payment integration is in progress. You will be able to start your free trial here soon.',
-      variant: 'default',
-    });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!user) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          interval,
+          userId: user.id,
+          userEmail: user.email,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast({
+          title: 'Checkout error',
+          description: data.error || 'Something went wrong. Please try again.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+      toast({
+        title: 'Checkout error',
+        description: 'No checkout URL received.',
+        variant: 'destructive',
+      });
+    } catch {
+      toast({
+        title: 'Checkout error',
+        description: 'Network error. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const priceLabel = interval === 'monthly' ? `$${MONTHLY_PRICE}/month` : `$${YEARLY_PRICE}/year`;
@@ -127,11 +163,12 @@ export default function Checkout() {
           <Button
             className="flex-1 bg-earth-primary hover:bg-earth-primary/90 text-white text-lg py-6"
             onClick={handleSubmit}
+            disabled={submitting}
           >
-            Start 7-day free trial — {priceLabel}
+            {submitting ? 'Redirecting to checkout…' : `Start 7-day free trial — ${priceLabel}`}
           </Button>
           <p className="text-sm text-earth-text/70 text-center sm:text-left">
-            Payment integration coming soon. Clicking the button will not charge your card.
+            You will not be charged until after your 7-day trial. Cancel anytime.
           </p>
         </div>
       </div>

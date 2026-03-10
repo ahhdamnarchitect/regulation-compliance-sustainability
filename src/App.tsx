@@ -15,6 +15,7 @@ import RegulationDetail from "./pages/RegulationDetail";
 import AccountSettings from "./pages/AccountSettings";
 import ResetPassword from "./pages/ResetPassword";
 import Checkout from "./pages/Checkout";
+import CheckoutSuccess from "./pages/CheckoutSuccess";
 import About from "./pages/About";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
@@ -52,6 +53,7 @@ const App = () => (
               <Route path="/account" element={<AccountSettings />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/checkout" element={<Checkout />} />
+              <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms" element={<Terms />} />
