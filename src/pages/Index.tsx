@@ -120,18 +120,16 @@ export default function Index() {
         )}
 
         <main className="flex-1 max-w-full overflow-x-hidden">
-          {/* Hero: deep blue overlay + light theme CTAs */}
+          {/* Hero: image only, no overlay */}
           <section className="relative w-full min-h-[50vh] flex flex-col items-center justify-center px-4 py-16 md:py-24 overflow-hidden">
             <div
               className="absolute inset-0 bg-cover bg-center hero-bg-animate"
               style={{ backgroundImage: 'url(/hero-sustainability.jpg)' }}
               aria-hidden
             />
-            <div className="absolute inset-0 bg-earth-primary/85" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-earth-primary/90" />
             <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">
               <h1 className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight mb-4 md:mb-6 drop-shadow-lg">
-                Search and track global sustainability regulations.
+                Search and Track Global Sustainability Regulations.
               </h1>
               <p className="text-lg md:text-xl text-white/90 mb-8 md:mb-10 drop-shadow-sm">
                 One place for CSRD, TCFD, ISSB and beyond.
