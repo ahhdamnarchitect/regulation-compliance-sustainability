@@ -237,18 +237,18 @@ export default function SearchResults() {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
-      <div className="flex-1 container mx-auto px-4 py-8">
-        <div className="mb-4">
-          <Link to="/" className="inline-flex items-center text-primary hover:text-primary/90 transition-colors duration-150">
+      <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 py-8">
+        <div className="mb-6">
+          <Link to="/" className="inline-flex items-center text-primary hover:text-primary/90 transition-colors duration-150 font-medium">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Map
           </Link>
         </div>
 
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Search Results</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">Search Results</h1>
 
         <div className="space-y-3 mb-6">
-          <div className="flex gap-2 sm:gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <SearchInputWithSuggestions
               value={searchQuery}
               onChange={setSearchQuery}
@@ -256,9 +256,9 @@ export default function SearchResults() {
               placeholder="Search regulations..."
               regulations={regulations}
               suggestionsEnabled={false}
-              inputClassName="border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20"
+              inputClassName="border-border rounded-xl focus:border-primary focus:ring-2 focus:ring-primary/20"
             />
-            <Button onClick={() => handleSearch()} className="bg-primary hover:bg-primary/90 shrink-0 rounded-lg">
+            <Button onClick={() => handleSearch()} className="bg-primary hover:bg-primary/90 shrink-0 rounded-xl h-11">
               Search
             </Button>
           </div>
@@ -267,7 +267,7 @@ export default function SearchResults() {
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full sm:w-auto border-border hover:bg-muted/80 justify-center gap-2 rounded-lg"
+                  className="w-full sm:w-auto border-border hover:bg-muted/80 justify-center gap-2 rounded-xl"
                 >
                   <Filter className="w-4 h-4" />
                   Filters
@@ -290,7 +290,7 @@ export default function SearchResults() {
                 </div>
                 <div className="shrink-0 border-t border-border bg-card p-4 safe-area-pb">
                   <Button
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-xl"
                     onClick={() => setShowFiltersMobile(false)}
                   >
                     Show {filteredRegulations.length} results
@@ -302,11 +302,13 @@ export default function SearchResults() {
         </div>
 
         <div className="flex gap-8 flex-col lg:flex-row">
-          <div className="hidden lg:block shrink-0">
-            {sidebarContent}
-          </div>
+          <aside className="hidden lg:block shrink-0 w-64 xl:w-72">
+            <div className="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto rounded-xl border border-border bg-card p-4 shadow-card">
+              {sidebarContent}
+            </div>
+          </aside>
 
-          <div className="flex-1 min-w-0">
+          <main className="flex-1 min-w-0">
             <p className="text-muted-foreground mb-6">
               {loading ? 'Loading...' : `${filteredRegulations.length} regulations found`}
             </p>
@@ -326,11 +328,11 @@ export default function SearchResults() {
                 <p className="text-muted-foreground mt-2">Try adjusting your search terms or filters.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
                 {filteredRegulations.map((regulation) => (
                   <div
                     key={regulation.id}
-                    className="cursor-pointer transition-transform duration-200"
+                    className="cursor-pointer transition-transform duration-200 hover:-translate-y-0.5"
                     onClick={() => navigate(`/regulation/${regulation.id}`)}
                   >
                     <RegulationCard
@@ -345,7 +347,7 @@ export default function SearchResults() {
                 ))}
               </div>
             )}
-          </div>
+          </main>
         </div>
       </div>
       <Footer />
