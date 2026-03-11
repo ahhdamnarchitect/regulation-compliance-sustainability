@@ -6,7 +6,12 @@ import { getRecoveryPending, RECOVERY_PENDING_EVENT } from "@/lib/recoveryMode";
 import { LogOut, User, Shield } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 
-export const Header = () => {
+interface HeaderProps {
+  /** When on homepage, scroll to map instead of navigating */
+  onExploreMap?: () => void;
+}
+
+export const Header = ({ onExploreMap }: HeaderProps) => {
   const { user, logout, isAdmin } = useAuth();
   const { openUpgrade } = useUpgrade();
   const navigate = useNavigate();
@@ -20,9 +25,9 @@ export const Header = () => {
 
   if (recoveryPending) {
     return (
-      <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
+      <header className="border-b border-earth-sand bg-white shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-center">
-          <span className="font-title text-lg sm:text-xl font-semibold text-[rgb(25,89,8)]">
+          <span className="font-title text-lg sm:text-xl font-semibold text-earth-primary">
             Complete password reset
           </span>
         </div>
@@ -31,24 +36,36 @@ export const Header = () => {
   }
 
   return (
-    <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
+    <header className="border-b border-earth-sand bg-white shadow-sm">
       <div className="container mx-auto px-2 sm:px-4 py-4 grid grid-cols-3 items-center gap-4 w-full max-w-full">
         {/* Left: logo */}
         <div className="flex justify-start min-w-0">
           <Link to="/" className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[rgb(25,89,8)] rounded-lg flex items-center justify-center shadow-sm">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-earth-primary rounded-lg flex items-center justify-center shadow-sm">
               <span className="text-white font-bold text-sm sm:text-lg">M</span>
             </div>
-            <span className="font-title text-xl sm:text-2xl md:text-3xl font-semibold text-[rgb(25,89,8)]">
+            <span className="font-title text-xl sm:text-2xl md:text-3xl font-semibold text-earth-primary">
               MSRD
             </span>
           </Link>
         </div>
 
-        {/* Center: Search, Bookmarks, Admin – true page center */}
+        {/* Center: Explore the map, Search, Bookmarks, Admin */}
         <nav className="hidden md:flex justify-center items-center space-x-6">
+          {onExploreMap ? (
+            <button
+              onClick={onExploreMap}
+              className="text-earth-primary hover:opacity-80 transition-colors font-medium"
+            >
+              Explore the map
+            </button>
+          ) : (
+            <Link to="/#map-section" className="text-earth-primary hover:opacity-80 transition-colors font-medium">
+              Explore the map
+            </Link>
+          )}
           {user && user.plan !== 'free' ? (
-            <Link to="/search?q=" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium">
+            <Link to="/search?q=" className="text-earth-primary hover:opacity-80 transition-colors font-medium">
               Search
             </Link>
           ) : (
@@ -60,25 +77,25 @@ export const Header = () => {
                   openUpgrade();
                 }
               }}
-              className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium cursor-pointer"
+              className="text-earth-primary hover:opacity-80 transition-colors font-medium cursor-pointer"
             >
               Search
             </button>
           )}
           {user && user.plan !== 'free' ? (
-            <Link to="/dashboard" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium">
+            <Link to="/dashboard" className="text-earth-primary hover:opacity-80 transition-colors font-medium">
               Bookmarks
             </Link>
           ) : user ? (
             <button 
               onClick={openUpgrade}
-              className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium cursor-pointer"
+              className="text-earth-primary hover:opacity-80 transition-colors font-medium cursor-pointer"
             >
               Bookmarks
             </button>
           ) : null}
           {isAdmin && (
-            <Link to="/admin" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors flex items-center space-x-1 font-medium">
+            <Link to="/admin" className="text-earth-primary hover:opacity-80 transition-colors flex items-center space-x-1 font-medium">
               <Shield className="w-4 h-4" />
               <span>Admin</span>
             </Link>
@@ -97,7 +114,7 @@ export const Header = () => {
                 navigate('/search?q=');
               }
             }}
-            className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1"
+            className="text-earth-primary hover:opacity-80 transition-colors p-1"
           >
             <span className="sr-only">Search</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,14 +122,14 @@ export const Header = () => {
             </svg>
           </button>
           {user && user.plan !== 'free' ? (
-            <Link to="/dashboard" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
+            <Link to="/dashboard" className="text-earth-primary hover:opacity-80 transition-colors p-1">
               <span className="sr-only">Bookmarks</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
             </Link>
           ) : user ? (
-            <button onClick={openUpgrade} className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
+            <button onClick={openUpgrade} className="text-earth-primary hover:opacity-80 transition-colors p-1">
               <span className="sr-only">Bookmarks</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -120,7 +137,7 @@ export const Header = () => {
             </button>
           ) : null}
           {isAdmin && (
-            <Link to="/admin" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
+            <Link to="/admin" className="text-earth-primary hover:opacity-80 transition-colors p-1">
               <span className="sr-only">Admin</span>
               <Shield className="w-4 h-4" />
             </Link>
