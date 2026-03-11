@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,45 +7,45 @@
 
 @layer base {
   :root {
-    /* Modern Earth Theme */
-    --background: 0 0% 97%; /* #F7F8F3 */
-    --foreground: 0 0% 18%; /* #2E2E2E */
+    /* Editorial-tech palette */
+    --background: 30 9% 98%; /* #FAFAF9 */
+    --foreground: 0 0% 5%; /* #0C0C0C ink */
 
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 18%;
+    --card-foreground: 0 0% 5%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 18%;
+    --popover-foreground: 0 0% 5%;
 
-    --primary: 150 50% 20%; /* #1B4332 */
+    --primary: 174 58% 39%; /* #0D9488 teal */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 60 30% 85%; /* #DAD7CD */
-    --secondary-foreground: 0 0% 18%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 5%;
 
-    --muted: 60 30% 85%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%; /* #737373 */
 
-    --accent: 80 40% 60%; /* #A8C686 */
-    --accent-foreground: 0 0% 18%;
+    --accent: 166 76% 90%; /* #CCFBF1 accent soft */
+    --accent-foreground: 174 58% 39%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 60 30% 85%;
-    --input: 60 30% 85%;
-    --ring: 150 50% 20%;
+    --border: 0 0% 90%; /* #E5E5E5 */
+    --input: 0 0% 90%;
+    --ring: 174 58% 39%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 97%;
-    --sidebar-foreground: 0 0% 18%;
-    --sidebar-primary: 150 50% 20%;
+    --sidebar-background: 30 9% 98%;
+    --sidebar-foreground: 0 0% 5%;
+    --sidebar-primary: 174 58% 39%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 60 30% 85%;
-    --sidebar-accent-foreground: 0 0% 18%;
-    --sidebar-border: 60 30% 85%;
-    --sidebar-ring: 150 50% 20%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 5%;
+    --sidebar-border: 0 0% 90%;
+    --sidebar-ring: 174 58% 39%;
   }
 
   .dark {
@@ -98,17 +98,15 @@
   }
 
   body {
-    @apply text-earth-text font-sans;
-    /* Vibrant ombre: white at top to light sage (sustainability theme) at bottom */
-    background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+    @apply text-foreground font-sans antialiased;
+    background: #FAFAF9;
     min-height: 100vh;
     min-height: 100dvh;
-    background-attachment: fixed;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
-    font-family: Lora, Georgia, serif;
-    @apply font-semibold;
+    font-family: 'Plus Jakarta Sans', ui-sans-serif, sans-serif;
+    @apply font-semibold tracking-tight;
   }
   
   .brand-text {
@@ -130,6 +128,10 @@
   
   .prevent-zoom {
     touch-action: manipulation;
+  }
+
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0.75rem);
   }
 }
 

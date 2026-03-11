@@ -65,18 +65,18 @@ export default function ResetPassword() {
     <div className="min-h-screen bg-transparent flex flex-col">
       <Header />
       <div className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
-        <Card className="w-full max-w-md bg-white border-earth-sand">
+        <Card className="w-full max-w-md bg-card border-border">
           <CardHeader className="text-center">
-            <div className="w-16 h-16 bg-earth-primary rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
               <Lock className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-xl font-bold text-earth-primary">
+            <CardTitle className="text-xl font-bold text-primary">
               {success ? 'Password updated' : showInvalid ? 'Invalid or expired link' : 'Set new password'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {!recoveryChecked || authLoading ? (
-              <p className="text-earth-text text-sm text-center">Loading...</p>
+              <p className="text-foreground text-sm text-center">Loading...</p>
             ) : showInvalid ? (
               <>
                 <Alert className="border-amber-200 bg-amber-50">
@@ -86,7 +86,7 @@ export default function ResetPassword() {
                 </Alert>
                 <Button
                   type="button"
-                  className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
+                  className="w-full bg-primary hover:bg-primary/90 text-white"
                   onClick={() => {
                     setRecoveryPending(false);
                     navigate('/', { replace: true });
@@ -107,7 +107,7 @@ export default function ResetPassword() {
             ) : showForm ? (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                  <Label htmlFor="new-password" className="text-earth-text font-medium">New password</Label>
+                  <Label htmlFor="new-password" className="text-foreground font-medium">New password</Label>
                   <div className="relative">
                     <Input
                       id="new-password"
@@ -115,14 +115,14 @@ export default function ResetPassword() {
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       placeholder="Enter new password"
-                      className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary pr-10"
+                      className="border-border focus:border-primary focus:ring-2 focus:ring-primary/20 pr-10"
                       required
                       minLength={6}
                     />
                     <button
                       type="button"
                       onClick={() => setShowNewPassword((v) => !v)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-earth-text/60 hover:text-earth-text p-1 rounded"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground p-1 rounded"
                       aria-label={showNewPassword ? 'Hide password' : 'Show password'}
                     >
                       {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -130,7 +130,7 @@ export default function ResetPassword() {
                   </div>
                 </div>
                 <div>
-                  <Label htmlFor="confirm-password" className="text-earth-text font-medium">Confirm password</Label>
+                  <Label htmlFor="confirm-password" className="text-foreground font-medium">Confirm password</Label>
                   <div className="relative">
                     <Input
                       id="confirm-password"
@@ -138,14 +138,14 @@ export default function ResetPassword() {
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm new password"
-                      className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary pr-10"
+                      className="border-border focus:border-primary focus:ring-2 focus:ring-primary/20 pr-10"
                       required
                       minLength={6}
                     />
                     <button
                       type="button"
                       onClick={() => setShowConfirmPassword((v) => !v)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-earth-text/60 hover:text-earth-text p-1 rounded"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground p-1 rounded"
                       aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                     >
                       {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -159,7 +159,7 @@ export default function ResetPassword() {
                 )}
                 <Button
                   type="submit"
-                  className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
+                  className="w-full bg-primary hover:bg-primary/90 text-white"
                   disabled={submitting}
                 >
                   {submitting ? 'Updating...' : 'Update password'}
@@ -167,7 +167,7 @@ export default function ResetPassword() {
                 <Button
                   type="button"
                   variant="outline"
-                  className="w-full border-earth-sand text-earth-text"
+                  className="w-full border-border text-foreground"
                   disabled={submitting}
                   onClick={async () => {
                     setRecoveryPending(false);

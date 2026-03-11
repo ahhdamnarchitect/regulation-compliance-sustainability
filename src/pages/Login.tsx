@@ -163,7 +163,7 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowForgotPassword(true)}
-                className="text-[rgb(25,89,8)] hover:underline"
+                className="text-primary hover:underline"
               >
                 Forgot password?
               </button>
@@ -172,7 +172,7 @@ export default function Login() {
           )}
           
           <p className="mt-4 text-center text-sm text-gray-600">
-            <a href="/" className="text-[rgb(25,89,8)] hover:underline">Back to home</a>
+            <a href="/" className="text-primary hover:underline">Back to home</a>
           </p>
         </CardContent>
       </Card>

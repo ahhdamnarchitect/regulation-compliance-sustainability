@@ -10,7 +10,6 @@ import { SearchInputWithSuggestions } from '@/components/search/SearchInputWithS
 import { useRegulations } from '@/hooks/useRegulations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUpgrade } from '@/contexts/UpgradeContext';
-import { MapPin, Globe, Filter } from 'lucide-react';
 
 export default function Index() {
   const { user, login, register, loading: authLoading } = useAuth();
@@ -110,24 +109,25 @@ export default function Index() {
       {/* Main Content */}
       <div className="flex-1 max-w-full overflow-x-hidden">
         {/* Hero Section - full-width background image with floating text */}
-        <div className="relative w-full overflow-hidden">
+        <div className="relative w-full overflow-hidden bg-gradient-to-br from-primary/20 via-background to-primary/10">
           <div
-            className="absolute inset-0 bg-cover bg-no-repeat"
+            className="absolute inset-0 bg-cover bg-no-repeat bg-center"
             style={{
-              backgroundImage: 'url(/green-city-solar-panels-header.webp)',
+              backgroundImage: 'url(/green-city-solar-panels-header.jpg)',
               backgroundPosition: '50% 30%',
             }}
+            aria-hidden
           />
-          <div className="absolute inset-0 bg-black/35" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/25 to-black/40" />
           <div className="relative min-h-[220px] sm:min-h-[280px] md:min-h-[360px] lg:min-h-[400px] flex flex-col items-center justify-center px-4 py-10 md:py-16">
             <h1
-              className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold mb-2 md:mb-3 text-white tracking-tight drop-shadow-lg"
+              className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-2 md:mb-3 text-white tracking-tight drop-shadow-lg"
               style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5), 0 0 24px rgba(0,0,0,0.3)' }}
             >
               MSRD
             </h1>
             <p
-              className="font-title text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 font-medium px-4 text-center max-w-2xl"
+              className="font-heading text-base sm:text-lg md:text-xl lg:text-2xl text-white/95 font-medium px-4 text-center max-w-2xl"
               style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6), 0 0 16px rgba(0,0,0,0.25)' }}
             >
               Sustainability Regulation Database
@@ -135,83 +135,78 @@ export default function Index() {
           </div>
         </div>
 
-        <div className="container mx-auto px-2 sm:px-4 py-8">
+        <div className="container mx-auto px-4 py-8 max-w-6xl">
 
-        {/* Interactive Map - More contained like earthday.org */}
-        <div className="mb-6 md:mb-8 max-w-5xl mx-auto">
+        {/* Interactive Map */}
+        <div className="mb-8 md:mb-10">
           <div className="text-center mb-4">
-            <h2 className="text-xl md:text-2xl font-semibold text-earth-text mb-2">
+            <h2 className="text-xl md:text-2xl font-semibold text-foreground mb-2">
               Global Regulation Map
             </h2>
-            <p className="text-sm md:text-base text-earth-text/70">
-              Click on any country to explore sustainability regulations
+            <p className="text-sm md:text-base text-muted-foreground">
+              Click any country to explore regulations
             </p>
           </div>
-          <InteractiveMap
-            regulations={regulations}
-            onRegulationClick={handleRegulationClick}
-          />
+          <div className="bg-card border border-border rounded-xl shadow-card overflow-hidden">
+            <InteractiveMap
+              regulations={regulations}
+              onRegulationClick={handleRegulationClick}
+            />
+          </div>
         </div>
 
         {/* Search Section */}
-        <div className="max-w-4xl mx-auto">
-          <Card className="border-earth-sand bg-white shadow-lg">
-            <CardContent className="p-4 md:p-6">
-              <div className="text-center mb-4 md:mb-6">
-                <h2 className="text-xl md:text-2xl font-bold text-[rgb(25,89,8)] mb-2">
+        <div className="max-w-3xl mx-auto">
+          <Card className="border border-border bg-card rounded-xl shadow-card">
+            <CardContent className="p-5 md:p-6">
+              <div className="text-center mb-5 md:mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
                   Search Global Regulations
                 </h2>
-                <p className="text-sm md:text-base text-earth-text/80 px-4">
+                <p className="text-sm md:text-base text-muted-foreground px-4">
                   Find sustainability regulations by country, framework, or keyword
                 </p>
               </div>
-              
               <div className="max-w-2xl mx-auto">
-              <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
-                <SearchInputWithSuggestions
-                  value={searchQuery}
-                  onChange={setSearchQuery}
-                  onSearch={handleSearch}
-                  placeholder="Search regulations, countries, frameworks..."
-                  regulations={regulations}
-                  suggestionsEnabled={false}
-                  className="flex-1"
-                  inputClassName="h-10 md:h-12 text-base md:text-lg border-earth-sand focus:border-earth-primary focus:ring-earth-primary transition-all duration-200 hover:shadow-md"
-                />
-                <Button 
-                  onClick={() => handleSearch()} 
-                  className="h-10 md:h-12 px-6 md:px-8 bg-[rgb(25,89,8)] hover:opacity-90 text-white font-medium text-sm md:text-base"
-                >
-                  Search
-                </Button>
-              </div>
-              <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-4 md:mt-6">
-                {['CSRD', 'TCFD', 'ISSB', 'SEC Climate', 'EU Taxonomy', 'SFDR'].map((term) => (
-                  <button
-                    key={term}
-                    onClick={() => {
-                      if (!user) {
-                        setShowLogin(true);
-                        return;
-                      }
-                      if (user.plan === 'free') {
-                        openUpgrade();
-                        return;
-                      }
-                      setSearchQuery(term);
-                      navigate(`/search?q=${encodeURIComponent(term)}`);
-                    }}
-                    className="px-2 md:px-3 py-1 bg-earth-sand text-earth-text rounded-full text-xs md:text-sm hover:bg-[rgb(25,89,8)] hover:text-white transition-colors cursor-pointer"
+                <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+                  <SearchInputWithSuggestions
+                    value={searchQuery}
+                    onChange={setSearchQuery}
+                    onSearch={handleSearch}
+                    placeholder="Search regulations, countries, frameworks..."
+                    regulations={regulations}
+                    suggestionsEnabled={false}
+                    className="flex-1"
+                    inputClassName="h-11 md:h-12 text-base border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                  />
+                  <Button
+                    onClick={() => handleSearch()}
+                    className="h-11 md:h-12 px-6 md:px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-medium text-sm rounded-lg transition-all duration-150 active:scale-[0.98]"
                   >
-                    {term}
-                  </button>
-                ))}
+                    Search
+                  </Button>
+                </div>
+                <div className="flex flex-wrap justify-center gap-2 md:gap-3 mt-4 md:mt-5">
+                  {['CSRD', 'TCFD', 'ISSB', 'SEC Climate', 'EU Taxonomy', 'SFDR'].map((term) => (
+                    <button
+                      key={term}
+                      onClick={() => {
+                        if (!user) { setShowLogin(true); return; }
+                        if (user.plan === 'free') { openUpgrade(); return; }
+                        setSearchQuery(term);
+                        navigate(`/search?q=${encodeURIComponent(term)}`);
+                      }}
+                      className="px-3 py-1.5 border border-border rounded-full text-xs md:text-sm text-muted-foreground hover:border-primary hover:text-primary hover:bg-accent/50 transition-colors duration-150 cursor-pointer"
+                    >
+                      {term}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
         </div>
-      </div>
+        </div>
       </div>
       </div>
       <Footer />

@@ -73,15 +73,15 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <Card className="w-full max-w-md bg-white shadow-2xl border-earth-sand max-h-[90vh] overflow-y-auto">
+      <Card className="w-full max-w-md bg-card shadow-card-hover border border-border rounded-xl max-h-[90vh] overflow-y-auto">
         <CardHeader className="text-center pb-4">
-          <div className="w-16 h-16 bg-earth-primary rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
             <span className="text-white font-bold text-2xl">M</span>
           </div>
-          <CardTitle className="text-2xl font-bold text-earth-primary brand-text">
+          <CardTitle className="text-2xl font-bold text-primary font-heading">
             Welcome to MSRD
           </CardTitle>
-          <p className="text-earth-text text-sm mt-2">
+          <p className="text-foreground text-sm mt-2">
             Sustainability Regulation Database
           </p>
         </CardHeader>
@@ -89,8 +89,8 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
         <CardContent className="px-4 sm:px-6 pb-6">
           {showForgotPassword ? (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-earth-primary">Reset password</h3>
-              <p className="text-sm text-earth-text">
+              <h3 className="text-lg font-semibold text-primary">Reset password</h3>
+              <p className="text-sm text-foreground">
                 Enter your email and we&apos;ll send you a link to reset your password.
               </p>
               {forgotSuccess ? (
@@ -103,7 +103,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                   <Button
                     type="button"
                     variant="outline"
-                    className="w-full border-earth-sand text-earth-primary"
+                    className="w-full border-border text-primary"
                     onClick={() => { setShowForgotPassword(false); setForgotSuccess(false); setForgotEmail(''); }}
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
@@ -113,16 +113,16 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
               ) : (
                 <form onSubmit={handleForgotSubmit} className="space-y-4">
                   <div>
-                    <Label htmlFor="forgot-email" className="text-earth-text font-medium">Email</Label>
+                    <Label htmlFor="forgot-email" className="text-foreground font-medium">Email</Label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/60 w-4 h-4" />
                       <Input
                         id="forgot-email"
                         type="email"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
                         placeholder="Enter your email"
-                        className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                        className="pl-10 border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
                         required
                       />
                     </div>
@@ -134,7 +134,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                   )}
                   <Button
                     type="submit"
-                    className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
+                    className="w-full bg-primary hover:bg-primary/90 text-white"
                     disabled={forgotLoading}
                   >
                     {forgotLoading ? 'Sending...' : 'Send reset link'}
@@ -142,7 +142,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                   <Button
                     type="button"
                     variant="ghost"
-                    className="w-full text-earth-text"
+                    className="w-full text-foreground"
                     onClick={() => { setShowForgotPassword(false); setForgotError(null); }}
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
@@ -161,60 +161,60 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
             <TabsContent value="register">
               <form onSubmit={handleRegister} className="space-y-4">
                 <div>
-                  <Label htmlFor="register-name" className="text-earth-text font-medium">
+                  <Label htmlFor="register-name" className="text-foreground font-medium">
                     Full Name
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/60 w-4 h-4" />
                     <Input
                       id="register-name"
                       type="text"
                       value={registerData.name}
                       onChange={(e) => setRegisterData(prev => ({ ...prev, name: e.target.value }))}
                       placeholder="Enter your full name"
-                      className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                      className="pl-10 border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
                       required
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <Label htmlFor="register-email" className="text-earth-text font-medium">
+                  <Label htmlFor="register-email" className="text-foreground font-medium">
                     Email
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/60 w-4 h-4" />
                     <Input
                       id="register-email"
                       type="email"
                       value={registerData.email}
                       onChange={(e) => setRegisterData(prev => ({ ...prev, email: e.target.value }))}
                       placeholder="Enter your email"
-                      className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                      className="pl-10 border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
                       required
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <Label htmlFor="register-password" className="text-earth-text font-medium">
+                  <Label htmlFor="register-password" className="text-foreground font-medium">
                     Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/60 w-4 h-4" />
                     <Input
                       id="register-password"
                       type={showPassword ? 'text' : 'password'}
                       value={registerData.password}
                       onChange={(e) => setRegisterData(prev => ({ ...prev, password: e.target.value }))}
                       placeholder="Create a password"
-                      className="pl-10 pr-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                      className="pl-10 pr-10 border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 hover:text-earth-text"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-foreground/60 hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -229,7 +229,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
+                  className="w-full bg-primary hover:bg-primary/90 text-white"
                   disabled={loading}
                 >
                   {loading ? 'Creating Account...' : 'Create Account'}
@@ -240,42 +240,42 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
             <TabsContent value="login">
               <form onSubmit={handleLogin} className="space-y-4">
                 <div>
-                  <Label htmlFor="login-email" className="text-earth-text font-medium">
+                  <Label htmlFor="login-email" className="text-foreground font-medium">
                     Email
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/60 w-4 h-4" />
                     <Input
                       id="login-email"
                       type="email"
                       value={loginData.email}
                       onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
                       placeholder="Enter your email"
-                      className="pl-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                      className="pl-10 border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
                       required
                     />
                   </div>
                 </div>
                 
                 <div>
-                  <Label htmlFor="login-password" className="text-earth-text font-medium">
+                  <Label htmlFor="login-password" className="text-foreground font-medium">
                     Password
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4" />
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-foreground/60 w-4 h-4" />
                     <Input
                       id="login-password"
                       type={showPassword ? 'text' : 'password'}
                       value={loginData.password}
                       onChange={(e) => setLoginData(prev => ({ ...prev, password: e.target.value }))}
                       placeholder="Enter your password"
-                      className="pl-10 pr-10 border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
+                      className="pl-10 pr-10 border-border focus:border-primary focus:ring-2 focus:ring-primary/20"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 hover:text-earth-text"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-foreground/60 hover:text-foreground"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -290,7 +290,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
+                  className="w-full bg-primary hover:bg-primary/90 text-white"
                   disabled={loading}
                 >
                   {loading ? 'Signing In...' : 'Sign In'}
@@ -299,7 +299,7 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
                   <button
                     type="button"
                     onClick={() => setShowForgotPassword(true)}
-                    className="text-earth-primary hover:underline"
+                    className="text-primary hover:underline"
                   >
                     Forgot password?
                   </button>
