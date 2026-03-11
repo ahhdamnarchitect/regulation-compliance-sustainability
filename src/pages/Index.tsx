@@ -162,9 +162,9 @@ export default function Index() {
             <RevealSection delay={100} variant="slide-up" className="w-full">
               <div className="w-full px-2 sm:px-4 max-w-7xl mx-auto">
                 <p className="text-center text-sm text-earth-text mb-4">
-                  Click a region to explore regulations
+                  Click a region to explore regulations.
                 </p>
-                <div className="rounded-xl overflow-hidden shadow-lg min-h-[400px] md:min-h-[500px]" style={{ backgroundColor: '#d5e8eb', border: '1px solid #b8d4da' }}>
+                <div className="rounded-xl overflow-hidden min-h-[400px] md:min-h-[500px] border border-earth-sand/60">
                   <InteractiveMap
                     regulations={regulations}
                     onRegulationClick={handleRegulationClick}

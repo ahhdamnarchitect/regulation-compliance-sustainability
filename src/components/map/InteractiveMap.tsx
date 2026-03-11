@@ -152,18 +152,18 @@ const mapStyles = `
     background: #a1a1a1;
   }
   
-  /* Zoom control: match map water background, no white box */
+  /* Zoom control: earth theme, no white box */
   .leaflet-control-zoom {
-    border: 1px solid #b8d4da !important;
+    border: 1px solid #DAD7CD !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
   }
   .leaflet-control-zoom a {
-    background: #d5e8eb !important;
-    color: #2d5a63 !important;
-    border-bottom: 1px solid #b8d4da !important;
+    background: #F7F8F3 !important;
+    color: rgb(25, 89, 8) !important;
+    border-bottom: 1px solid #DAD7CD !important;
   }
   .leaflet-control-zoom a:hover {
-    background: #c4dfe4 !important;
+    background: #e8f2e8 !important;
   }
   .leaflet-control-zoom a:last-child {
     border-bottom: none !important;
@@ -605,10 +605,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
   };
 
-  const MAP_WATER_BG = '#d5e8eb';
-
   return (
-    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_WATER_BG, borderColor: MAP_WATER_BG }}>
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden relative max-w-6xl mx-auto bg-transparent">
       
       <MapContainer
         center={[20, 0]}
@@ -616,7 +614,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         style={{ 
           height: '100%', 
           width: '100%',
-          backgroundColor: MAP_WATER_BG
+          backgroundColor: 'transparent'
         }}
         className="z-0 rounded-lg"
         maxBounds={[[-85, -180], [85, 180]]}
