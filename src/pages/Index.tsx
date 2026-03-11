@@ -154,11 +154,10 @@ export default function Index() {
             </RevealSection>
           </section>
 
-          {/* Map: water-tone section and container to match map, no white edges */}
+          {/* Map: same gradient green as other pages */}
           <section
             id="map-section"
-            className="relative w-full py-8 md:py-12"
-            style={{ backgroundColor: '#d5e8eb' }}
+            className="relative w-full py-8 md:py-12 section-gradient"
           >
             <RevealSection delay={100} variant="slide-up" className="w-full">
               <div className="w-full px-2 sm:px-4 max-w-7xl mx-auto">

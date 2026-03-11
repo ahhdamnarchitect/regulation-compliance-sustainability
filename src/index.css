@@ -152,6 +152,11 @@
   min-height: 100%;
 }
 
+/* Section-only gradient (no min-height) for map etc. */
+.section-gradient {
+  background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+}
+
 /* Mobile viewport fixes */
 @layer utilities {
   .mobile-full-width {
