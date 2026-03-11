@@ -72,15 +72,17 @@ const mapStyles = `
   
   .leaflet-popup-content-wrapper {
     border-radius: 8px !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    background: #1e293b !important;
+    border: 1px solid #06b6d4 !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4), 0 0 20px rgba(6, 182, 212, 0.15) !important;
     min-width: 280px !important;
     max-width: 320px !important;
     width: 320px !important;
   }
   
   .leaflet-popup-tip {
-    background: white !important;
-    border: 1px solid #ccc !important;
+    background: #1e293b !important;
+    border: 1px solid #06b6d4 !important;
   }
   
   .leaflet-popup-content {
@@ -152,18 +154,19 @@ const mapStyles = `
     background: #a1a1a1;
   }
   
-  /* Zoom control: earth theme, no white box */
+  /* Zoom control: dark neon theme */
   .leaflet-control-zoom {
-    border: 1px solid #DAD7CD !important;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+    border: 1px solid #334155 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
   }
   .leaflet-control-zoom a {
-    background: #F7F8F3 !important;
-    color: rgb(25, 89, 8) !important;
-    border-bottom: 1px solid #DAD7CD !important;
+    background: #1e293b !important;
+    color: #22c55e !important;
+    border-bottom: 1px solid #334155 !important;
   }
   .leaflet-control-zoom a:hover {
-    background: #e8f2e8 !important;
+    background: #334155 !important;
+    color: #4ade80 !important;
   }
   .leaflet-control-zoom a:last-child {
     border-bottom: none !important;
@@ -198,11 +201,10 @@ type LocationLevel = 'region' | 'country' | 'state';
 // Regulation scope: Global, Regional, National, State/Province
 type RegulationScope = 'global' | 'regional' | 'country' | 'state';
 
-// Earth theme colors for pins
-const earthThemeColors = {
-  primary: '#1B4332',    // Deep forest green
-  accent: '#A8C686',     // Soft sage
-  sand: '#DAD7CD',       // Muted sand
+// Neon theme colors for pins
+const neonThemeColors = {
+  green: '#22c55e',
+  cyan: '#06b6d4',
 };
 
 type RegulationTarget =
@@ -395,13 +397,13 @@ const getRegulationLevel = (regulation: Regulation): RegulationScope => {
   return 'country';
 };
 
-// Create custom marker icon: earth green fill, white stroke, white inner circle
+// Create custom marker icon: neon green fill, cyan stroke, glow
 const createCustomIcon = (_locationLevel: LocationLevel) => {
   return new Icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(`
       <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="${earthThemeColors.primary}" stroke="white" stroke-width="1.5"/>
-        <circle cx="12.5" cy="12.5" r="6" fill="white"/>
+        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="${neonThemeColors.green}" stroke="${neonThemeColors.cyan}" stroke-width="1.5"/>
+        <circle cx="12.5" cy="12.5" r="6" fill="#0f172a"/>
       </svg>
     `)}`,
     iconSize: [25, 41],
@@ -410,12 +412,12 @@ const createCustomIcon = (_locationLevel: LocationLevel) => {
   });
 };
 
-// Earth theme scope badges: indigo (global/regional), green (country), amber (state)
+// Dark theme scope badges: cyan (global/regional), green (country), amber (state)
 const regulationLevelColors: Record<RegulationScope, { bg: string; text: string; border: string }> = {
-  global: { bg: 'rgba(79,70,229,0.12)', text: '#4f46e5', border: 'rgba(79,70,229,0.4)' },
-  regional: { bg: 'rgba(79,70,229,0.08)', text: '#6366f1', border: 'rgba(79,70,229,0.35)' },
-  country: { bg: 'rgba(27,67,50,0.12)', text: '#1B4332', border: 'rgba(27,67,50,0.4)' },
-  state: { bg: 'rgba(217,119,6,0.12)', text: '#b45309', border: 'rgba(217,119,6,0.4)' },
+  global: { bg: 'rgba(6,182,212,0.2)', text: '#22d3ee', border: 'rgba(6,182,212,0.5)' },
+  regional: { bg: 'rgba(6,182,212,0.12)', text: '#06b6d4', border: 'rgba(6,182,212,0.4)' },
+  country: { bg: 'rgba(34,197,94,0.2)', text: '#4ade80', border: 'rgba(34,197,94,0.5)' },
+  state: { bg: 'rgba(251,191,36,0.2)', text: '#fbbf24', border: 'rgba(251,191,36,0.5)' },
 };
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
@@ -597,8 +599,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   const getTileLayerUrl = () => {
-    // CARTO Voyager: light base map for earth theme (retina {r})
-    return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+    // CARTO Dark Matter: dark base map for neon theme
+    return 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png';
   };
 
   const getTileLayerAttribution = () => {
@@ -606,7 +608,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   return (
-    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden relative max-w-6xl mx-auto bg-transparent">
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden relative max-w-6xl mx-auto bg-background">
       
       <MapContainer
         center={[20, 0]}
@@ -667,12 +669,12 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 keepInView={true}
                 offset={[0, -35]}
               >
-                <div className="p-2 w-full max-w-[280px] sm:max-w-[320px]">
-                  <h3 className="font-semibold text-earth-primary mb-1 flex items-center">
+                <div className="p-2 w-full max-w-[280px] sm:max-w-[320px] text-foreground">
+                  <h3 className="font-semibold text-primary mb-1 flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
                     {coords.name}
                   </h3>
-                  <p className="text-sm text-earth-text mb-3">
+                  <p className="text-sm text-muted-foreground mb-3">
                     {locationRegulations.length} applicable regulation{locationRegulations.length !== 1 ? 's' : ''}
                   </p>
                   
@@ -701,19 +703,19 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                               >
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1 min-w-0">
-                                    <h4 className="font-medium text-xs text-earth-text line-clamp-2 mb-1">
+                                    <h4 className="font-medium text-xs text-foreground line-clamp-2 mb-1">
                                       {regulation.title}
                                     </h4>
                                     <div className="flex items-center gap-1.5 flex-wrap">
                                       <Badge 
                                         className={`text-[10px] px-1.5 py-0 ${
-                                          regulation.status === 'proposed' ? 'bg-yellow-100 text-yellow-800' :
-                                          'bg-green-100 text-green-800'
+                                          regulation.status === 'proposed' ? 'bg-amber-500/20 text-amber-300' :
+                                          'bg-emerald-500/20 text-emerald-300'
                                         }`}
                                       >
                                         {formatStatus(regulation.status)}
                                       </Badge>
-                                      <span className="text-[10px] text-earth-text/60">
+                                      <span className="text-[10px] text-muted-foreground">
                                         {regulation.jurisdiction}
                                       </span>
                                     </div>
@@ -721,7 +723,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="ml-1 text-[10px] flex-shrink-0 px-1.5 py-0.5 h-6"
+                                    className="ml-1 text-[10px] flex-shrink-0 px-1.5 py-0.5 h-6 border-primary text-primary hover:bg-primary/10"
                                     onClick={(e) => {
                                       e.stopPropagation();
                                       onRegulationClick(regulation);

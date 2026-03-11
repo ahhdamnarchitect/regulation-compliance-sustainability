@@ -25,9 +25,9 @@ export const Header = ({ onExploreMap }: HeaderProps) => {
 
   if (recoveryPending) {
     return (
-      <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
+      <header className="border-b border-border bg-card shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-center">
-          <span className="font-title text-lg sm:text-xl font-semibold text-[rgb(25,89,8)]">
+          <span className="font-title text-lg sm:text-xl font-semibold text-primary">
             Complete password reset
           </span>
         </div>
@@ -36,15 +36,15 @@ export const Header = ({ onExploreMap }: HeaderProps) => {
   }
 
   return (
-    <header className="border-b border-[rgb(25,89,8)] bg-white shadow-sm">
+    <header className="border-b border-border bg-card/80 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto px-2 sm:px-4 py-4 grid grid-cols-3 items-center gap-4 w-full max-w-full">
         {/* Left: logo */}
         <div className="flex justify-start min-w-0">
           <Link to="/" className="flex items-center space-x-2 sm:space-x-3 shrink-0">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[rgb(25,89,8)] rounded-lg flex items-center justify-center shadow-sm">
-              <span className="text-white font-bold text-sm sm:text-lg">M</span>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-lg flex items-center justify-center shadow-sm glow-primary">
+              <span className="text-primary-foreground font-bold text-sm sm:text-lg">M</span>
             </div>
-            <span className="font-title text-xl sm:text-2xl md:text-3xl font-semibold text-[rgb(25,89,8)]">
+            <span className="font-title text-xl sm:text-2xl md:text-3xl font-semibold text-primary">
               MSRD
             </span>
           </Link>
@@ -55,17 +55,17 @@ export const Header = ({ onExploreMap }: HeaderProps) => {
           {onExploreMap ? (
             <button
               onClick={onExploreMap}
-              className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium"
+              className="text-primary hover:text-neon-green-light transition-colors font-medium"
             >
               Explore the map
             </button>
           ) : (
-            <Link to="/#map-section" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium">
+            <Link to="/#map-section" className="text-primary hover:text-neon-green-light transition-colors font-medium">
               Explore the map
             </Link>
           )}
           {user && user.plan !== 'free' ? (
-            <Link to="/search?q=" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium">
+            <Link to="/search?q=" className="text-primary hover:text-neon-green-light transition-colors font-medium">
               Search
             </Link>
           ) : (
@@ -77,25 +77,25 @@ export const Header = ({ onExploreMap }: HeaderProps) => {
                   openUpgrade();
                 }
               }}
-              className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium cursor-pointer"
+              className="text-primary hover:text-neon-green-light transition-colors font-medium cursor-pointer"
             >
               Search
             </button>
           )}
           {user && user.plan !== 'free' ? (
-            <Link to="/dashboard" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium">
+            <Link to="/dashboard" className="text-primary hover:text-neon-green-light transition-colors font-medium">
               Bookmarks
             </Link>
           ) : user ? (
             <button 
               onClick={openUpgrade}
-              className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors font-medium cursor-pointer"
+              className="text-primary hover:text-neon-green-light transition-colors font-medium cursor-pointer"
             >
               Bookmarks
             </button>
           ) : null}
           {isAdmin && (
-            <Link to="/admin" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors flex items-center space-x-1 font-medium">
+            <Link to="/admin" className="text-primary hover:text-neon-green-light transition-colors flex items-center space-x-1 font-medium">
               <Shield className="w-4 h-4" />
               <span>Admin</span>
             </Link>
@@ -114,7 +114,7 @@ export const Header = ({ onExploreMap }: HeaderProps) => {
                 navigate('/search?q=');
               }
             }}
-            className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1"
+            className="text-primary hover:text-neon-green-light transition-colors p-1"
           >
             <span className="sr-only">Search</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,14 +122,14 @@ export const Header = ({ onExploreMap }: HeaderProps) => {
             </svg>
           </button>
           {user && user.plan !== 'free' ? (
-            <Link to="/dashboard" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
+            <Link to="/dashboard" className="text-primary hover:text-neon-green-light transition-colors p-1">
               <span className="sr-only">Bookmarks</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
               </svg>
             </Link>
           ) : user ? (
-            <button onClick={openUpgrade} className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
+            <button onClick={openUpgrade} className="text-primary hover:text-neon-green-light transition-colors p-1">
               <span className="sr-only">Bookmarks</span>
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -137,7 +137,7 @@ export const Header = ({ onExploreMap }: HeaderProps) => {
             </button>
           ) : null}
           {isAdmin && (
-            <Link to="/admin" className="text-[rgb(25,89,8)] hover:opacity-80 transition-colors p-1">
+            <Link to="/admin" className="text-primary hover:text-neon-green-light transition-colors p-1">
               <span className="sr-only">Admin</span>
               <Shield className="w-4 h-4" />
             </Link>
@@ -151,28 +151,28 @@ export const Header = ({ onExploreMap }: HeaderProps) => {
               {/* Desktop: Full email display */}
               <Link 
                 to="/account" 
-                className="hidden md:flex items-center space-x-2 hover:bg-earth-sand/50 px-3 py-2 rounded-lg transition-colors cursor-pointer"
+                className="hidden md:flex items-center space-x-2 hover:bg-muted px-3 py-2 rounded-lg transition-colors cursor-pointer"
               >
-                <User className="w-4 h-4 text-gray-500" />
-                <span className="text-sm text-gray-700">{user.email}</span>
+                <User className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm text-foreground">{user.email}</span>
               </Link>
               
               {/* Mobile: Just avatar */}
               <Link 
                 to="/account" 
-                className="md:hidden flex items-center hover:bg-earth-sand/50 p-1 rounded-lg transition-colors cursor-pointer"
+                className="md:hidden flex items-center hover:bg-muted p-1 rounded-lg transition-colors cursor-pointer"
               >
-                <User className="w-4 h-4 text-gray-500" />
+                <User className="w-4 h-4 text-muted-foreground" />
               </Link>
               
-              <Button variant="outline" size="sm" onClick={logout} className="text-xs md:text-sm px-1 md:px-3 border-earth-sand text-earth-text hover:bg-earth-sand/50">
+              <Button variant="outline" size="sm" onClick={logout} className="text-xs md:text-sm px-1 md:px-3 border-border text-foreground hover:bg-muted">
                 <LogOut className="w-3 h-3 md:w-4 md:h-4 md:mr-2" />
                 <span className="hidden md:inline">Logout</span>
               </Button>
             </div>
           ) : (
             <Link to="/">
-              <Button size="sm" className="text-xs md:text-sm px-1 md:px-3 bg-[rgb(25,89,8)] text-white hover:opacity-90 font-medium">
+              <Button size="sm" className="text-xs md:text-sm px-1 md:px-3 bg-primary text-primary-foreground hover:opacity-90 font-medium glow-primary glow-primary-hover">
                 <span className="hidden md:inline">Login</span>
                 <span className="md:hidden">Login</span>
               </Button>

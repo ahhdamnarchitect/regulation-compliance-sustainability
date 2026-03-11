@@ -7,84 +7,76 @@
 
 @layer base {
   :root {
-    /* Modern Earth Theme (ea6c2ad) */
-    --background: 0 0% 97%;
-    --foreground: 0 0% 18%;
+    /* Dark Neon Sustainability Theme */
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 18%;
+    --card: 222 47% 14%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 18%;
+    --popover: 222 47% 14%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 150 50% 20%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 222 47% 11%;
 
-    --secondary: 60 30% 85%;
-    --secondary-foreground: 0 0% 18%;
+    --secondary: 187 85% 43%;
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 60 30% 85%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 222 30% 18%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 80 40% 60%;
-    --accent-foreground: 0 0% 18%;
+    --accent: 187 85% 43%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 60 30% 85%;
-    --input: 60 30% 85%;
-    --ring: 150 50% 20%;
+    --border: 222 30% 22%;
+    --input: 222 30% 22%;
+    --ring: 142 71% 45%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 97%;
-    --sidebar-foreground: 0 0% 18%;
-    --sidebar-primary: 150 50% 20%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 60 30% 85%;
-    --sidebar-accent-foreground: 0 0% 18%;
-    --sidebar-border: 60 30% 85%;
-    --sidebar-ring: 150 50% 20%;
+    --sidebar-background: 222 47% 11%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 222 30% 18%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 222 30% 22%;
+    --sidebar-ring: 142 71% 45%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
+    /* Same as :root (dark neon sustainability) */
+    --background: 222 47% 11%;
     --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
+    --card: 222 47% 14%;
     --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
+    --popover: 222 47% 14%;
     --popover-foreground: 210 40% 98%;
-
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-
-    --sidebar-background: 215 28% 17%;
+    --primary: 142 71% 45%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 187 85% 43%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 222 30% 18%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 187 85% 43%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 30% 22%;
+    --input: 222 30% 22%;
+    --ring: 142 71% 45%;
+    --sidebar-background: 222 47% 11%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 215 25% 27%;
+    --sidebar-primary: 142 71% 45%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 222 30% 18%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 215 25% 27%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-border: 222 30% 22%;
+    --sidebar-ring: 142 71% 45%;
   }
 }
 
@@ -105,8 +97,10 @@
   }
 
   body {
-    @apply text-earth-text font-sans;
-    background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+    @apply text-foreground font-sans;
+    background: #0f172a;
+    background-image: url(/theme-assets/pattern-circuit-dark.png);
+    background-repeat: repeat;
     min-height: 100vh;
     min-height: 100dvh;
     background-attachment: fixed;
@@ -146,15 +140,19 @@
   animation: hero-kenburns 25s ease-in-out infinite alternate;
 }
 
-/* Inner pages: earth gradient */
+/* Inner pages: dark theme */
 .page-gradient {
-  background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+  background: #0f172a;
+  background-image: url(/theme-assets/pattern-circuit-dark.png);
+  background-repeat: repeat;
   min-height: 100%;
 }
 
-/* Section-only gradient (no min-height) for map etc. */
+/* Section-only for map etc. */
 .section-gradient {
-  background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+  background: #0f172a;
+  background-image: url(/theme-assets/pattern-circuit-dark.png);
+  background-repeat: repeat;
 }
 
 /* Mobile viewport fixes */
@@ -168,6 +166,16 @@
   .prevent-zoom {
     touch-action: manipulation;
   }
+
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
+  }
+  .glow-primary-hover:hover {
+    box-shadow: 0 0 24px rgba(34, 197, 94, 0.45);
+  }
+  .glow-accent {
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+  }
 }
 
 .markdown-editor {
@@ -175,7 +183,7 @@
 }
 
 .markdown-preview {
-  @apply prose max-w-none prose-blue dark:prose-invert;
+  @apply prose max-w-none prose-invert prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground;
 }
 
 .markdown-preview pre {
