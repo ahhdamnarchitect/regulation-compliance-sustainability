@@ -14,17 +14,17 @@ export default function CheckoutSuccess() {
       <Header />
       <div className="flex-1 container max-w-lg mx-auto px-4 py-16 flex flex-col items-center justify-center text-center">
         <CheckCircle className="w-16 h-16 text-green-600 mb-6" />
-        <h1 className="text-3xl font-heading text-neon-cyan mb-2">You're all set</h1>
-        <p className="text-slate-200 mb-8">
+        <h1 className="text-3xl font-heading text-primary mb-2">You're all set</h1>
+        <p className="text-foreground mb-8">
           Your 7-day free trial has started. You now have full access to MSRD Professional.
         </p>
         {sessionId && (
-          <p className="text-sm text-slate-200/70 mb-6">
-            Session ID: <code className="bg-navy-700 px-1 rounded">{sessionId.slice(0, 24)}…</code>
+          <p className="text-sm text-foreground/70 mb-6">
+            Session ID: <code className="bg-muted px-1 rounded">{sessionId.slice(0, 24)}…</code>
           </p>
         )}
         <Button
-          className="bg-neon-cyan hover:bg-neon-cyan/90 text-white"
+          className="bg-primary hover:bg-primary/90 text-primary-foreground"
           onClick={() => navigate('/dashboard')}
         >
           Go to Dashboard

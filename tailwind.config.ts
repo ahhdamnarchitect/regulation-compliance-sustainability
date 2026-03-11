@@ -21,20 +21,16 @@ export default {
     },
     extend: {
       colors: {
-        // Navy + neon digital/tech theme (Huly, Cleanmeter, Neon, Evervault)
-        navy: {
-          950: '#0a0e17',
-          900: '#0f172a',
-          800: '#1e293b',
-          700: '#334155',
-          600: '#475569',
-          500: '#64748b',
-        },
-        neon: {
-          cyan: '#22d3ee',
-          'cyan-dim': '#06b6d4',
-          green: '#00ff88',
-          'green-dim': '#10b981',
+        // Trust/sustainability palette (B2B, ESG research: deep blue + forest green)
+        brand: {
+          primary: '#1e3a5f',
+          'primary-light': '#2d4a73',
+          accent: '#1B5E3F',
+          'accent-light': '#2d6a4f',
+          background: '#FAFBFC',
+          surface: '#FFFFFF',
+          muted: '#64748b',
+          border: '#e2e8f0',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -83,8 +79,8 @@ export default {
       fontFamily: {
         mono: ['JetBrains Mono', 'monospace'],
         sans: ['Inter', 'Source Sans Pro', 'sans-serif'],
-        heading: ['Space Grotesk', 'Poppins', 'Inter', 'sans-serif'],
-        title: ['Space Grotesk', 'Poppins', 'sans-serif'],
+        heading: ['Lora', 'Georgia', 'serif'],
+        title: ['Lora', 'Georgia', 'serif'],
       },
       letterSpacing: {
         'brand': '0.05em',

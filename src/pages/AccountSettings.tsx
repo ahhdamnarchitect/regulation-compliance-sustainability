@@ -157,37 +157,37 @@ export default function AccountSettings() {
           <Button 
             variant="outline" 
             onClick={() => navigate(-1)} 
-            className="mr-4 text-neon-cyan border-navy-600 hover:bg-navy-600"
+            className="mr-4 text-primary border-border hover:bg-muted"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back
           </Button>
-          <h1 className="text-3xl font-heading text-neon-cyan">Account Settings</h1>
+          <h1 className="text-3xl font-heading text-primary">Account Settings</h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Account Overview */}
           <div className="lg:col-span-1">
-            <Card className="bg-navy-800 border-navy-600">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="flex items-center text-neon-cyan">
+                <CardTitle className="flex items-center text-primary">
                   <User className="w-5 h-5 mr-2" />
                   Account Overview
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-sm font-medium text-slate-200/70">Email</Label>
-                  <p className="text-slate-200">{user?.email}</p>
+                  <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+                  <p className="text-foreground">{user?.email}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-slate-200/70">Plan</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">Plan</Label>
                   <div className="flex items-center mt-1">
                     {getPlanBadge(user?.plan)}
                     {user?.plan === 'free' && (
                       <Button 
                         size="sm" 
-                        className="ml-2 bg-neon-cyan hover:bg-neon-cyan/90 text-white"
+                        className="ml-2 bg-primary hover:bg-primary/90 text-primary-foreground"
                         onClick={handleUpgrade}
                       >
                         <Crown className="w-4 h-4 mr-1" />
@@ -196,7 +196,7 @@ export default function AccountSettings() {
                     )}
                   </div>
                 </div>
-                <div className="pt-4 border-t border-navy-600">
+                <div className="pt-4 border-t border-border">
                   <Button 
                     variant="outline" 
                     onClick={handleLogout}
@@ -212,19 +212,19 @@ export default function AccountSettings() {
           {/* Settings Tabs */}
           <div className="lg:col-span-2">
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-navy-600/50">
-                <TabsTrigger value="profile" className="text-slate-200 data-[state=active]:bg-neon-cyan data-[state=active]:text-navy-900">
+              <TabsList className="grid w-full grid-cols-2 bg-muted">
+                <TabsTrigger value="profile" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   Profile
                 </TabsTrigger>
-                <TabsTrigger value="security" className="text-slate-200 data-[state=active]:bg-neon-cyan data-[state=active]:text-navy-900">
+                <TabsTrigger value="security" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
                   Security
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile" className="mt-6">
-                <Card className="bg-navy-800 border-navy-600">
+                <Card className="bg-card border-border">
                   <CardHeader>
-                    <CardTitle className="flex items-center text-neon-cyan">
+                    <CardTitle className="flex items-center text-primary">
                       <User className="w-5 h-5 mr-2" />
                       Profile Information
                     </CardTitle>
@@ -232,7 +232,7 @@ export default function AccountSettings() {
                   <CardContent>
                     <form onSubmit={handleProfileUpdate} className="space-y-4">
                       <div>
-                        <Label htmlFor="name" className="text-slate-200 font-medium">
+                        <Label htmlFor="name" className="text-foreground font-medium">
                           Full Name
                         </Label>
                         <Input
@@ -240,13 +240,13 @@ export default function AccountSettings() {
                           type="text"
                           value={profileData.name}
                           onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                          className="border-navy-600 focus:border-neon-cyan focus:ring-neon-cyan"
+                          className="border-border focus:border-primary focus:ring-primary"
                           required
                         />
                       </div>
                       
                       <div>
-                        <Label htmlFor="email" className="text-slate-200 font-medium">
+                        <Label htmlFor="email" className="text-foreground font-medium">
                           Email Address
                         </Label>
                         <Input
@@ -254,13 +254,13 @@ export default function AccountSettings() {
                           type="email"
                           value={profileData.email}
                           onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                          className="border-navy-600 focus:border-neon-cyan focus:ring-neon-cyan"
+                          className="border-border focus:border-primary focus:ring-primary"
                           required
                         />
                       </div>
 
                       <div>
-                        <Label htmlFor="profileConfirmPassword" className="text-slate-200 font-medium">
+                        <Label htmlFor="profileConfirmPassword" className="text-foreground font-medium">
                           Confirm your password
                         </Label>
                         <div className="relative">
@@ -270,13 +270,13 @@ export default function AccountSettings() {
                             value={profileConfirmPassword}
                             onChange={(e) => setProfileConfirmPassword(e.target.value)}
                             placeholder="Enter your password to save changes"
-                            className="border-navy-600 focus:border-neon-cyan focus:ring-neon-cyan pr-10"
+                            className="border-border focus:border-primary focus:ring-primary pr-10"
                             required
                           />
                           <button
                             type="button"
                             onClick={() => setShowProfilePassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-200/60 hover:text-slate-200 p-1 rounded"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded"
                             aria-label={showProfilePassword ? 'Hide password' : 'Show password'}
                           >
                             {showProfilePassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -286,7 +286,7 @@ export default function AccountSettings() {
                       
                       <Button 
                         type="submit" 
-                        className="w-full bg-neon-cyan hover:bg-neon-cyan/90 text-white"
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                         disabled={loading}
                       >
                         {loading ? 'Updating...' : 'Update Profile'}
@@ -297,9 +297,9 @@ export default function AccountSettings() {
               </TabsContent>
 
               <TabsContent value="security" className="mt-6">
-                <Card className="bg-navy-800 border-navy-600">
+                <Card className="bg-card border-border">
                   <CardHeader>
-                    <CardTitle className="flex items-center text-neon-cyan">
+                    <CardTitle className="flex items-center text-primary">
                       <Lock className="w-5 h-5 mr-2" />
                       Security Settings
                     </CardTitle>
@@ -307,7 +307,7 @@ export default function AccountSettings() {
                   <CardContent>
                     <form onSubmit={handlePasswordChange} className="space-y-4">
                       <div>
-                        <Label htmlFor="currentPassword" className="text-slate-200 font-medium">
+                        <Label htmlFor="currentPassword" className="text-foreground font-medium">
                           Current Password
                         </Label>
                         <div className="relative">
@@ -316,13 +316,13 @@ export default function AccountSettings() {
                             type={showCurrentPassword ? 'text' : 'password'}
                             value={passwordData.currentPassword}
                             onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                            className="border-navy-600 focus:border-neon-cyan focus:ring-neon-cyan pr-10"
+                            className="border-border focus:border-primary focus:ring-primary pr-10"
                             required
                           />
                           <button
                             type="button"
                             onClick={() => setShowCurrentPassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-200/60 hover:text-slate-200 p-1 rounded"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded"
                             aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
                           >
                             {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -331,7 +331,7 @@ export default function AccountSettings() {
                       </div>
                       
                       <div>
-                        <Label htmlFor="newPassword" className="text-slate-200 font-medium">
+                        <Label htmlFor="newPassword" className="text-foreground font-medium">
                           New Password
                         </Label>
                         <div className="relative">
@@ -340,13 +340,13 @@ export default function AccountSettings() {
                             type={showNewPassword ? 'text' : 'password'}
                             value={passwordData.newPassword}
                             onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                            className="border-navy-600 focus:border-neon-cyan focus:ring-neon-cyan pr-10"
+                            className="border-border focus:border-primary focus:ring-primary pr-10"
                             required
                           />
                           <button
                             type="button"
                             onClick={() => setShowNewPassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-200/60 hover:text-slate-200 p-1 rounded"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded"
                             aria-label={showNewPassword ? 'Hide password' : 'Show password'}
                           >
                             {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -355,7 +355,7 @@ export default function AccountSettings() {
                       </div>
                       
                       <div>
-                        <Label htmlFor="confirmPassword" className="text-slate-200 font-medium">
+                        <Label htmlFor="confirmPassword" className="text-foreground font-medium">
                           Confirm New Password
                         </Label>
                         <div className="relative">
@@ -364,13 +364,13 @@ export default function AccountSettings() {
                             type={showConfirmPassword ? 'text' : 'password'}
                             value={passwordData.confirmPassword}
                             onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                            className="border-navy-600 focus:border-neon-cyan focus:ring-neon-cyan pr-10"
+                            className="border-border focus:border-primary focus:ring-primary pr-10"
                             required
                           />
                           <button
                             type="button"
                             onClick={() => setShowConfirmPassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-200/60 hover:text-slate-200 p-1 rounded"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded"
                             aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                           >
                             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -380,7 +380,7 @@ export default function AccountSettings() {
                       
                       <Button 
                         type="submit" 
-                        className="w-full bg-neon-cyan hover:bg-neon-cyan/90 text-white"
+                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
                         disabled={loading}
                       >
                         {loading ? 'Changing Password...' : 'Change Password'}

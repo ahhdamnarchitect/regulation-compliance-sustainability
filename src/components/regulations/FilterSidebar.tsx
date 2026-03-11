@@ -60,14 +60,14 @@ function FilterSection({
   };
 
   return (
-    <div className="border-b border-navy-600/50 pb-4 mb-4 last:border-0 last:mb-0">
+    <div className="border-b border-border pb-4 mb-4 last:border-0 last:mb-0">
       <div className="flex items-center justify-between mb-2">
-        <span className="font-semibold text-slate-200 text-sm">{title}</span>
+        <span className="font-semibold text-foreground text-sm">{title}</span>
         {showClear && hasSelectionInSection && (
           <button
             type="button"
             onClick={handleClearSection}
-            className="text-neon-cyan hover:underline text-xs font-medium"
+            className="text-primary hover:underline text-xs font-medium"
           >
             Clear
           </button>
@@ -84,13 +84,13 @@ function FilterSection({
             const displayLabel = filterKey === 'status' ? formatStatus(opt) : opt;
             return (
               <li key={opt}>
-                <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-navy-600/50 cursor-pointer">
+                <label className="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-muted cursor-pointer">
                   <Checkbox
                     checked={!!isSelected}
                     onCheckedChange={(checked) => onToggle(filterKey, value, !!checked)}
-                    className="border-navy-500 data-[state=checked]:bg-neon-cyan data-[state=checked]:border-neon-cyan"
+                    className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                   />
-                  <span className={isSelected ? 'text-neon-cyan font-medium' : 'text-slate-200/90'}>{displayLabel}</span>
+                  <span className={isSelected ? 'text-primary font-medium' : 'text-foreground/90'}>{displayLabel}</span>
                 </label>
               </li>
             );
@@ -159,15 +159,15 @@ export function FilterSidebar({
   };
 
   return (
-    <aside className="w-full lg:w-64 shrink-0 bg-navy-800 border border-navy-600 rounded-lg p-4 shadow-sm h-fit">
+    <aside className="w-full lg:w-64 shrink-0 bg-card border border-border rounded-lg p-4 shadow-sm h-fit">
       <div className="flex items-center justify-between mb-4">
-        <span className="font-bold text-slate-200">Filters</span>
+        <span className="font-bold text-foreground">Filters</span>
         {hasActiveFilters && (
           <Button
             variant="ghost"
             size="sm"
             onClick={onClearFilters}
-            className="text-neon-cyan hover:bg-navy-600/50 h-8 px-2 font-medium"
+            className="text-primary hover:bg-muted h-8 px-2 font-medium"
           >
             <X className="w-3.5 h-3.5 mr-1" />
             Clear All

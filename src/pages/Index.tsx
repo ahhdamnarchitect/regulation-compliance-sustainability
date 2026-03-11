@@ -120,26 +120,29 @@ export default function Index() {
         )}
 
         <main className="flex-1 max-w-full overflow-x-hidden">
-          {/* Hero: navy overlay + one value line + neon CTAs */}
+          {/* Hero: deep blue overlay + trust CTAs */}
           <section className="relative w-full min-h-[50vh] flex flex-col items-center justify-center px-4 py-16 md:py-24 overflow-hidden">
             <div
               className="absolute inset-0 bg-cover bg-center hero-bg-animate"
               style={{ backgroundImage: 'url(/hero-sustainability.jpg)' }}
               aria-hidden
             />
-            <div className="absolute inset-0 bg-navy-950/85" />
-            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-navy-900/90" />
+            <div className="absolute inset-0 bg-brand-primary/85" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-brand-primary/90" />
             <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">
               <h1 className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight mb-4 md:mb-6 drop-shadow-lg">
                 Search and track global sustainability regulations.
               </h1>
-              <p className="text-lg md:text-xl text-slate-200 mb-8 md:mb-10 drop-shadow-sm">
+              <p className="text-lg md:text-xl text-white/90 mb-6 md:mb-8 drop-shadow-sm">
                 One place for CSRD, TCFD, ISSB and beyond.
+              </p>
+              <p className="text-sm text-white/80 mb-8 md:mb-10">
+                Secure access • Structured data • Built for compliance teams
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
                 <Button
                   onClick={scrollToMap}
-                  className="w-full sm:w-auto h-12 px-8 bg-neon-cyan text-navy-900 hover:bg-neon-cyan/90 font-medium rounded-lg transition-all shadow-lg shadow-neon-cyan/25 hover:shadow-neon-cyan/40 border-0"
+                  className="w-full sm:w-auto h-12 px-8 bg-white text-brand-primary hover:bg-white/90 font-medium rounded-lg transition-all shadow-lg border-0"
                 >
                   <MapPin className="w-5 h-5 mr-2 inline-block" />
                   Explore the map
@@ -147,7 +150,7 @@ export default function Index() {
                 <Button
                   variant="outline"
                   onClick={() => handleSearch()}
-                  className="w-full sm:w-auto h-12 px-6 border-2 border-neon-cyan text-neon-cyan bg-neon-cyan/10 hover:bg-neon-cyan/20 font-medium rounded-lg backdrop-blur-sm"
+                  className="w-full sm:w-auto h-12 px-6 border-2 border-white text-white bg-white/10 hover:bg-white/20 font-medium rounded-lg backdrop-blur-sm"
                 >
                   <Search className="w-4 h-4 mr-2 inline-block" />
                   Search by topic
@@ -156,17 +159,17 @@ export default function Index() {
             </RevealSection>
           </section>
 
-          {/* Map: navy section + neon accent */}
+          {/* Map: light section */}
           <section
             id="map-section"
-            className="relative w-full bg-navy-900 py-8 md:py-12"
+            className="relative w-full bg-brand-background py-8 md:py-12"
           >
             <RevealSection delay={100} variant="slide-up" className="w-full">
               <div className="w-full px-2 sm:px-4 max-w-7xl mx-auto">
-                <p className="text-center text-sm text-neon-cyan/90 mb-4">
+                <p className="text-center text-sm text-muted-foreground mb-4">
                   Click a region to explore regulations
                 </p>
-                <div className="rounded-xl overflow-hidden border border-neon-cyan/20 shadow-2xl shadow-neon-cyan/5 bg-navy-800 min-h-[400px] md:min-h-[500px]">
+                <div className="rounded-xl overflow-hidden border border-brand-border shadow-xl bg-brand-surface min-h-[400px] md:min-h-[500px]">
                   <InteractiveMap
                     regulations={regulations}
                     onRegulationClick={handleRegulationClick}
@@ -177,13 +180,13 @@ export default function Index() {
           </section>
 
           {/* Search by framework */}
-          <section className="w-full py-12 md:py-16 bg-navy-950">
+          <section className="w-full py-12 md:py-16 bg-background">
             <div className="max-w-3xl mx-auto px-4 text-center">
               <RevealSection delay={0} variant="slide-up">
-                <h2 className="font-title text-xl md:text-2xl font-semibold text-slate-100 mb-2">
+                <h2 className="font-title text-xl md:text-2xl font-semibold text-foreground mb-2">
                   Search by framework
                 </h2>
-                <p className="text-slate-400 text-sm md:text-base mb-6">
+                <p className="text-muted-foreground text-sm md:text-base mb-6">
                   Jump to CSRD, TCFD, ISSB, and other major frameworks
                 </p>
                 <div className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8">
@@ -191,7 +194,7 @@ export default function Index() {
                     <button
                       key={term}
                       onClick={() => handlePillSearch(term)}
-                      className="px-4 py-2 rounded-full text-sm font-medium border border-navy-600 text-slate-200 hover:bg-neon-cyan/20 hover:text-neon-cyan hover:border-neon-cyan/50 transition-colors"
+                      className="px-4 py-2 rounded-full text-sm font-medium border border-border bg-card text-foreground hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-colors"
                     >
                       {term}
                     </button>
@@ -206,11 +209,11 @@ export default function Index() {
                     regulations={regulations}
                     suggestionsEnabled={false}
                     className="flex-1"
-                    inputClassName="h-11 rounded-lg border-navy-600 bg-navy-800 text-slate-200 placeholder:text-slate-500 focus:border-neon-cyan focus:ring-neon-cyan/50"
+                    inputClassName="h-11 rounded-lg border-border bg-card text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/50"
                   />
                   <Button
                     onClick={() => handleSearch()}
-                    className="h-11 px-6 bg-neon-cyan text-navy-900 hover:bg-neon-cyan/90 font-medium rounded-lg shrink-0"
+                    className="h-11 px-6 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg shrink-0"
                   >
                     Search
                   </Button>
@@ -219,25 +222,27 @@ export default function Index() {
             </div>
           </section>
 
-          {/* Pricing CTA */}
-          <section id="pricing" className="w-full py-12 md:py-16 bg-navy-900 border-t border-navy-700">
-            <div className="max-w-2xl mx-auto px-4 text-center">
-              <RevealSection delay={0} variant="fade">
-                <h2 className="font-title text-xl md:text-2xl font-semibold text-slate-100 mb-2">
-                  Unlock search & export
-                </h2>
-                <p className="text-slate-400 text-sm md:text-base mb-6">
-                  Search, bookmark, and export regulations. Start with a free trial.
-                </p>
-                <Button
-                  onClick={() => (user ? openUpgrade() : setShowLogin(true))}
-                  className="h-12 px-8 bg-neon-cyan text-navy-900 hover:bg-neon-cyan/90 font-medium rounded-lg shadow-lg shadow-neon-cyan/20"
-                >
-                  {user ? 'Upgrade' : 'Start free trial'}
-                </Button>
-              </RevealSection>
-            </div>
-          </section>
+          {/* Pricing CTA — only for free or logged-out users */}
+          {(!user || user?.plan === 'free') && (
+            <section id="pricing" className="w-full py-12 md:py-16 bg-card border-t border-border">
+              <div className="max-w-2xl mx-auto px-4 text-center">
+                <RevealSection delay={0} variant="fade">
+                  <h2 className="font-title text-xl md:text-2xl font-semibold text-foreground mb-2">
+                    Unlock search & export
+                  </h2>
+                  <p className="text-muted-foreground text-sm md:text-base mb-6">
+                    Search, bookmark, and export regulations. Start with a free trial.
+                  </p>
+                  <Button
+                    onClick={() => (user ? openUpgrade() : setShowLogin(true))}
+                    className="h-12 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-medium rounded-lg shadow-lg"
+                  >
+                    {user ? 'Upgrade' : 'Start free trial'}
+                  </Button>
+                </RevealSection>
+              </div>
+            </section>
+          )}
         </main>
       </div>
       <Footer />

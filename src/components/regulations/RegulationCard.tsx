@@ -48,9 +48,9 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
   const displayStatus = regulation.status === 'proposed' ? 'proposed' : 'enacted';
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'enacted': return 'bg-neon-green/20 text-neon-green border-neon-green/40';
+      case 'enacted': return 'bg-accent/20 text-accent border-accent/40';
       case 'proposed': return 'bg-amber-400/20 text-amber-300 border-amber-400/40';
-      default: return 'bg-navy-600 text-slate-300 border-navy-500';
+      default: return 'bg-muted text-muted-foreground border-border';
     }
   };
 
@@ -104,14 +104,14 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-neon-cyan bg-navy-800 border-navy-600 rounded-lg shadow-sm">
+    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary bg-card border-border rounded-lg shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1">
-            <h3 className="font-title text-lg font-semibold text-slate-200 mb-2 line-clamp-2">
+            <h3 className="font-title text-lg font-semibold text-foreground mb-2 line-clamp-2">
               {regulation.title}
             </h3>
-            <div className="flex items-center flex-wrap gap-2 text-sm text-slate-200/70 mb-2">
+            <div className="flex items-center flex-wrap gap-2 text-sm text-muted-foreground mb-2">
               <span className="flex items-center">
                 <MapPin className="w-4 h-4 mr-1" />
                 {regulation.jurisdiction || regulation.region || 'Unknown'}
@@ -122,7 +122,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
               </span>
               {getDeadlineIndicator()}
             </div>
-            <div className="text-xs text-slate-200/60">
+            <div className="text-xs text-muted-foreground">
               {regulation.country} • {regulation.sector}
             </div>
           </div>

@@ -72,17 +72,17 @@ const mapStyles = `
   
   .leaflet-popup-content-wrapper {
     border-radius: 8px !important;
-    background: #1e293b !important;
-    border: 1px solid rgba(34, 211, 238, 0.3) !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 211, 238, 0.08) !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
     min-width: 280px !important;
     max-width: 320px !important;
     width: 320px !important;
   }
   
   .leaflet-popup-tip {
-    background: #1e293b !important;
-    border: 1px solid rgba(34, 211, 238, 0.3) !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
   }
   
   .leaflet-popup-content {
@@ -183,11 +183,11 @@ type LocationLevel = 'region' | 'country' | 'state';
 // Regulation scope: Global, Regional, National, State/Province
 type RegulationScope = 'global' | 'regional' | 'country' | 'state';
 
-// Navy + neon theme for pins
+// Trust theme: primary blue + accent green for pins
 const mapThemeColors = {
-  pin: '#22d3ee',        // neon-cyan
-  pinStroke: '#0f172a',  // navy-900
-  dot: '#22d3ee',
+  pin: '#1e3a5f',
+  pinStroke: '#1e3a5f',
+  dot: '#1B5E3F',
 };
 
 type RegulationTarget =
@@ -380,7 +380,7 @@ const getRegulationLevel = (regulation: Regulation): RegulationScope => {
   return 'country';
 };
 
-// Create custom marker icon using neon/navy theme
+// Create custom marker icon using primary/accent theme
 const createCustomIcon = (_locationLevel: LocationLevel) => {
   return new Icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(`
@@ -395,12 +395,12 @@ const createCustomIcon = (_locationLevel: LocationLevel) => {
   });
 };
 
-// Navy/neon scope badges for popups
+// Trust theme scope badges for popups (primary blue + accent green)
 const regulationLevelColors: Record<RegulationScope, { bg: string; text: string; border: string }> = {
-  global: { bg: 'rgba(34,211,238,0.15)', text: '#22d3ee', border: 'rgba(34,211,238,0.5)' },
-  regional: { bg: 'rgba(34,211,238,0.1)', text: '#67e8f9', border: 'rgba(34,211,238,0.4)' },
-  country: { bg: 'rgba(0,255,136,0.15)', text: '#00ff88', border: 'rgba(0,255,136,0.5)' },
-  state: { bg: 'rgba(0,255,136,0.1)', text: '#34d399', border: 'rgba(0,255,136,0.4)' },
+  global: { bg: 'rgba(30,58,95,0.12)', text: '#1e3a5f', border: 'rgba(30,58,95,0.4)' },
+  regional: { bg: 'rgba(30,58,95,0.08)', text: '#2d4a73', border: 'rgba(30,58,95,0.35)' },
+  country: { bg: 'rgba(27,94,63,0.12)', text: '#1B5E3F', border: 'rgba(27,94,63,0.4)' },
+  state: { bg: 'rgba(27,94,63,0.08)', text: '#2d6a4f', border: 'rgba(27,94,63,0.35)' },
 };
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
@@ -582,18 +582,18 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   const getTileLayerUrl = () => {
-    // CARTO Dark Matter: cutting-edge look, matches dark map section
-    return 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png';
+    // CARTO Voyager: light base map for trust/sustainability theme
+    return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
   };
 
   const getTileLayerAttribution = () => {
     return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
   };
 
-  const MAP_BG = '#0f172a'; /* navy-900 */
+  const MAP_BG = '#FAFBFC';
 
   return (
-    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-neon-cyan/20 relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_BG }}>
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-border relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_BG }}>
       
       <MapContainer
         center={[20, 0]}
@@ -655,7 +655,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 offset={[0, -35]}
               >
                 <div className="p-2 w-full max-w-[280px] sm:max-w-[320px]">
-                  <h3 className="font-semibold text-neon-cyan mb-1 flex items-center">
+                  <h3 className="font-semibold text-primary mb-1 flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
                     {coords.name}
                   </h3>
