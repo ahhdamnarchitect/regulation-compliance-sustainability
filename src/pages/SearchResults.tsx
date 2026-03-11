@@ -327,7 +327,7 @@ export default function SearchResults() {
             ) : filteredRegulations.length === 0 ? (
               <div className="text-center py-12">
                 <p className="text-foreground text-lg">No regulations found matching your criteria.</p>
-                <p className="text-muted-foreground mt-2">Try adjusting your search terms or filters.</p>
+                <p className="text-foreground/60 mt-2">Try adjusting your search terms or filters.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

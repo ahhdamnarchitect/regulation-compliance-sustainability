@@ -72,17 +72,15 @@ const mapStyles = `
   
   .leaflet-popup-content-wrapper {
     border-radius: 8px !important;
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12) !important;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
     min-width: 280px !important;
     max-width: 320px !important;
     width: 320px !important;
   }
   
   .leaflet-popup-tip {
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+    background: white !important;
+    border: 1px solid #ccc !important;
   }
   
   .leaflet-popup-content {
@@ -183,11 +181,11 @@ type LocationLevel = 'region' | 'country' | 'state';
 // Regulation scope: Global, Regional, National, State/Province
 type RegulationScope = 'global' | 'regional' | 'country' | 'state';
 
-// Trust theme: primary blue + accent green for pins
-const mapThemeColors = {
-  pin: '#1e3a5f',
-  pinStroke: '#1e3a5f',
-  dot: '#1B5E3F',
+// Earth theme colors for pins
+const earthThemeColors = {
+  primary: '#1B4332',    // Deep forest green
+  accent: '#A8C686',     // Soft sage
+  sand: '#DAD7CD',       // Muted sand
 };
 
 type RegulationTarget =
@@ -380,13 +378,13 @@ const getRegulationLevel = (regulation: Regulation): RegulationScope => {
   return 'country';
 };
 
-// Create custom marker icon using primary/accent theme
+// Create custom marker icon: earth green fill, white stroke, white inner circle
 const createCustomIcon = (_locationLevel: LocationLevel) => {
   return new Icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(`
       <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="${mapThemeColors.pin}" stroke="${mapThemeColors.pinStroke}" stroke-width="1.5"/>
-        <circle cx="12.5" cy="12.5" r="6" fill="${mapThemeColors.dot}"/>
+        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="${earthThemeColors.primary}" stroke="white" stroke-width="1.5"/>
+        <circle cx="12.5" cy="12.5" r="6" fill="white"/>
       </svg>
     `)}`,
     iconSize: [25, 41],
@@ -395,12 +393,12 @@ const createCustomIcon = (_locationLevel: LocationLevel) => {
   });
 };
 
-// Trust theme scope badges for popups (primary blue + accent green)
+// Earth theme scope badges: indigo (global/regional), green (country), amber (state)
 const regulationLevelColors: Record<RegulationScope, { bg: string; text: string; border: string }> = {
-  global: { bg: 'rgba(30,58,95,0.12)', text: '#1e3a5f', border: 'rgba(30,58,95,0.4)' },
-  regional: { bg: 'rgba(30,58,95,0.08)', text: '#2d4a73', border: 'rgba(30,58,95,0.35)' },
-  country: { bg: 'rgba(27,94,63,0.12)', text: '#1B5E3F', border: 'rgba(27,94,63,0.4)' },
-  state: { bg: 'rgba(27,94,63,0.08)', text: '#2d6a4f', border: 'rgba(27,94,63,0.35)' },
+  global: { bg: 'rgba(79,70,229,0.12)', text: '#4f46e5', border: 'rgba(79,70,229,0.4)' },
+  regional: { bg: 'rgba(79,70,229,0.08)', text: '#6366f1', border: 'rgba(79,70,229,0.35)' },
+  country: { bg: 'rgba(27,67,50,0.12)', text: '#1B4332', border: 'rgba(27,67,50,0.4)' },
+  state: { bg: 'rgba(217,119,6,0.12)', text: '#b45309', border: 'rgba(217,119,6,0.4)' },
 };
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
@@ -582,18 +580,18 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   const getTileLayerUrl = () => {
-    // CARTO Voyager: light base map for trust/sustainability theme
-    return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png';
+    // CARTO Voyager: light base map for earth theme (retina {r})
+    return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
   };
 
   const getTileLayerAttribution = () => {
     return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
   };
 
-  const MAP_BG = '#FAFBFC';
+  const MAP_WATER_BG = '#d5e8eb';
 
   return (
-    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-border relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_BG }}>
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_WATER_BG, borderColor: MAP_WATER_BG }}>
       
       <MapContainer
         center={[20, 0]}
@@ -601,7 +599,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         style={{ 
           height: '100%', 
           width: '100%',
-          backgroundColor: MAP_BG
+          backgroundColor: MAP_WATER_BG
         }}
         className="z-0 rounded-lg"
         maxBounds={[[-85, -180], [85, 180]]}
@@ -655,11 +653,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 offset={[0, -35]}
               >
                 <div className="p-2 w-full max-w-[280px] sm:max-w-[320px]">
-                  <h3 className="font-semibold text-primary mb-1 flex items-center">
+                  <h3 className="font-semibold text-earth-primary mb-1 flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
                     {coords.name}
                   </h3>
-                  <p className="text-sm text-slate-200 mb-3">
+                  <p className="text-sm text-earth-text mb-3">
                     {locationRegulations.length} applicable regulation{locationRegulations.length !== 1 ? 's' : ''}
                   </p>
                   
@@ -688,7 +686,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                               >
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1 min-w-0">
-                                    <h4 className="font-medium text-xs text-slate-200 line-clamp-2 mb-1">
+                                    <h4 className="font-medium text-xs text-earth-text line-clamp-2 mb-1">
                                       {regulation.title}
                                     </h4>
                                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -700,7 +698,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                                       >
                                         {formatStatus(regulation.status)}
                                       </Badge>
-                                      <span className="text-[10px] text-slate-400">
+                                      <span className="text-[10px] text-earth-text/60">
                                         {regulation.jurisdiction}
                                       </span>
                                     </div>

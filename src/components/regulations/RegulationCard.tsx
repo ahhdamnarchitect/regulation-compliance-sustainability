@@ -111,7 +111,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
             <h3 className="font-title text-lg font-semibold text-foreground mb-2 line-clamp-2">
               {regulation.title}
             </h3>
-            <div className="flex items-center flex-wrap gap-2 text-sm text-muted-foreground mb-2">
+            <div className="flex items-center flex-wrap gap-2 text-sm text-foreground/60 mb-2">
               <span className="flex items-center">
                 <MapPin className="w-4 h-4 mr-1" />
                 {regulation.jurisdiction || regulation.region || 'Unknown'}
@@ -122,7 +122,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
               </span>
               {getDeadlineIndicator()}
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-foreground/60">
               {regulation.country} • {regulation.sector}
             </div>
           </div>

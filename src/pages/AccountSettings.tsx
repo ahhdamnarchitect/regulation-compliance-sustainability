@@ -177,11 +177,11 @@ export default function AccountSettings() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Email</Label>
+                  <Label className="text-sm font-medium text-foreground/60">Email</Label>
                   <p className="text-foreground">{user?.email}</p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Plan</Label>
+                  <Label className="text-sm font-medium text-foreground/60">Plan</Label>
                   <div className="flex items-center mt-1">
                     {getPlanBadge(user?.plan)}
                     {user?.plan === 'free' && (
@@ -276,7 +276,7 @@ export default function AccountSettings() {
                           <button
                             type="button"
                             onClick={() => setShowProfilePassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground p-1 rounded"
                             aria-label={showProfilePassword ? 'Hide password' : 'Show password'}
                           >
                             {showProfilePassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -322,7 +322,7 @@ export default function AccountSettings() {
                           <button
                             type="button"
                             onClick={() => setShowCurrentPassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground p-1 rounded"
                             aria-label={showCurrentPassword ? 'Hide password' : 'Show password'}
                           >
                             {showCurrentPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -346,7 +346,7 @@ export default function AccountSettings() {
                           <button
                             type="button"
                             onClick={() => setShowNewPassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground p-1 rounded"
                             aria-label={showNewPassword ? 'Hide password' : 'Show password'}
                           >
                             {showNewPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -370,7 +370,7 @@ export default function AccountSettings() {
                           <button
                             type="button"
                             onClick={() => setShowConfirmPassword((v) => !v)}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded"
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground/60 hover:text-foreground p-1 rounded"
                             aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
                           >
                             {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Sans+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,45 +7,45 @@
 
 @layer base {
   :root {
-    /* Trust/sustainability: deep blue + forest green, light backgrounds */
-    --background: 210 20% 98%; /* #FAFBFC */
-    --foreground: 220 15% 18%; /* #2d3748 */
+    /* Modern Earth Theme (ea6c2ad) */
+    --background: 0 0% 97%;
+    --foreground: 0 0% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 15% 18%;
+    --card-foreground: 0 0% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 15% 18%;
+    --popover-foreground: 0 0% 18%;
 
-    --primary: 214 42% 26%; /* #1e3a5f deep blue */
+    --primary: 150 50% 20%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 96%;
-    --secondary-foreground: 220 15% 18%;
+    --secondary: 60 30% 85%;
+    --secondary-foreground: 0 0% 18%;
 
-    --muted: 220 14% 96%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 60 30% 85%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 152 42% 26%; /* #1B5E3F forest green */
-    --accent-foreground: 0 0% 100%;
+    --accent: 80 40% 60%;
+    --accent-foreground: 0 0% 18%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 214 42% 26%;
+    --border: 60 30% 85%;
+    --input: 60 30% 85%;
+    --ring: 150 50% 20%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 210 20% 98%;
-    --sidebar-foreground: 220 15% 18%;
-    --sidebar-primary: 214 42% 26%;
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 0 0% 18%;
+    --sidebar-primary: 150 50% 20%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 14% 96%;
-    --sidebar-accent-foreground: 220 15% 18%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 214 42% 26%;
+    --sidebar-accent: 60 30% 85%;
+    --sidebar-accent-foreground: 0 0% 18%;
+    --sidebar-border: 60 30% 85%;
+    --sidebar-ring: 150 50% 20%;
   }
 
   .dark {
@@ -105,8 +105,8 @@
   }
 
   body {
-    @apply text-foreground font-sans;
-    background: #FAFBFC;
+    @apply text-earth-text font-sans;
+    background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
     min-height: 100vh;
     min-height: 100dvh;
     background-attachment: fixed;
@@ -114,7 +114,7 @@
   
   h1, h2, h3, h4, h5, h6 {
     font-family: Lora, Georgia, serif;
-    @apply font-semibold text-foreground;
+    @apply font-semibold;
   }
   
   .brand-text {
@@ -146,9 +146,9 @@
   animation: hero-kenburns 25s ease-in-out infinite alternate;
 }
 
-/* Inner pages: light trust/sustainability consistency */
+/* Inner pages: earth gradient */
 .page-gradient {
-  background: linear-gradient(180deg, #FAFBFC 0%, #F5F6F7 100%);
+  background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
   min-height: 100%;
 }
 
@@ -170,7 +170,7 @@
 }
 
 .markdown-preview {
-  @apply prose max-w-none prose-headings:text-foreground prose-p:text-foreground/90 prose-a:text-primary;
+  @apply prose max-w-none prose-blue dark:prose-invert;
 }
 
 .markdown-preview pre {

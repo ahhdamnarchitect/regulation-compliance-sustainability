@@ -21,16 +21,18 @@ export default {
     },
     extend: {
       colors: {
-        // Trust/sustainability palette (B2B, ESG research: deep blue + forest green)
-        brand: {
-          primary: '#1e3a5f',
-          'primary-light': '#2d4a73',
-          accent: '#1B5E3F',
-          'accent-light': '#2d6a4f',
-          background: '#FAFBFC',
-          surface: '#FFFFFF',
-          muted: '#64748b',
-          border: '#e2e8f0',
+        // Quite Nice / quitenice.com inspired (ea6c2ad)
+        quitenice: {
+          green: 'rgb(25, 89, 8)',
+          cream: '#FAF8F5',
+          searchBox: '#FECD97',
+        },
+        earth: {
+          primary: 'rgb(25, 89, 8)',
+          accent: '#A8C686',
+          sand: '#DAD7CD',
+          background: '#F7F8F3',
+          text: '#2E2E2E',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -79,7 +81,7 @@ export default {
       fontFamily: {
         mono: ['JetBrains Mono', 'monospace'],
         sans: ['Inter', 'Source Sans Pro', 'sans-serif'],
-        heading: ['Lora', 'Georgia', 'serif'],
+        heading: ['Poppins', 'Montserrat', 'Inter', 'sans-serif'],
         title: ['Lora', 'Georgia', 'serif'],
       },
       letterSpacing: {
