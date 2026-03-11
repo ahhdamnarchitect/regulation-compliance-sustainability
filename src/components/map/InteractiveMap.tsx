@@ -152,6 +152,23 @@ const mapStyles = `
     background: #a1a1a1;
   }
   
+  /* Zoom control: match map water background, no white box */
+  .leaflet-control-zoom {
+    border: 1px solid #b8d4da !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08) !important;
+  }
+  .leaflet-control-zoom a {
+    background: #d5e8eb !important;
+    color: #2d5a63 !important;
+    border-bottom: 1px solid #b8d4da !important;
+  }
+  .leaflet-control-zoom a:hover {
+    background: #c4dfe4 !important;
+  }
+  .leaflet-control-zoom a:last-child {
+    border-bottom: none !important;
+  }
+  
 `;
 
 // Fix for default markers in react-leaflet

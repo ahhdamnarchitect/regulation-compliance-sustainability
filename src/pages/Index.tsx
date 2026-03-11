@@ -154,17 +154,18 @@ export default function Index() {
             </RevealSection>
           </section>
 
-          {/* Map: light section */}
+          {/* Map: water-tone section and container to match map, no white edges */}
           <section
             id="map-section"
-            className="relative w-full bg-background py-8 md:py-12"
+            className="relative w-full py-8 md:py-12"
+            style={{ backgroundColor: '#d5e8eb' }}
           >
             <RevealSection delay={100} variant="slide-up" className="w-full">
               <div className="w-full px-2 sm:px-4 max-w-7xl mx-auto">
                 <p className="text-center text-sm text-earth-text mb-4">
                   Click a region to explore regulations
                 </p>
-                <div className="rounded-xl overflow-hidden border border-earth-sand shadow-xl bg-white min-h-[400px] md:min-h-[500px]">
+                <div className="rounded-xl overflow-hidden shadow-lg min-h-[400px] md:min-h-[500px]" style={{ backgroundColor: '#d5e8eb', border: '1px solid #b8d4da' }}>
                   <InteractiveMap
                     regulations={regulations}
                     onRegulationClick={handleRegulationClick}
