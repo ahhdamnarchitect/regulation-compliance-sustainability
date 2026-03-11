@@ -229,12 +229,13 @@ export default function RegulationDetail() {
   return (
     <div className="min-h-screen flex flex-col bg-transparent">
       <Header />
-      <div className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 py-8">
+      <div className="flex-1 container mx-auto px-4 py-8">
+        {/* Back Button */}
         <div className="mb-6">
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="text-primary hover:text-primary/90 font-medium"
+            className="text-primary hover:text-primary/90"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Results
@@ -244,7 +245,7 @@ export default function RegulationDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <Card className="border border-border rounded-2xl shadow-card overflow-hidden">
+            <Card className="border border-border rounded-xl shadow-card">
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -385,91 +386,93 @@ export default function RegulationDetail() {
             </Card>
           </div>
 
-          {/* Bento-style sidebar */}
-          <aside className="space-y-4">
-            {/* Export & Share */}
-            <div className="rounded-2xl border border-border bg-card shadow-card overflow-hidden">
-              <div className="px-4 py-3 border-b border-border bg-muted/30">
-                <h3 className="text-sm font-semibold text-foreground">Export & Share</h3>
-              </div>
-              <div className="p-4 space-y-3">
+          {/* Sidebar */}
+          <div className="space-y-6">
+            {/* Actions */}
+            <Card className="border-border">
+              <CardHeader>
+                <CardTitle className="text-lg text-foreground">Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
                 {user ? (
                   <>
-                    <Button
+                    <Button 
                       onClick={handleExportPDF}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl h-10"
+                      className="w-full bg-primary hover:bg-primary/90 text-white"
                     >
                       <Download className="w-4 h-4 mr-2" />
                       Export PDF
                     </Button>
-                    <Button
-                      variant="outline"
+                    <Button 
+                      variant="outline" 
                       onClick={handleShare}
-                      className="w-full border-border rounded-xl h-10"
+                      className="w-full border-border"
                     >
                       <Share2 className="w-4 h-4 mr-2" />
                       Share
                     </Button>
                   </>
                 ) : (
-                  <div className="text-center py-1">
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Sign in to export and share
+                  <div className="text-center">
+                    <p className="text-sm text-foreground/70 mb-3">
+                      Sign in to access export and sharing features
                     </p>
-                    <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl h-10">
+                    <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white">
                       <Link to="/">Sign In</Link>
                     </Button>
                   </div>
                 )}
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Status definitions */}
-            <div className="rounded-2xl border border-border bg-card shadow-card overflow-hidden">
-              <div className="px-4 py-3 border-b border-border bg-muted/30">
-                <h3 className="text-sm font-semibold text-foreground">Status</h3>
-              </div>
-              <div className="p-4 space-y-4 text-sm">
+            {/* Status Definitions */}
+            <Card className="border-border">
+              <CardHeader>
+                <CardTitle className="text-lg text-foreground">Status Definitions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-sm">
                 <div>
                   <p className="font-medium text-foreground mb-1">Proposed</p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Formally introduced, not yet enacted.
+                  <p className="text-foreground/80">
+                    A regulation that has been formally introduced, but has not been enacted into law.
                   </p>
                 </div>
                 <div>
                   <p className="font-medium text-foreground mb-1">Enacted</p>
-                  <p className="text-muted-foreground leading-relaxed">
-                    Approved and legally in force.
+                  <p className="text-foreground/80">
+                    A regulation that has completed the legislative or regulatory approval process and is legally valid.
                   </p>
                 </div>
-              </div>
-            </div>
+              </CardContent>
+            </Card>
 
-            {/* Related */}
-            <div className="rounded-2xl border border-border bg-card shadow-card overflow-hidden">
-              <div className="px-4 py-3 border-b border-border bg-muted/30">
-                <h3 className="text-sm font-semibold text-foreground">Related</h3>
-              </div>
-              <div className="p-4 space-y-3 text-sm">
-                <div>
-                  <p className="text-muted-foreground">Framework</p>
-                  <p className="font-medium text-foreground">{regulation.framework}</p>
+            {/* Related Information */}
+            <Card className="border-border">
+              <CardHeader>
+                <CardTitle className="text-lg text-foreground">Related Information</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 text-sm">
+                  <div>
+                    <p className="text-foreground/60">Framework</p>
+                    <p className="font-medium text-foreground">{regulation.framework}</p>
+                  </div>
+                  <div>
+                    <p className="text-foreground/60">Last Updated</p>
+                    <p className="font-medium text-foreground">
+                      {regulation.updated_at ? formatDate(regulation.updated_at) : 'Not available'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-foreground/60">Date Added</p>
+                    <p className="font-medium text-foreground">
+                      {regulation.dateAdded ? formatDate(regulation.dateAdded) : 'Not available'}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-muted-foreground">Last Updated</p>
-                  <p className="font-medium text-foreground">
-                    {regulation.updated_at ? formatDate(regulation.updated_at) : '—'}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground">Date Added</p>
-                  <p className="font-medium text-foreground">
-                    {regulation.dateAdded ? formatDate(regulation.dateAdded) : '—'}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </aside>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
       <Footer />
