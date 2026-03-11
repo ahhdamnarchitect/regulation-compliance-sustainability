@@ -104,37 +104,37 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
   };
 
   return (
-    <Card className="bg-card border border-border rounded-xl shadow-card hover:shadow-card-hover hover:-translate-y-0.5 transition-all duration-200">
+    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-earth-primary bg-white border-earth-sand rounded-lg shadow-sm">
       <CardHeader className="pb-3">
-        <div className="flex justify-between items-start gap-2">
-          <div className="flex-1 min-w-0">
-            <h3 className="font-heading text-lg font-semibold text-foreground mb-2 line-clamp-2">
+        <div className="flex justify-between items-start">
+          <div className="flex-1">
+            <h3 className="font-title text-lg font-semibold text-earth-text mb-2 line-clamp-2">
               {regulation.title}
             </h3>
-            <div className="flex items-center flex-wrap gap-2 text-sm text-muted-foreground mb-2">
+            <div className="flex items-center flex-wrap gap-2 text-sm text-earth-text/70 mb-2">
               <span className="flex items-center">
-                <MapPin className="w-4 h-4 mr-1 shrink-0" />
+                <MapPin className="w-4 h-4 mr-1" />
                 {regulation.jurisdiction || regulation.region || 'Unknown'}
               </span>
               <span className="flex items-center">
-                <Calendar className="w-4 h-4 mr-1 shrink-0" />
+                <Calendar className="w-4 h-4 mr-1" />
                 {formatDate(regulation.complianceDeadline || regulation.reporting_date)}
               </span>
               {getDeadlineIndicator()}
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-xs text-earth-text/60">
               {regulation.country} • {regulation.sector}
             </div>
           </div>
           {user && onBookmark && (
-            <Button
-              variant="ghost"
-              size="sm"
+            <Button 
+              variant="ghost" 
+              size="sm" 
               onClick={(e) => {
                 e.stopPropagation();
                 onBookmark(e, regulation.id);
               }}
-              className={`shrink-0 ${isBookmarked ? 'text-amber-500' : 'text-muted-foreground'} hover:text-amber-500`}
+              className={`${isBookmarked ? 'text-yellow-600' : 'text-gray-400'} hover:text-yellow-600`}
             >
               <Bookmark className={`w-4 h-4 ${isBookmarked ? 'fill-current' : ''}`} />
             </Button>
@@ -143,46 +143,47 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
       </CardHeader>
 
       <CardContent>
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-3">
+        <p className="text-gray-700 text-sm mb-4 line-clamp-3">
           {regulation.summary || regulation.description || 'No description available'}
         </p>
-
+        
         <div className="flex flex-wrap gap-2 mb-4">
           <Badge className={getStatusColor(displayStatus)}>
             {getStatusIcon(displayStatus)} {formatStatus(regulation.status)}
           </Badge>
-          <Badge variant="outline" className="border-primary/30 text-primary">
+          <Badge variant="outline" className="border-blue-200 text-blue-700">
             {regulation.framework}
           </Badge>
           {regulation.tags && regulation.tags.length > 0 && (
-            <Badge variant="secondary" className="text-xs bg-muted text-muted-foreground">
+            <Badge variant="secondary" className="text-xs">
               {regulation.tags.slice(0, 2).join(', ')}
               {regulation.tags.length > 2 && ` +${regulation.tags.length - 2} more`}
             </Badge>
           )}
         </div>
-
-        <div className="flex justify-between items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
+        
+        <div className="flex justify-between items-center">
+          <Button 
+            variant="outline" 
+            size="sm" 
             asChild
             disabled={!regulation.source_url}
             onClick={handleSourceClick}
-            className="flex-1 min-w-0 border-border hover:bg-muted/80"
+            className="flex-1 mr-2"
           >
-            <a
-              href={regulation.source_url || '#'}
-              target="_blank"
+            <a 
+              href={regulation.source_url || '#'} 
+              target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-1.5"
+              className="flex items-center justify-center"
             >
-              <ExternalLink className="w-4 h-4 shrink-0" />
-              {regulation.source_url ? 'Source' : 'No Source'}
+              <ExternalLink className="w-4 h-4 mr-2" />
+              {regulation.source_url ? 'View Source' : 'No Source'}
             </a>
           </Button>
+          
           {!regulation.source_url && (
-            <div className="flex items-center text-xs text-muted-foreground shrink-0">
+            <div className="flex items-center text-xs text-gray-500">
               <AlertCircle className="w-3 h-3 mr-1" />
               No source
             </div>

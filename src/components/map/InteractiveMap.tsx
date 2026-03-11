@@ -181,8 +181,12 @@ type LocationLevel = 'region' | 'country' | 'state';
 // Regulation scope: Global, Regional, National, State/Province
 type RegulationScope = 'global' | 'regional' | 'country' | 'state';
 
-// Accent color for map pins (editorial-tech teal)
-const pinColor = '#0D9488';
+// Earth theme colors for pins
+const earthThemeColors = {
+  primary: '#1B4332',    // Deep forest green
+  accent: '#A8C686',     // Soft sage
+  sand: '#DAD7CD',       // Muted sand
+};
 
 type RegulationTarget =
   | { type: 'location'; name: string }
@@ -374,12 +378,16 @@ const getRegulationLevel = (regulation: Regulation): RegulationScope => {
   return 'country';
 };
 
-// Create custom marker icon
-const createCustomIcon = (_locationLevel: LocationLevel) => {
+// Create custom marker icon using earth theme colors
+const createCustomIcon = (locationLevel: LocationLevel) => {
+  // Use earth theme - darker green for more specific (state), lighter for broader (country)
+  const color = locationLevel === 'state' ? earthThemeColors.primary : earthThemeColors.primary;
+  
+  // All pins use the same earth-themed style, just standard pin shape
   return new Icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(`
       <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="${pinColor}" stroke="#fff" stroke-width="1.5"/>
+        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="${color}" stroke="#fff" stroke-width="1.5"/>
         <circle cx="12.5" cy="12.5" r="6" fill="white"/>
       </svg>
     `)}`,
@@ -651,11 +659,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 offset={[0, -35]}
               >
                 <div className="p-2 w-full max-w-[280px] sm:max-w-[320px]">
-                  <h3 className="font-semibold text-primary mb-1 flex items-center">
+                  <h3 className="font-semibold text-earth-primary mb-1 flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
                     {coords.name}
                   </h3>
-                  <p className="text-sm text-foreground mb-3">
+                  <p className="text-sm text-earth-text mb-3">
                     {locationRegulations.length} applicable regulation{locationRegulations.length !== 1 ? 's' : ''}
                   </p>
                   
@@ -684,7 +692,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                               >
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1 min-w-0">
-                                    <h4 className="font-medium text-xs text-foreground line-clamp-2 mb-1">
+                                    <h4 className="font-medium text-xs text-earth-text line-clamp-2 mb-1">
                                       {regulation.title}
                                     </h4>
                                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -696,7 +704,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                                       >
                                         {formatStatus(regulation.status)}
                                       </Badge>
-                                      <span className="text-[10px] text-foreground/60">
+                                      <span className="text-[10px] text-earth-text/60">
                                         {regulation.jurisdiction}
                                       </span>
                                     </div>

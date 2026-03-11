@@ -78,72 +78,61 @@ export default function Checkout() {
     }
   };
 
-  const microcopy =
-    interval === 'monthly'
-      ? `7 days free, then $${MONTHLY_PRICE}/mo`
-      : `7 days free, then $${YEARLY_PRICE}/yr`;
+  const priceLabel = interval === 'monthly' ? `$${MONTHLY_PRICE}/month` : `$${YEARLY_PRICE}/year`;
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen bg-transparent flex flex-col">
       <Header />
-      <div className="flex-1 container max-w-3xl mx-auto px-4 py-8 pb-24 md:pb-8">
+      <div className="flex-1 container max-w-3xl mx-auto px-4 py-8">
         <Button
-          variant="ghost"
+          variant="outline"
           onClick={() => navigate(-1)}
-          className="mb-6 text-primary hover:text-primary/90 hover:bg-muted/50"
+          className="mb-6 text-earth-primary border-earth-sand hover:bg-earth-sand"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
 
-        <h1 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-2">Start your free trial</h1>
-        <p className="text-muted-foreground mb-8">
+        <h1 className="text-3xl font-heading text-earth-primary mb-2">Start your free trial</h1>
+        <p className="text-earth-text mb-8">
           Get full access to MSRD Professional. No charge until your 7-day trial ends.
         </p>
 
-        <div className="grid gap-4 md:grid-cols-2 mb-8">
+        <div className="grid gap-6 md:grid-cols-2 mb-8">
           <Card
-            className={`cursor-pointer transition-all duration-200 border-2 rounded-xl ${interval === 'monthly' ? 'border-primary bg-accent/30' : 'border-border hover:border-primary/50'}`}
+            className={`cursor-pointer transition-all border-2 ${interval === 'monthly' ? 'border-earth-primary bg-earth-primary/5' : 'border-earth-sand hover:border-earth-primary/50'}`}
             onClick={() => setInterval('monthly')}
           >
             <CardHeader className="pb-2">
-              <CardTitle className="text-foreground">Monthly</CardTitle>
-              <p className="text-2xl font-bold text-foreground">
-                ${MONTHLY_PRICE}
-                <span className="text-base font-normal text-muted-foreground">/month</span>
-              </p>
-              <p className="text-sm text-muted-foreground">Billed monthly. Cancel anytime.</p>
+              <CardTitle className="text-earth-primary">Monthly</CardTitle>
+              <p className="text-2xl font-bold text-earth-text">${MONTHLY_PRICE}<span className="text-base font-normal text-earth-text/80">/month</span></p>
+              <p className="text-sm text-earth-text/80">Billed monthly. Cancel anytime.</p>
             </CardHeader>
           </Card>
           <Card
-            className={`cursor-pointer transition-all duration-200 border-2 rounded-xl relative ${interval === 'yearly' ? 'border-primary bg-accent/30' : 'border-border hover:border-primary/50'}`}
+            className={`cursor-pointer transition-all border-2 relative ${interval === 'yearly' ? 'border-earth-primary bg-earth-primary/5' : 'border-earth-sand hover:border-earth-primary/50'}`}
             onClick={() => setInterval('yearly')}
           >
-            <div className="absolute -top-2 right-4 bg-primary text-primary-foreground text-xs font-semibold px-2 py-0.5 rounded">
+            <div className="absolute -top-2 right-4 bg-earth-primary text-white text-xs font-semibold px-2 py-0.5 rounded">
               Save {YEARLY_SAVINGS_PERCENT}%
             </div>
             <CardHeader className="pb-2">
-              <CardTitle className="text-foreground">Yearly</CardTitle>
-              <p className="text-2xl font-bold text-foreground">
-                ${YEARLY_PRICE}
-                <span className="text-base font-normal text-muted-foreground">/year</span>
-              </p>
-              <p className="text-sm text-muted-foreground">
-                ${(YEARLY_PRICE / 12).toFixed(2)}/month. Billed annually.
-              </p>
+              <CardTitle className="text-earth-primary">Yearly</CardTitle>
+              <p className="text-2xl font-bold text-earth-text">${YEARLY_PRICE}<span className="text-base font-normal text-earth-text/80">/year</span></p>
+              <p className="text-sm text-earth-text/80">${(YEARLY_PRICE / 12).toFixed(2)}/month. Billed annually.</p>
             </CardHeader>
           </Card>
         </div>
 
-        <Card className="mb-8 border border-border rounded-xl shadow-card">
+        <Card className="mb-8 border-earth-sand">
           <CardHeader>
-            <CardTitle className="text-foreground">Professional includes</CardTitle>
+            <CardTitle className="text-earth-primary">Professional includes</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
               {PROFESSIONAL_FEATURES.map((feature, i) => (
-                <li key={i} className="flex items-center text-foreground">
-                  <Check className="w-4 h-4 text-primary mr-2 flex-shrink-0" />
+                <li key={i} className="flex items-center text-earth-text">
+                  <Check className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -151,51 +140,38 @@ export default function Checkout() {
           </CardContent>
         </Card>
 
-        <Card className="mb-8 border border-border rounded-xl shadow-card">
+        <Card className="mb-8 border-earth-sand">
           <CardContent className="pt-6">
-            <div className="flex items-start gap-3 text-sm text-muted-foreground">
-              <Shield className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 text-sm text-earth-text/90">
+              <Shield className="w-5 h-5 text-earth-primary flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-foreground">Secure checkout</p>
+                <p className="font-medium text-earth-text">Secure checkout</p>
                 <p>Your payment information is encrypted and secure. We never store your full card details.</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 text-sm text-muted-foreground mt-4">
-              <Lock className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 text-sm text-earth-text/90 mt-4">
+              <Lock className="w-5 h-5 text-earth-primary flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-foreground">7-day free trial</p>
+                <p className="font-medium text-earth-text">7-day free trial</p>
                 <p>You will not be charged until the trial ends. Cancel anytime before then.</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <div className="hidden sm:block">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <Button
-            className="w-full sm:w-auto min-w-[200px] bg-primary hover:bg-primary/90 text-primary-foreground text-lg py-6 rounded-xl transition-all duration-150 active:scale-[0.98]"
+            className="flex-1 bg-earth-primary hover:bg-earth-primary/90 text-white text-lg py-6"
             onClick={handleSubmit}
             disabled={submitting}
           >
-            {submitting ? 'Redirecting…' : 'Start free trial'}
+            {submitting ? 'Redirecting to checkout…' : `Start 7-day free trial — ${priceLabel}`}
           </Button>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {microcopy}. Cancel anytime. No charge today.
+          <p className="text-sm text-earth-text/70 text-center sm:text-left">
+            You will not be charged until after your 7-day trial. Cancel anytime.
           </p>
         </div>
       </div>
-
-      {/* Sticky mobile CTA */}
-      <div className="fixed bottom-0 left-0 right-0 sm:hidden z-40 border-t border-border bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80 py-3 px-4 safe-area-pb">
-        <Button
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-xl font-medium"
-          onClick={handleSubmit}
-          disabled={submitting}
-        >
-          {submitting ? 'Redirecting…' : 'Start free trial'}
-        </Button>
-        <p className="text-xs text-muted-foreground text-center mt-1.5">{microcopy}</p>
-      </div>
-
       <Footer />
     </div>
   );

@@ -239,14 +239,15 @@ export default function SearchResults() {
       <Header />
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-4">
-          <Link to="/" className="inline-flex items-center text-primary hover:text-primary/90 transition-colors duration-150">
+          <Link to="/" className="inline-flex items-center text-earth-primary hover:text-earth-primary/80 transition-colors">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Map
           </Link>
         </div>
 
-        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4">Search Results</h1>
+        <h1 className="text-3xl font-bold text-earth-text mb-4">Search Results</h1>
 
+        {/* Search bar + Filter bar (filters up top on mobile) */}
         <div className="space-y-3 mb-6">
           <div className="flex gap-2 sm:gap-4">
             <SearchInputWithSuggestions
@@ -256,23 +257,24 @@ export default function SearchResults() {
               placeholder="Search regulations..."
               regulations={regulations}
               suggestionsEnabled={false}
-              inputClassName="border-border rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/20"
+              inputClassName="border-earth-sand focus:border-earth-primary focus:ring-earth-primary"
             />
-            <Button onClick={() => handleSearch()} className="bg-primary hover:bg-primary/90 shrink-0 rounded-lg">
+            <Button onClick={() => handleSearch()} className="bg-earth-primary hover:bg-earth-primary/90 shrink-0">
               Search
             </Button>
           </div>
+          {/* Mobile: filter bar up top with one clear filter-settings button */}
           <div className="flex items-center lg:hidden">
             <Sheet open={showFiltersMobile} onOpenChange={setShowFiltersMobile}>
               <SheetTrigger asChild>
                 <Button
                   variant="outline"
-                  className="w-full sm:w-auto border-border hover:bg-muted/80 justify-center gap-2 rounded-lg"
+                  className="w-full sm:w-auto border-earth-sand hover:bg-earth-sand justify-center gap-2"
                 >
                   <Filter className="w-4 h-4" />
                   Filters
                   {activeFilterCount > 0 && (
-                    <span className="bg-primary text-primary-foreground text-xs font-medium min-w-[1.25rem] h-5 px-1.5 rounded-full flex items-center justify-center">
+                    <span className="bg-earth-primary text-white text-xs font-medium min-w-[1.25rem] h-5 px-1.5 rounded-full flex items-center justify-center">
                       {activeFilterCount}
                     </span>
                   )}
@@ -280,17 +282,17 @@ export default function SearchResults() {
               </SheetTrigger>
               <SheetContent
                 side="left"
-                className="w-full max-w-full sm:max-w-sm h-full rounded-none border-0 flex flex-col p-0 lg:hidden bg-card"
+                className="w-full max-w-full sm:max-w-full h-full rounded-none border-0 flex flex-col p-0 lg:hidden"
               >
-                <div className="flex items-center justify-between shrink-0 border-b border-border px-4 pt-3 pb-3 pr-14 bg-card">
-                  <h2 className="text-lg font-bold text-foreground">Filters</h2>
+                <div className="flex items-center justify-between shrink-0 border-b border-earth-sand px-4 pt-3 pb-3 pr-14 bg-white">
+                  <h2 className="text-lg font-bold text-earth-text">Filters</h2>
                 </div>
-                <div className="flex-1 overflow-y-auto px-4 py-4">
+                <div className="flex-1 overflow-y-auto px-4 py-4 bg-transparent">
                   {sidebarContent}
                 </div>
-                <div className="shrink-0 border-t border-border bg-card p-4 safe-area-pb">
+                <div className="shrink-0 border-t border-earth-sand bg-white p-4 safe-area-pb">
                   <Button
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3 rounded-lg"
+                    className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white py-3"
                     onClick={() => setShowFiltersMobile(false)}
                   >
                     Show {filteredRegulations.length} results
@@ -302,35 +304,37 @@ export default function SearchResults() {
         </div>
 
         <div className="flex gap-8 flex-col lg:flex-row">
+          {/* Left sidebar - hidden on mobile (use Sheet instead) */}
           <div className="hidden lg:block shrink-0">
             {sidebarContent}
           </div>
 
+          {/* Main content */}
           <div className="flex-1 min-w-0">
-            <p className="text-muted-foreground mb-6">
+            <p className="text-earth-text mb-6">
               {loading ? 'Loading...' : `${filteredRegulations.length} regulations found`}
             </p>
 
             {loading ? (
               <div className="text-center py-12">
-                <div className="animate-spin rounded-full h-12 w-12 border-2 border-border border-t-primary mx-auto" />
-                <p className="text-foreground mt-4">Loading regulations...</p>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-earth-primary mx-auto" />
+                <p className="text-earth-text mt-4">Loading regulations...</p>
               </div>
             ) : error ? (
               <div className="text-center py-12">
-                <p className="text-destructive">Error loading regulations: {error}</p>
+                <p className="text-red-600">Error loading regulations: {error}</p>
               </div>
             ) : filteredRegulations.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-foreground text-lg">No regulations found matching your criteria.</p>
-                <p className="text-muted-foreground mt-2">Try adjusting your search terms or filters.</p>
+                <p className="text-earth-text text-lg">No regulations found matching your criteria.</p>
+                <p className="text-earth-text/60 mt-2">Try adjusting your search terms or filters.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {filteredRegulations.map((regulation) => (
                   <div
                     key={regulation.id}
-                    className="cursor-pointer transition-transform duration-200"
+                    className="cursor-pointer hover:scale-105 transition-transform duration-200"
                     onClick={() => navigate(`/regulation/${regulation.id}`)}
                   >
                     <RegulationCard

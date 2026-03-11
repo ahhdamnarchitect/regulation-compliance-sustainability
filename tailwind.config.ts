@@ -21,23 +21,19 @@ export default {
     },
     extend: {
       colors: {
-        // Editorial-tech (spec)
-        editorial: {
-          background: '#FAFAF9',
-          surface: '#FFFFFF',
-          ink: '#0C0C0C',
-          muted: '#737373',
-          accent: '#0D9488',
-          accentSoft: '#CCFBF1',
-          border: '#E5E5E5',
+        // Quite Nice / quitenice.com inspired
+        quitenice: {
+          green: 'rgb(25, 89, 8)',  // Header/body/footer divider and primary text
+          cream: '#FAF8F5',         // Background gradient end
+          searchBox: '#FECD97',     // Search Global Regulations card
         },
-        // Aliases for compatibility during migration
+        // Modern Earth Theme (kept for compatibility)
         earth: {
-          primary: '#0D9488',
-          accent: '#CCFBF1',
-          sand: '#E5E5E5',
-          background: '#FAFAF9',
-          text: '#0C0C0C',
+          primary: 'rgb(25, 89, 8)', // Align with quitenice green
+          accent: '#A8C686',
+          sand: '#DAD7CD',
+          background: '#F7F8F3',
+          text: '#2E2E2E',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -85,9 +81,9 @@ export default {
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'monospace'],
-        sans: ['Inter', 'ui-sans-serif', 'sans-serif'],
-        heading: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
-        title: ['Plus Jakarta Sans', 'Inter', 'sans-serif'],
+        sans: ['Inter', 'Source Sans Pro', 'sans-serif'],
+        heading: ['Poppins', 'Montserrat', 'Inter', 'sans-serif'],
+        title: ['Lora', 'Georgia', 'serif'],
       },
       letterSpacing: {
         'brand': '0.05em',
@@ -114,20 +110,12 @@ export default {
           from: { transform: 'translateY(10px)', opacity: '0' },
           to: { transform: 'translateY(0)', opacity: '1' },
         },
-        'card-hover': {
-          '0%': { transform: 'translateY(0)' },
-          '100%': { transform: 'translateY(-2px)' },
-        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.2s ease-out',
-        'slide-in': 'slide-in 0.2s ease-out',
-      },
-      boxShadow: {
-        'card': '0 1px 3px rgba(0,0,0,0.06)',
-        'card-hover': '0 8px 24px rgba(0,0,0,0.08)',
+        'fade-in': 'fade-in 0.3s ease-out',
+        'slide-in': 'slide-in 0.3s ease-out',
       },
       typography: {
         DEFAULT: {

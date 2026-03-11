@@ -218,8 +218,8 @@ export default function RegulationDetail() {
         <Header />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-2 border-border border-t-primary mx-auto"></div>
-            <p className="text-foreground mt-4">Loading regulation details...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-earth-primary mx-auto"></div>
+            <p className="text-earth-text mt-4">Loading regulation details...</p>
           </div>
         </div>
       </div>
@@ -235,7 +235,7 @@ export default function RegulationDetail() {
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="text-primary hover:text-primary/90"
+            className="text-earth-primary hover:text-earth-primary/80"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Results
@@ -245,11 +245,11 @@ export default function RegulationDetail() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
           <div className="lg:col-span-2">
-            <Card className="border border-border rounded-xl shadow-card">
+            <Card className="border-earth-sand shadow-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <CardTitle className="font-heading text-2xl font-bold text-foreground mb-4">
+                    <CardTitle className="font-title text-2xl font-bold text-earth-text mb-4">
                       {regulation.title}
                     </CardTitle>
                     
@@ -258,7 +258,7 @@ export default function RegulationDetail() {
                         {getStatusIcon(displayStatus)}
                         {formatStatus(regulation.status)}
                       </Badge>
-                      <Badge variant="outline" className="border-primary text-primary">
+                      <Badge variant="outline" className="border-earth-primary text-earth-primary">
                         {regulation.framework}
                       </Badge>
                     </div>
@@ -269,7 +269,7 @@ export default function RegulationDetail() {
                       variant="outline"
                       size="sm"
                       onClick={handleBookmark}
-                      className={`${isBookmarked ? 'text-yellow-600 border-yellow-300' : 'text-foreground border-border'} hover:text-yellow-600`}
+                      className={`${isBookmarked ? 'text-yellow-600 border-yellow-300' : 'text-earth-text border-earth-sand'} hover:text-yellow-600`}
                     >
                       <Bookmark className={`w-4 h-4 mr-2 ${isBookmarked ? 'fill-current' : ''}`} />
                       {isBookmarked ? 'Bookmarked' : 'Bookmark'}
@@ -281,41 +281,41 @@ export default function RegulationDetail() {
               <CardContent className="space-y-6">
                 {/* Description */}
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-3">Description</h3>
-                  <p className="text-foreground/80 leading-relaxed">
+                  <h3 className="text-lg font-semibold text-earth-text mb-3">Description</h3>
+                  <p className="text-earth-text/80 leading-relaxed">
                     {regulation.summary || regulation.description || 'No description available for this regulation.'}
                   </p>
                 </div>
 
-                <Separator className="bg-muted" />
+                <Separator className="bg-earth-sand" />
 
                 {/* Key Information */}
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-4">Key Information</h3>
+                  <h3 className="text-lg font-semibold text-earth-text mb-4">Key Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-primary" />
+                      <MapPin className="w-5 h-5 text-earth-primary" />
                       <div>
-                        <p className="text-sm text-foreground/60">Jurisdiction</p>
-                        <p className="font-medium text-foreground">{regulation.jurisdiction}</p>
+                        <p className="text-sm text-earth-text/60">Jurisdiction</p>
+                        <p className="font-medium text-earth-text">{regulation.jurisdiction}</p>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-3">
-                      <Building className="w-5 h-5 text-primary" />
+                      <Building className="w-5 h-5 text-earth-primary" />
                       <div>
-                        <p className="text-sm text-foreground/60">Sector</p>
-                        <p className="font-medium text-foreground">{regulation.sector}</p>
+                        <p className="text-sm text-earth-text/60">Sector</p>
+                        <p className="font-medium text-earth-text">{regulation.sector}</p>
                       </div>
                     </div>
                     
                     {regulation.complianceDeadline && (
                       <div className="flex items-center gap-3">
-                        <Calendar className="w-5 h-5 text-primary" />
+                        <Calendar className="w-5 h-5 text-earth-primary" />
                         <div>
-                          <p className="text-sm text-foreground/60">Compliance Deadline</p>
+                          <p className="text-sm text-earth-text/60">Compliance Deadline</p>
                           <div className="flex items-center gap-2">
-                            <p className="font-medium text-foreground">{formatDate(regulation.complianceDeadline)}</p>
+                            <p className="font-medium text-earth-text">{formatDate(regulation.complianceDeadline)}</p>
                             {new Date(regulation.complianceDeadline) < new Date() ? (
                               <Badge className="bg-amber-100 text-amber-800 border-amber-200 text-xs">
                                 <CheckCircle className="w-3 h-3 mr-1" />
@@ -333,10 +333,10 @@ export default function RegulationDetail() {
                     )}
                     
                     <div className="flex items-center gap-3">
-                      <Tag className="w-5 h-5 text-primary" />
+                      <Tag className="w-5 h-5 text-earth-primary" />
                       <div>
-                        <p className="text-sm text-foreground/60">Country</p>
-                        <p className="font-medium text-foreground">{regulation.country}</p>
+                        <p className="text-sm text-earth-text/60">Country</p>
+                        <p className="font-medium text-earth-text">{regulation.country}</p>
                       </div>
                     </div>
                   </div>
@@ -345,12 +345,12 @@ export default function RegulationDetail() {
                 {/* Tags */}
                 {regulation.tags && regulation.tags.length > 0 && (
                   <>
-                    <Separator className="bg-muted" />
+                    <Separator className="bg-earth-sand" />
                     <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-3">Tags</h3>
+                      <h3 className="text-lg font-semibold text-earth-text mb-3">Tags</h3>
                       <div className="flex flex-wrap gap-2">
                         {regulation.tags.map((tag: string, index: number) => (
-                          <Badge key={index} variant="secondary" className="bg-muted text-foreground">
+                          <Badge key={index} variant="secondary" className="bg-earth-sand text-earth-text">
                             {tag}
                           </Badge>
                         ))}
@@ -362,12 +362,12 @@ export default function RegulationDetail() {
                 {/* Source Link */}
                 {regulation.source_url && (
                   <>
-                    <Separator className="bg-muted" />
+                    <Separator className="bg-earth-sand" />
                     <div>
-                      <h3 className="text-lg font-semibold text-foreground mb-3">Official Source</h3>
+                      <h3 className="text-lg font-semibold text-earth-text mb-3">Official Source</h3>
                       <Button
                         asChild
-                        className="bg-primary hover:bg-primary/90 text-white"
+                        className="bg-earth-primary hover:bg-earth-primary/90 text-white"
                       >
                         <a
                           href={regulation.source_url}
@@ -376,7 +376,7 @@ export default function RegulationDetail() {
                           className="inline-flex items-center"
                         >
                           <ExternalLink className="w-4 h-4 mr-2" />
-                          Source
+                          View Official Source
                         </a>
                       </Button>
                     </div>
@@ -389,16 +389,16 @@ export default function RegulationDetail() {
           {/* Sidebar */}
           <div className="space-y-6">
             {/* Actions */}
-            <Card className="border-border">
+            <Card className="border-earth-sand">
               <CardHeader>
-                <CardTitle className="text-lg text-foreground">Actions</CardTitle>
+                <CardTitle className="text-lg text-earth-text">Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 {user ? (
                   <>
                     <Button 
                       onClick={handleExportPDF}
-                      className="w-full bg-primary hover:bg-primary/90 text-white"
+                      className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
                     >
                       <Download className="w-4 h-4 mr-2" />
                       Export PDF
@@ -406,7 +406,7 @@ export default function RegulationDetail() {
                     <Button 
                       variant="outline" 
                       onClick={handleShare}
-                      className="w-full border-border"
+                      className="w-full border-earth-sand"
                     >
                       <Share2 className="w-4 h-4 mr-2" />
                       Share
@@ -414,10 +414,10 @@ export default function RegulationDetail() {
                   </>
                 ) : (
                   <div className="text-center">
-                    <p className="text-sm text-foreground/70 mb-3">
+                    <p className="text-sm text-earth-text/70 mb-3">
                       Sign in to access export and sharing features
                     </p>
-                    <Button asChild className="w-full bg-primary hover:bg-primary/90 text-white">
+                    <Button asChild className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white">
                       <Link to="/">Sign In</Link>
                     </Button>
                   </div>
@@ -426,20 +426,20 @@ export default function RegulationDetail() {
             </Card>
 
             {/* Status Definitions */}
-            <Card className="border-border">
+            <Card className="border-earth-sand">
               <CardHeader>
-                <CardTitle className="text-lg text-foreground">Status Definitions</CardTitle>
+                <CardTitle className="text-lg text-earth-text">Status Definitions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4 text-sm">
                 <div>
-                  <p className="font-medium text-foreground mb-1">Proposed</p>
-                  <p className="text-foreground/80">
+                  <p className="font-medium text-earth-text mb-1">Proposed</p>
+                  <p className="text-earth-text/80">
                     A regulation that has been formally introduced, but has not been enacted into law.
                   </p>
                 </div>
                 <div>
-                  <p className="font-medium text-foreground mb-1">Enacted</p>
-                  <p className="text-foreground/80">
+                  <p className="font-medium text-earth-text mb-1">Enacted</p>
+                  <p className="text-earth-text/80">
                     A regulation that has completed the legislative or regulatory approval process and is legally valid.
                   </p>
                 </div>
@@ -447,25 +447,25 @@ export default function RegulationDetail() {
             </Card>
 
             {/* Related Information */}
-            <Card className="border-border">
+            <Card className="border-earth-sand">
               <CardHeader>
-                <CardTitle className="text-lg text-foreground">Related Information</CardTitle>
+                <CardTitle className="text-lg text-earth-text">Related Information</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3 text-sm">
                   <div>
-                    <p className="text-foreground/60">Framework</p>
-                    <p className="font-medium text-foreground">{regulation.framework}</p>
+                    <p className="text-earth-text/60">Framework</p>
+                    <p className="font-medium text-earth-text">{regulation.framework}</p>
                   </div>
                   <div>
-                    <p className="text-foreground/60">Last Updated</p>
-                    <p className="font-medium text-foreground">
+                    <p className="text-earth-text/60">Last Updated</p>
+                    <p className="font-medium text-earth-text">
                       {regulation.updated_at ? formatDate(regulation.updated_at) : 'Not available'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-foreground/60">Date Added</p>
-                    <p className="font-medium text-foreground">
+                    <p className="text-earth-text/60">Date Added</p>
+                    <p className="font-medium text-earth-text">
                       {regulation.dateAdded ? formatDate(regulation.dateAdded) : 'Not available'}
                     </p>
                   </div>
