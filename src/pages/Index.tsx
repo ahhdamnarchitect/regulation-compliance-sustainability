@@ -164,7 +164,7 @@ export default function Index() {
                 <p className="text-center text-sm text-earth-text mb-4">
                   Click a region to explore regulations.
                 </p>
-                <div className="rounded-xl overflow-hidden min-h-[400px] md:min-h-[500px] border border-earth-sand/60">
+                <div className="rounded-xl overflow-hidden min-h-[400px] md:min-h-[500px] bg-earth-sand border border-earth-sand shadow-lg">
                   <InteractiveMap
                     regulations={regulations}
                     onRegulationClick={handleRegulationClick}
