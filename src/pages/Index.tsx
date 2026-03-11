@@ -21,25 +21,15 @@ export default function Index() {
   const [showLogin, setShowLogin] = useState(!user);
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [mapRevealed, setMapRevealed] = useState(false);
   const { regulations } = useRegulations();
 
   useEffect(() => {
     if (location.hash === '#pricing') {
       document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
     } else if (location.hash === '#map-section') {
-      setMapRevealed(true);
+      document.getElementById('map-section')?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [location.hash]);
-
-  useEffect(() => {
-    if (!mapRevealed) return;
-    const el = document.getElementById('map-section');
-    if (el) {
-      const t = setTimeout(() => el.scrollIntoView({ behavior: 'smooth' }), 150);
-      return () => clearTimeout(t);
-    }
-  }, [mapRevealed]);
 
   useEffect(() => {
     if (!user) setShowLogin(true);
@@ -113,7 +103,7 @@ export default function Index() {
   };
 
   const scrollToMap = () => {
-    setMapRevealed(true);
+    document.getElementById('map-section')?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -164,27 +154,25 @@ export default function Index() {
             </RevealSection>
           </section>
 
-          {/* Map: only rendered and visible after "Explore the map" is clicked (desktop + mobile) */}
-          {mapRevealed && (
-            <section
-              id="map-section"
-              className="relative w-full py-8 md:py-12 section-gradient"
-            >
-              <RevealSection delay={100} variant="slide-up" className="w-full">
-                <div className="w-full px-2 sm:px-4 max-w-7xl mx-auto">
-                  <p className="text-center text-sm text-earth-text mb-4">
-                    Click a region to explore regulations
-                  </p>
-                  <div className="rounded-xl overflow-hidden shadow-lg min-h-[400px] md:min-h-[500px]" style={{ backgroundColor: '#d5e8eb', border: '1px solid #b8d4da' }}>
-                    <InteractiveMap
-                      regulations={regulations}
-                      onRegulationClick={handleRegulationClick}
-                    />
-                  </div>
+          {/* Map: same gradient green as other pages */}
+          <section
+            id="map-section"
+            className="relative w-full py-8 md:py-12 section-gradient"
+          >
+            <RevealSection delay={100} variant="slide-up" className="w-full">
+              <div className="w-full px-2 sm:px-4 max-w-7xl mx-auto">
+                <p className="text-center text-sm text-earth-text mb-4">
+                  Click a region to explore regulations
+                </p>
+                <div className="rounded-xl overflow-hidden shadow-lg min-h-[400px] md:min-h-[500px]" style={{ backgroundColor: '#d5e8eb', border: '1px solid #b8d4da' }}>
+                  <InteractiveMap
+                    regulations={regulations}
+                    onRegulationClick={handleRegulationClick}
+                  />
                 </div>
-              </RevealSection>
-            </section>
-          )}
+              </div>
+            </RevealSection>
+          </section>
 
           {/* Search by framework */}
           <section className="w-full py-12 md:py-16 bg-background">
