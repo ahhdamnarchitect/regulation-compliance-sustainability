@@ -134,7 +134,7 @@ export function SearchInputWithSuggestions({
 
   return (
     <div className={`relative flex-1 ${className}`} ref={wrapperRef}>
-      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-earth-text/60 w-4 h-4 pointer-events-none z-10" />
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 w-4 h-4 pointer-events-none z-10" />
       <Input
         value={value}
         onChange={(e) => {
@@ -156,7 +156,7 @@ export function SearchInputWithSuggestions({
         <ul
           id="search-suggestions-list"
           role="listbox"
-          className="absolute left-0 right-0 top-full mt-1 bg-white border border-earth-sand rounded-md shadow-lg z-50 max-h-56 overflow-y-auto"
+          className="absolute left-0 right-0 top-full mt-1 bg-navy-800 border border-navy-600 rounded-md shadow-lg z-50 max-h-56 overflow-y-auto"
         >
           {suggestions.map((s, i) => (
             <li
@@ -164,7 +164,7 @@ export function SearchInputWithSuggestions({
               role="option"
               aria-selected={i === highlightedIndex}
               className={`px-3 py-2.5 text-sm cursor-pointer transition-colors ${
-                i === highlightedIndex ? 'bg-earth-primary/10 text-earth-primary' : 'text-earth-text hover:bg-earth-sand/50'
+                i === highlightedIndex ? 'bg-neon-cyan/10 text-neon-cyan' : 'text-slate-200 hover:bg-navy-600/50'
               }`}
               onMouseEnter={() => setHighlightedIndex(i)}
               onMouseDown={(e) => {

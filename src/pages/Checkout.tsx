@@ -87,51 +87,51 @@ export default function Checkout() {
         <Button
           variant="outline"
           onClick={() => navigate(-1)}
-          className="mb-6 text-earth-primary border-earth-sand hover:bg-earth-sand"
+          className="mb-6 text-neon-cyan border-navy-600 hover:bg-navy-600"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
         </Button>
 
-        <h1 className="text-3xl font-heading text-earth-primary mb-2">Start your free trial</h1>
-        <p className="text-earth-text mb-8">
+        <h1 className="text-3xl font-heading text-neon-cyan mb-2">Start your free trial</h1>
+        <p className="text-slate-200 mb-8">
           Get full access to MSRD Professional. No charge until your 7-day trial ends.
         </p>
 
         <div className="grid gap-6 md:grid-cols-2 mb-8">
           <Card
-            className={`cursor-pointer transition-all border-2 ${interval === 'monthly' ? 'border-earth-primary bg-earth-primary/5' : 'border-earth-sand hover:border-earth-primary/50'}`}
+            className={`cursor-pointer transition-all border-2 ${interval === 'monthly' ? 'border-neon-cyan bg-neon-cyan/10' : 'border-navy-600 hover:border-neon-cyan/50'}`}
             onClick={() => setInterval('monthly')}
           >
             <CardHeader className="pb-2">
-              <CardTitle className="text-earth-primary">Monthly</CardTitle>
-              <p className="text-2xl font-bold text-earth-text">${MONTHLY_PRICE}<span className="text-base font-normal text-earth-text/80">/month</span></p>
-              <p className="text-sm text-earth-text/80">Billed monthly. Cancel anytime.</p>
+              <CardTitle className="text-neon-cyan">Monthly</CardTitle>
+              <p className="text-2xl font-bold text-slate-200">${MONTHLY_PRICE}<span className="text-base font-normal text-slate-200/80">/month</span></p>
+              <p className="text-sm text-slate-200/80">Billed monthly. Cancel anytime.</p>
             </CardHeader>
           </Card>
           <Card
-            className={`cursor-pointer transition-all border-2 relative ${interval === 'yearly' ? 'border-earth-primary bg-earth-primary/5' : 'border-earth-sand hover:border-earth-primary/50'}`}
+            className={`cursor-pointer transition-all border-2 relative ${interval === 'yearly' ? 'border-neon-cyan bg-neon-cyan/10' : 'border-navy-600 hover:border-neon-cyan/50'}`}
             onClick={() => setInterval('yearly')}
           >
-            <div className="absolute -top-2 right-4 bg-earth-primary text-white text-xs font-semibold px-2 py-0.5 rounded">
+            <div className="absolute -top-2 right-4 bg-neon-cyan text-white text-xs font-semibold px-2 py-0.5 rounded">
               Save {YEARLY_SAVINGS_PERCENT}%
             </div>
             <CardHeader className="pb-2">
-              <CardTitle className="text-earth-primary">Yearly</CardTitle>
-              <p className="text-2xl font-bold text-earth-text">${YEARLY_PRICE}<span className="text-base font-normal text-earth-text/80">/year</span></p>
-              <p className="text-sm text-earth-text/80">${(YEARLY_PRICE / 12).toFixed(2)}/month. Billed annually.</p>
+              <CardTitle className="text-neon-cyan">Yearly</CardTitle>
+              <p className="text-2xl font-bold text-slate-200">${YEARLY_PRICE}<span className="text-base font-normal text-slate-200/80">/year</span></p>
+              <p className="text-sm text-slate-200/80">${(YEARLY_PRICE / 12).toFixed(2)}/month. Billed annually.</p>
             </CardHeader>
           </Card>
         </div>
 
-        <Card className="mb-8 border-earth-sand">
+        <Card className="mb-8 border-navy-600">
           <CardHeader>
-            <CardTitle className="text-earth-primary">Professional includes</CardTitle>
+            <CardTitle className="text-neon-cyan">Professional includes</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2">
               {PROFESSIONAL_FEATURES.map((feature, i) => (
-                <li key={i} className="flex items-center text-earth-text">
+                <li key={i} className="flex items-center text-slate-200">
                   <Check className="w-4 h-4 text-green-600 mr-2 flex-shrink-0" />
                   <span>{feature}</span>
                 </li>
@@ -140,19 +140,19 @@ export default function Checkout() {
           </CardContent>
         </Card>
 
-        <Card className="mb-8 border-earth-sand">
+        <Card className="mb-8 border-navy-600">
           <CardContent className="pt-6">
-            <div className="flex items-start gap-3 text-sm text-earth-text/90">
-              <Shield className="w-5 h-5 text-earth-primary flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 text-sm text-slate-200/90">
+              <Shield className="w-5 h-5 text-neon-cyan flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-earth-text">Secure checkout</p>
+                <p className="font-medium text-slate-200">Secure checkout</p>
                 <p>Your payment information is encrypted and secure. We never store your full card details.</p>
               </div>
             </div>
-            <div className="flex items-start gap-3 text-sm text-earth-text/90 mt-4">
-              <Lock className="w-5 h-5 text-earth-primary flex-shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 text-sm text-slate-200/90 mt-4">
+              <Lock className="w-5 h-5 text-neon-cyan flex-shrink-0 mt-0.5" />
               <div>
-                <p className="font-medium text-earth-text">7-day free trial</p>
+                <p className="font-medium text-slate-200">7-day free trial</p>
                 <p>You will not be charged until the trial ends. Cancel anytime before then.</p>
               </div>
             </div>
@@ -161,13 +161,13 @@ export default function Checkout() {
 
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
           <Button
-            className="flex-1 bg-earth-primary hover:bg-earth-primary/90 text-white text-lg py-6"
+            className="flex-1 bg-neon-cyan hover:bg-neon-cyan/90 text-white text-lg py-6"
             onClick={handleSubmit}
             disabled={submitting}
           >
             {submitting ? 'Redirecting to checkout…' : `Start 7-day free trial — ${priceLabel}`}
           </Button>
-          <p className="text-sm text-earth-text/70 text-center sm:text-left">
+          <p className="text-sm text-slate-200/70 text-center sm:text-left">
             You will not be charged until after your 7-day trial. Cancel anytime.
           </p>
         </div>

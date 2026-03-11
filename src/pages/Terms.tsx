@@ -6,10 +6,10 @@ export default function Terms() {
     <div className="min-h-screen page-gradient flex flex-col">
       <Header />
       <main className="container mx-auto px-4 py-8 flex-1 max-w-3xl">
-        <h1 className="text-3xl font-bold text-earth-primary mb-2">Terms of Use</h1>
-        <p className="text-earth-text/80 text-sm mb-8">Missick Sustainability Regulation Database LLC · Effective Date: February 11, 2026</p>
+        <h1 className="text-3xl font-bold text-neon-cyan mb-2">Terms of Use</h1>
+        <p className="text-slate-200/80 text-sm mb-8">Missick Sustainability Regulation Database LLC · Effective Date: February 11, 2026</p>
 
-        <div className="space-y-6 text-earth-text/90 text-sm">
+        <div className="space-y-6 text-slate-200/90 text-sm">
           <p>
             Welcome to the website and platform operated by Missick Sustainability Regulation Database LLC ("Company," "we," "us," or "our").
           </p>
@@ -18,38 +18,38 @@ export default function Terms() {
           </p>
           <ol className="list-decimal list-inside space-y-3 ml-2">
             <li>
-              <strong className="text-earth-text">Nature of the Platform</strong>
+              <strong className="text-slate-200">Nature of the Platform</strong>
               <br />
               The Platform provides sustainability and regulatory intelligence tools, data aggregation, and informational resources. The Platform does not provide legal advice and does not guarantee compliance outcomes.
             </li>
             <li>
-              <strong className="text-earth-text">Account Registration</strong>
+              <strong className="text-slate-200">Account Registration</strong>
               <br />
               Users must provide accurate information, maintain account security, and not share credentials. We may suspend or terminate accounts at our discretion.
             </li>
             <li>
-              <strong className="text-earth-text">Intellectual Property</strong>
+              <strong className="text-slate-200">Intellectual Property</strong>
               <br />
               All databases, content, platform architecture, branding, and materials are the exclusive property of Missick Sustainability Regulation Database LLC. Users may not copy, reproduce, scrape, reverse engineer, resell, or redistribute any portion of the Platform.
             </li>
             <li>
-              <strong className="text-earth-text">Subscription &amp; Billing</strong>
+              <strong className="text-slate-200">Subscription &amp; Billing</strong>
               <br />
               Paid features require subscription. By subscribing, you authorize recurring billing. All fees are non-refundable unless otherwise stated.
             </li>
             <li>
-              <strong className="text-earth-text">Limitation of Liability</strong>
+              <strong className="text-slate-200">Limitation of Liability</strong>
               <br />
               To the fullest extent permitted by Illinois law, the Company shall not be liable for indirect damages, loss of profits, business interruption, regulatory penalties, or compliance failures. Total liability shall not exceed the amount paid by the user in the preceding twelve (12) months.
             </li>
             <li>
-              <strong className="text-earth-text">Governing Law</strong>
+              <strong className="text-slate-200">Governing Law</strong>
               <br />
               These Terms are governed by the laws of the State of Illinois. Disputes shall be resolved in the appropriate courts serving Oswego, Illinois.
             </li>
           </ol>
 
-          <h2 className="text-xl font-semibold text-earth-primary mt-8 mb-4">Subscription Auto-Renew Terms</h2>
+          <h2 className="text-xl font-semibold text-neon-cyan mt-8 mb-4">Subscription Auto-Renew Terms</h2>
           <div className="space-y-2">
             <p>Subscriptions automatically renew at the end of each billing cycle unless canceled prior to renewal.</p>
             <p>By subscribing, users authorize recurring charges to their payment method.</p>

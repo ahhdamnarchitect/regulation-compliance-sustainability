@@ -176,7 +176,7 @@ const Admin = () => {
   return (
     <div className="min-h-screen page-gradient p-6">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold">Admin — Regulations Management</h1>
+        <h1 className="text-2xl font-semibold text-slate-100">Admin — Regulations Management</h1>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => { setEditingRegulation(null); resetForm(); }}>

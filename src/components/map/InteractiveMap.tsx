@@ -72,15 +72,17 @@ const mapStyles = `
   
   .leaflet-popup-content-wrapper {
     border-radius: 8px !important;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+    background: #1e293b !important;
+    border: 1px solid rgba(34, 211, 238, 0.3) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), 0 0 20px rgba(34, 211, 238, 0.08) !important;
     min-width: 280px !important;
     max-width: 320px !important;
     width: 320px !important;
   }
   
   .leaflet-popup-tip {
-    background: white !important;
-    border: 1px solid #ccc !important;
+    background: #1e293b !important;
+    border: 1px solid rgba(34, 211, 238, 0.3) !important;
   }
   
   .leaflet-popup-content {
@@ -181,11 +183,11 @@ type LocationLevel = 'region' | 'country' | 'state';
 // Regulation scope: Global, Regional, National, State/Province
 type RegulationScope = 'global' | 'regional' | 'country' | 'state';
 
-// Earth theme colors for pins
-const earthThemeColors = {
-  primary: '#1B4332',    // Deep forest green
-  accent: '#A8C686',     // Soft sage
-  sand: '#DAD7CD',       // Muted sand
+// Navy + neon theme for pins
+const mapThemeColors = {
+  pin: '#22d3ee',        // neon-cyan
+  pinStroke: '#0f172a',  // navy-900
+  dot: '#22d3ee',
 };
 
 type RegulationTarget =
@@ -378,17 +380,13 @@ const getRegulationLevel = (regulation: Regulation): RegulationScope => {
   return 'country';
 };
 
-// Create custom marker icon using earth theme colors
-const createCustomIcon = (locationLevel: LocationLevel) => {
-  // Use earth theme - darker green for more specific (state), lighter for broader (country)
-  const color = locationLevel === 'state' ? earthThemeColors.primary : earthThemeColors.primary;
-  
-  // All pins use the same earth-themed style, just standard pin shape
+// Create custom marker icon using neon/navy theme
+const createCustomIcon = (_locationLevel: LocationLevel) => {
   return new Icon({
     iconUrl: `data:image/svg+xml;base64,${btoa(`
       <svg width="25" height="41" viewBox="0 0 25 41" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="${color}" stroke="#fff" stroke-width="1.5"/>
-        <circle cx="12.5" cy="12.5" r="6" fill="white"/>
+        <path d="M12.5 0C5.6 0 0 5.6 0 12.5c0 12.5 12.5 28.5 12.5 28.5s12.5-16 12.5-28.5C25 5.6 19.4 0 12.5 0z" fill="${mapThemeColors.pin}" stroke="${mapThemeColors.pinStroke}" stroke-width="1.5"/>
+        <circle cx="12.5" cy="12.5" r="6" fill="${mapThemeColors.dot}"/>
       </svg>
     `)}`,
     iconSize: [25, 41],
@@ -397,12 +395,12 @@ const createCustomIcon = (locationLevel: LocationLevel) => {
   });
 };
 
-// Colors for regulation scope badges in popups
+// Navy/neon scope badges for popups
 const regulationLevelColors: Record<RegulationScope, { bg: string; text: string; border: string }> = {
-  global: { bg: '#E0E7FF', text: '#4338CA', border: '#818CF8' },     // Indigo for global
-  regional: { bg: '#C7D2FE', text: '#3730A3', border: '#6366F1' },  // Lighter indigo for regional
-  country: { bg: '#D1FAE5', text: '#065F46', border: '#34D399' },   // Green for national
-  state: { bg: '#FEF3C7', text: '#92400E', border: '#FBBF24' },     // Amber for state/province
+  global: { bg: 'rgba(34,211,238,0.15)', text: '#22d3ee', border: 'rgba(34,211,238,0.5)' },
+  regional: { bg: 'rgba(34,211,238,0.1)', text: '#67e8f9', border: 'rgba(34,211,238,0.4)' },
+  country: { bg: 'rgba(0,255,136,0.15)', text: '#00ff88', border: 'rgba(0,255,136,0.5)' },
+  state: { bg: 'rgba(0,255,136,0.1)', text: '#34d399', border: 'rgba(0,255,136,0.4)' },
 };
 
 const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulationClick }) => {
@@ -592,10 +590,10 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
   };
 
-  const MAP_BG = '#1a1d23';
+  const MAP_BG = '#0f172a'; /* navy-900 */
 
   return (
-    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-white/10 relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_BG }}>
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-neon-cyan/20 relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_BG }}>
       
       <MapContainer
         center={[20, 0]}
@@ -657,11 +655,11 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                 offset={[0, -35]}
               >
                 <div className="p-2 w-full max-w-[280px] sm:max-w-[320px]">
-                  <h3 className="font-semibold text-earth-primary mb-1 flex items-center">
+                  <h3 className="font-semibold text-neon-cyan mb-1 flex items-center">
                     <MapPin className="w-4 h-4 mr-1" />
                     {coords.name}
                   </h3>
-                  <p className="text-sm text-earth-text mb-3">
+                  <p className="text-sm text-slate-200 mb-3">
                     {locationRegulations.length} applicable regulation{locationRegulations.length !== 1 ? 's' : ''}
                   </p>
                   
@@ -690,7 +688,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                               >
                                 <div className="flex items-start justify-between">
                                   <div className="flex-1 min-w-0">
-                                    <h4 className="font-medium text-xs text-earth-text line-clamp-2 mb-1">
+                                    <h4 className="font-medium text-xs text-slate-200 line-clamp-2 mb-1">
                                       {regulation.title}
                                     </h4>
                                     <div className="flex items-center gap-1.5 flex-wrap">
@@ -702,7 +700,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
                                       >
                                         {formatStatus(regulation.status)}
                                       </Badge>
-                                      <span className="text-[10px] text-earth-text/60">
+                                      <span className="text-[10px] text-slate-400">
                                         {regulation.jurisdiction}
                                       </span>
                                     </div>

@@ -21,19 +21,20 @@ export default {
     },
     extend: {
       colors: {
-        // Quite Nice / quitenice.com inspired
-        quitenice: {
-          green: 'rgb(25, 89, 8)',  // Header/body/footer divider and primary text
-          cream: '#FAF8F5',         // Background gradient end
-          searchBox: '#FECD97',     // Search Global Regulations card
+        // Navy + neon digital/tech theme (Huly, Cleanmeter, Neon, Evervault)
+        navy: {
+          950: '#0a0e17',
+          900: '#0f172a',
+          800: '#1e293b',
+          700: '#334155',
+          600: '#475569',
+          500: '#64748b',
         },
-        // Modern Earth Theme (kept for compatibility)
-        earth: {
-          primary: 'rgb(25, 89, 8)', // Align with quitenice green
-          accent: '#A8C686',
-          sand: '#DAD7CD',
-          background: '#F7F8F3',
-          text: '#2E2E2E',
+        neon: {
+          cyan: '#22d3ee',
+          'cyan-dim': '#06b6d4',
+          green: '#00ff88',
+          'green-dim': '#10b981',
         },
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -82,8 +83,8 @@ export default {
       fontFamily: {
         mono: ['JetBrains Mono', 'monospace'],
         sans: ['Inter', 'Source Sans Pro', 'sans-serif'],
-        heading: ['Poppins', 'Montserrat', 'Inter', 'sans-serif'],
-        title: ['Lora', 'Georgia', 'serif'],
+        heading: ['Space Grotesk', 'Poppins', 'Inter', 'sans-serif'],
+        title: ['Space Grotesk', 'Poppins', 'sans-serif'],
       },
       letterSpacing: {
         'brand': '0.05em',

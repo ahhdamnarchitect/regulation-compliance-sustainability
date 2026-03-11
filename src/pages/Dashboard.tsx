@@ -135,7 +135,7 @@ export default function Dashboard() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <Bookmark className="w-8 h-8 text-earth-primary" />
+              <Bookmark className="w-8 h-8 text-neon-cyan" />
               Your Bookmarks
             </h1>
             <p className="text-gray-600 mt-2">Manage your saved regulations</p>
@@ -162,8 +162,8 @@ export default function Dashboard() {
 
         {regulationsLoading ? (
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-earth-primary mx-auto mb-4" />
-            <p className="text-earth-text">Loading your bookmarks...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-cyan mx-auto mb-4" />
+            <p className="text-slate-200">Loading your bookmarks...</p>
           </div>
         ) : bookmarkedRegulations.length === 0 ? (
           <div className="text-center py-12">

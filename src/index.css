@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Poppins:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,45 +7,45 @@
 
 @layer base {
   :root {
-    /* Modern Earth Theme */
-    --background: 0 0% 97%; /* #F7F8F3 */
-    --foreground: 0 0% 18%; /* #2E2E2E */
+    /* Navy + neon digital/tech theme */
+    --background: 222 47% 11%; /* navy-900 #1e293b */
+    --foreground: 210 40% 98%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 18%;
+    --card: 222 47% 14%;
+    --card-foreground: 210 40% 98%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 18%;
+    --popover: 222 47% 14%;
+    --popover-foreground: 210 40% 98%;
 
-    --primary: 150 50% 20%; /* #1B4332 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 187 85% 53%; /* neon-cyan #22d3ee */
+    --primary-foreground: 222 47% 11%;
 
-    --secondary: 60 30% 85%; /* #DAD7CD */
-    --secondary-foreground: 0 0% 18%;
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
 
-    --muted: 60 30% 85%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 217 33% 22%;
+    --muted-foreground: 215 20% 65%;
 
-    --accent: 80 40% 60%; /* #A8C686 */
-    --accent-foreground: 0 0% 18%;
+    --accent: 160 84% 50%; /* neon-green #00ff88 */
+    --accent-foreground: 222 47% 11%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 60 30% 85%;
-    --input: 60 30% 85%;
-    --ring: 150 50% 20%;
+    --border: 217 33% 25%;
+    --input: 217 33% 25%;
+    --ring: 187 85% 53%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 97%;
-    --sidebar-foreground: 0 0% 18%;
-    --sidebar-primary: 150 50% 20%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 60 30% 85%;
-    --sidebar-accent-foreground: 0 0% 18%;
-    --sidebar-border: 60 30% 85%;
-    --sidebar-ring: 150 50% 20%;
+    --sidebar-background: 222 47% 9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 187 85% 53%;
+    --sidebar-primary-foreground: 222 47% 11%;
+    --sidebar-accent: 217 33% 22%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 217 33% 25%;
+    --sidebar-ring: 187 85% 53%;
   }
 
   .dark {
@@ -105,17 +105,16 @@
   }
 
   body {
-    @apply text-earth-text font-sans;
-    /* Vibrant ombre: white at top to light sage (sustainability theme) at bottom */
-    background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+    @apply text-slate-200 font-sans;
+    background: linear-gradient(180deg, #0a0e17 0%, #0f172a 30%, #1e293b 70%, #0f172a 100%);
     min-height: 100vh;
     min-height: 100dvh;
     background-attachment: fixed;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: Lora, Georgia, serif;
-    @apply font-semibold;
+    font-family: Space Grotesk, Poppins, sans-serif;
+    @apply font-semibold text-slate-100;
   }
   
   .brand-text {
@@ -147,9 +146,9 @@
   animation: hero-kenburns 25s ease-in-out infinite alternate;
 }
 
-/* Inner pages: subtle gradient for consistency */
+/* Inner pages: navy gradient for digital/tech consistency */
 .page-gradient {
-  background: linear-gradient(180deg, #f7f8f3 0%, #f0f2ed 50%, #e8ece6 100%);
+  background: linear-gradient(180deg, #0a0e17 0%, #0f172a 40%, #1e293b 100%);
   min-height: 100%;
 }
 
@@ -171,7 +170,7 @@
 }
 
 .markdown-preview {
-  @apply prose max-w-none prose-blue dark:prose-invert;
+  @apply prose max-w-none prose-invert prose-headings:text-slate-100 prose-p:text-slate-300 prose-a:text-neon-cyan;
 }
 
 .markdown-preview pre {

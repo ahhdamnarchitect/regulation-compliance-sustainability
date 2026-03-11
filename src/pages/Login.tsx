@@ -57,12 +57,12 @@ export default function Login() {
 
   return (
     <div className="min-h-screen page-gradient flex items-center justify-center p-4">
-      <Card className="w-full max-w-md border-earth-sand shadow-lg">
+      <Card className="w-full max-w-md border-navy-600 shadow-lg">
         <CardHeader className="text-center">
-          <div className="w-16 h-16 bg-earth-primary rounded-full flex items-center justify-center mx-auto mb-4">
-            <span className="text-white font-bold text-2xl">M</span>
+          <div className="w-16 h-16 bg-neon-cyan rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-navy-900 font-bold text-2xl">M</span>
           </div>
-          <CardTitle className="text-2xl text-earth-primary font-title">
+          <CardTitle className="text-2xl text-neon-cyan font-title">
             Welcome to MSRD
           </CardTitle>
         </CardHeader>
@@ -70,14 +70,14 @@ export default function Login() {
         <CardContent>
           {showForgotPassword ? (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-earth-text">Reset password</h3>
-              <p className="text-sm text-earth-text/80">
+              <h3 className="text-lg font-semibold text-slate-200">Reset password</h3>
+              <p className="text-sm text-slate-200/80">
                 Enter your email and we&apos;ll send you a link to reset your password.
               </p>
               {forgotSuccess ? (
                 <>
-                  <Alert className="border-earth-primary/30 bg-earth-primary/10">
-                    <AlertDescription className="text-earth-text">
+                  <Alert className="border-neon-cyan/30 bg-neon-cyan/10">
+                    <AlertDescription className="text-slate-200">
                       If an account exists for that email, we&apos;ve sent a link to reset your password. Check your inbox and spam folder.
                     </AlertDescription>
                   </Alert>
@@ -156,14 +156,14 @@ export default function Login() {
               </Alert>
             )}
             
-            <Button type="submit" className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white">
+            <Button type="submit" className="w-full bg-neon-cyan hover:bg-neon-cyan/90 text-navy-900">
               Sign In
             </Button>
             <p className="text-center text-sm">
               <button
                 type="button"
                 onClick={() => setShowForgotPassword(true)}
-                className="text-earth-primary hover:underline"
+                className="text-neon-cyan hover:underline"
               >
                 Forgot password?
               </button>
@@ -171,8 +171,8 @@ export default function Login() {
           </form>
           )}
           
-          <p className="mt-4 text-center text-sm text-earth-text/80">
-            <a href="/" className="text-earth-primary hover:underline">Back to home</a>
+          <p className="mt-4 text-center text-sm text-slate-200/80">
+            <a href="/" className="text-neon-cyan hover:underline">Back to home</a>
           </p>
         </CardContent>
       </Card>
