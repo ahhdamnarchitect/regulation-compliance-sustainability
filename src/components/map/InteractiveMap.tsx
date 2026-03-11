@@ -583,21 +583,19 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
     return grouped;
   };
 
-  const getTileLayerUrl = (language: string) => {
-    // Use CartoDB Voyager tiles with Earth-friendly colors and no gridlines
-    // This provides a clean, professional look that complements the Earth theme
-    return 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+  const getTileLayerUrl = () => {
+    // CARTO Dark Matter: cutting-edge look, matches dark map section
+    return 'https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png';
   };
 
-  const getTileLayerAttribution = (language: string) => {
+  const getTileLayerAttribution = () => {
     return '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>';
   };
 
-  // Match Voyager water so the top sliver and edges blend in
-  const MAP_WATER_BG = '#d5e8eb';
+  const MAP_BG = '#1a1d23';
 
   return (
-    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_WATER_BG, borderColor: '#d5e8eb' }}>
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden shadow-lg border border-white/10 relative max-w-6xl mx-auto" style={{ backgroundColor: MAP_BG }}>
       
       <MapContainer
         center={[20, 0]}
@@ -605,7 +603,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         style={{ 
           height: '100%', 
           width: '100%',
-          backgroundColor: MAP_WATER_BG
+          backgroundColor: MAP_BG
         }}
         className="z-0 rounded-lg"
         maxBounds={[[-85, -180], [85, 180]]}
@@ -618,8 +616,8 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         ref={setMapRef}
       >
         <TileLayer
-          attribution={getTileLayerAttribution('en')}
-          url={getTileLayerUrl('en')}
+          attribution={getTileLayerAttribution()}
+          url={getTileLayerUrl()}
         />
         
         {Object.entries(regulationsByCountry).map(([location, locationRegulations]) => {

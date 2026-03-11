@@ -10,7 +10,7 @@ export default function CheckoutSuccess() {
   const sessionId = searchParams.get('session_id');
 
   return (
-    <div className="min-h-screen bg-transparent flex flex-col">
+    <div className="min-h-screen page-gradient flex flex-col">
       <Header />
       <div className="flex-1 container max-w-lg mx-auto px-4 py-16 flex flex-col items-center justify-center text-center">
         <CheckCircle className="w-16 h-16 text-green-600 mb-6" />

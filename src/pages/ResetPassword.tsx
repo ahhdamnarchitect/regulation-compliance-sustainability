@@ -62,7 +62,7 @@ export default function ResetPassword() {
   const showInvalid = !authLoading && recoveryChecked && !user;
 
   return (
-    <div className="min-h-screen bg-transparent flex flex-col">
+    <div className="min-h-screen page-gradient flex flex-col">
       <Header />
       <div className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
         <Card className="w-full max-w-md bg-white border-earth-sand">

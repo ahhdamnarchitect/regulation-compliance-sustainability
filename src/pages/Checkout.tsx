@@ -81,7 +81,7 @@ export default function Checkout() {
   const priceLabel = interval === 'monthly' ? `$${MONTHLY_PRICE}/month` : `$${YEARLY_PRICE}/year`;
 
   return (
-    <div className="min-h-screen bg-transparent flex flex-col">
+    <div className="min-h-screen page-gradient flex flex-col">
       <Header />
       <div className="flex-1 container max-w-3xl mx-auto px-4 py-8">
         <Button

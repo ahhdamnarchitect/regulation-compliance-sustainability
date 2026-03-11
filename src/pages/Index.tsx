@@ -120,19 +120,25 @@ export default function Index() {
         )}
 
         <main className="flex-1 max-w-full overflow-x-hidden">
-          {/* Hero: one value line + one primary CTA + one secondary */}
-          <section className="relative w-full min-h-[50vh] flex flex-col items-center justify-center px-4 py-16 md:py-24 bg-gradient-to-b from-earth-background to-earth-sand/30">
-            <RevealSection delay={0} variant="slide-up" className="text-center max-w-2xl mx-auto">
-              <h1 className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-earth-text tracking-tight mb-4 md:mb-6">
+          {/* Hero: animated photo background + one value line + CTAs */}
+          <section className="relative w-full min-h-[50vh] flex flex-col items-center justify-center px-4 py-16 md:py-24 overflow-hidden">
+            <div
+              className="absolute inset-0 bg-cover bg-center hero-bg-animate"
+              style={{ backgroundImage: 'url(/hero-sustainability.jpg)' }}
+              aria-hidden
+            />
+            <div className="absolute inset-0 bg-earth-text/50" />
+            <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">
+              <h1 className="font-title text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white tracking-tight mb-4 md:mb-6 drop-shadow-md">
                 Search and track global sustainability regulations.
               </h1>
-              <p className="text-lg md:text-xl text-earth-text/80 mb-8 md:mb-10">
+              <p className="text-lg md:text-xl text-white/95 mb-8 md:mb-10 drop-shadow-sm">
                 One place for CSRD, TCFD, ISSB and beyond.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
                 <Button
                   onClick={scrollToMap}
-                  className="w-full sm:w-auto h-12 px-8 bg-earth-primary hover:opacity-90 text-white font-medium rounded-lg transition-all shadow-md hover:shadow-lg"
+                  className="w-full sm:w-auto h-12 px-8 bg-earth-primary hover:opacity-90 text-white font-medium rounded-lg transition-all shadow-lg hover:shadow-xl border-0"
                 >
                   <MapPin className="w-5 h-5 mr-2 inline-block" />
                   Explore the map
@@ -140,7 +146,7 @@ export default function Index() {
                 <Button
                   variant="outline"
                   onClick={() => handleSearch()}
-                  className="w-full sm:w-auto h-12 px-6 border-earth-primary text-earth-primary hover:bg-earth-primary/10 font-medium rounded-lg"
+                  className="w-full sm:w-auto h-12 px-6 border-2 border-white text-white bg-white/10 hover:bg-white/20 font-medium rounded-lg backdrop-blur-sm"
                 >
                   <Search className="w-4 h-4 mr-2 inline-block" />
                   Search by topic
@@ -149,17 +155,17 @@ export default function Index() {
             </RevealSection>
           </section>
 
-          {/* Map as main experience - full width, minimal chrome */}
+          {/* Map as main experience - full width, dark theme */}
           <section
             id="map-section"
-            className="relative w-full bg-earth-sand/20 py-8 md:py-12"
+            className="relative w-full bg-[#1a1d23] py-8 md:py-12"
           >
             <RevealSection delay={100} variant="slide-up" className="w-full">
               <div className="w-full px-2 sm:px-4 max-w-7xl mx-auto">
-                <p className="text-center text-sm text-earth-text/70 mb-4">
+                <p className="text-center text-sm text-white/80 mb-4">
                   Click a region to explore regulations
                 </p>
-                <div className="rounded-xl overflow-hidden border border-earth-sand shadow-lg bg-card min-h-[400px] md:min-h-[500px]">
+                <div className="rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-[#1a1d23] min-h-[400px] md:min-h-[500px]">
                   <InteractiveMap
                     regulations={regulations}
                     onRegulationClick={handleRegulationClick}

@@ -149,7 +149,7 @@ export default function AccountSettings() {
   };
 
   return (
-    <div className="min-h-screen bg-transparent">
+    <div className="min-h-screen page-gradient">
       <Header />
       
       <div className="container mx-auto px-4 py-8">

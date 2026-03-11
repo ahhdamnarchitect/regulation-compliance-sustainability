@@ -235,7 +235,7 @@ export default function SearchResults() {
     (filters.status?.length ?? 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent">
+    <div className="min-h-screen flex flex-col page-gradient">
       <Header />
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-4">

@@ -214,7 +214,7 @@ export default function RegulationDetail() {
 
   if (!regulation) {
     return (
-      <div className="min-h-screen bg-transparent">
+      <div className="min-h-screen page-gradient">
         <Header />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
@@ -227,7 +227,7 @@ export default function RegulationDetail() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent">
+    <div className="min-h-screen flex flex-col page-gradient">
       <Header />
       <div className="flex-1 container mx-auto px-4 py-8">
         {/* Back Button */}

@@ -3,7 +3,7 @@ import { Footer } from '@/components/layout/Footer';
 
 export default function Privacy() {
   return (
-    <div className="min-h-screen bg-transparent flex flex-col">
+    <div className="min-h-screen page-gradient flex flex-col">
       <Header />
       <main className="container mx-auto px-4 py-8 flex-1 max-w-3xl">
         <h1 className="text-3xl font-bold text-earth-primary mb-2">Privacy Policy</h1>
