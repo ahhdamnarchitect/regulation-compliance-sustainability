@@ -125,7 +125,7 @@ export default function Index() {
           <section className="relative w-full min-h-[50vh] flex flex-col items-center justify-center px-4 py-16 md:py-24 overflow-hidden">
             <div className="absolute inset-0 bg-earth-primary" aria-hidden />
             <video
-              className={`hero-video-bg absolute inset-0 w-full h-full object-cover hero-bg-animate transition-opacity duration-500 ${heroVideoReady ? 'opacity-100' : 'opacity-0'}`}
+              className={`hero-video-bg absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ${heroVideoReady ? 'opacity-100' : 'opacity-0'}`}
               autoPlay
               muted
               loop
@@ -137,8 +137,7 @@ export default function Index() {
               onCanPlay={() => setHeroVideoReady(true)}
               onPlaying={() => setHeroVideoReady(true)}
             >
-              <source src={`${import.meta.env.BASE_URL}Valleymist.mp4`} type="video/mp4" media="(max-width: 767px)" />
-              <source src={`${import.meta.env.BASE_URL}ValleymistLo.mp4`} type="video/mp4" media="(min-width: 768px)" />
+              <source src={`${import.meta.env.BASE_URL}Valleymist.mp4`} type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-earth-primary/30" aria-hidden />
             <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">
@@ -205,7 +204,7 @@ export default function Index() {
                   From discovery to export — search, map, bookmark, and share regulations in one place.
                 </p>
               </RevealSection>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
                 {[
                   { icon: Eye, label: 'Monitor', desc: 'Stay on top of global sustainability regulations and updates.' },
                   { icon: GitBranch, label: 'Track', desc: 'Filter by region, sector, and framework. Find what applies to you.' },
