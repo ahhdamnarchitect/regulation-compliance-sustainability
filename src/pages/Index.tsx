@@ -137,7 +137,7 @@ export default function Index() {
               onCanPlay={() => setHeroVideoReady(true)}
               onPlaying={() => setHeroVideoReady(true)}
             >
-              <source src="/Valleymist.mp4" type="video/mp4" />
+              <source src={`${import.meta.env.BASE_URL}Valleymist.mp4`} type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-earth-primary/30" aria-hidden />
             <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">
@@ -238,7 +238,7 @@ export default function Index() {
               disablePictureInPicture
               disableRemotePlayback
             >
-              <source src="/TurbineSunlight.mp4" type="video/mp4" />
+              <source src={`${import.meta.env.BASE_URL}TurbineSunlight.mp4`} type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-earth-primary/50" aria-hidden />
             <div className="relative z-10 h-full flex items-center justify-center px-4">
