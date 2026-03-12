@@ -5,7 +5,8 @@ Generated and curated assets for the earth/cream sustainability theme.
 | File | Use |
 |------|-----|
 | `pattern-earth-tile.png` | Tileable background texture (cream/sage). Used on `body` in `index.css` for subtle depth. |
-| `accent-leaf-transparent.png` | Decorative leaf graphic (transparent). Use as section accent or corner element where desired. |
+| `accent-leaf.svg` | Vector leaf (earth green), transparent background. Used on About card and 404. No pixelation. |
+| `accent-leaf-hero.svg` | Same leaf in white for hero. Used in hero bottom-right. Transparent background. |
 
 ## Hero video
 

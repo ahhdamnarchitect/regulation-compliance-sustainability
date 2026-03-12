@@ -136,15 +136,14 @@ export default function Index() {
             </video>
             <div className="absolute inset-0 bg-earth-primary/30" aria-hidden />
             <div
-              className="pointer-events-none absolute bottom-0 right-0 w-32 sm:w-40 md:w-48 opacity-60 md:opacity-75"
+              className="pointer-events-none absolute bottom-0 right-0 w-32 sm:w-40 md:w-48 opacity-80 md:opacity-90"
               aria-hidden
             >
               <img
-                src="/theme-assets-earth/accent-leaf-transparent.png"
+                src="/theme-assets-earth/accent-leaf-hero.svg"
                 alt=""
                 className="w-full h-auto drop-shadow-lg"
                 loading="lazy"
-                style={{ imageRendering: 'auto' }}
               />
             </div>
             <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">

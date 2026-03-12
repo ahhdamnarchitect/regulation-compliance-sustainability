@@ -18,8 +18,8 @@ const NotFound = () => {
       <Header />
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="relative text-center p-10 md:p-12 rounded-2xl border border-earth-sand bg-white/90 shadow-lg max-w-md w-full">
-          <div className="absolute -right-4 -top-4 w-24 opacity-60 pointer-events-none hidden sm:block">
-            <img src="/theme-assets-earth/accent-leaf-transparent.png" alt="" className="w-full h-auto" loading="lazy" />
+          <div className="absolute -right-4 -top-4 w-24 opacity-70 pointer-events-none hidden sm:block">
+            <img src="/theme-assets-earth/accent-leaf.svg" alt="" className="w-full h-auto" loading="lazy" />
           </div>
           <h1 className="font-title text-5xl md:text-6xl font-bold mb-4 text-earth-primary">404</h1>
           <p className="text-xl text-earth-text mb-6">Page not found</p>

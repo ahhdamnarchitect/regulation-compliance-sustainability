@@ -9,13 +9,12 @@ export default function About() {
       <main className="container mx-auto px-4 py-10 md:py-12 flex-1 max-w-5xl">
         <RevealSection delay={0} variant="slide-up">
         <div className="relative overflow-hidden rounded-2xl bg-white/80 border border-earth-sand shadow-sm mb-10 md:mb-12">
-          <div className="pointer-events-none absolute bottom-0 right-0 w-28 sm:w-32 opacity-50" aria-hidden>
+          <div className="pointer-events-none absolute bottom-0 right-0 w-28 sm:w-32 opacity-70" aria-hidden>
             <img
-              src="/theme-assets-earth/accent-leaf-transparent.png"
+              src="/theme-assets-earth/accent-leaf.svg"
               alt=""
               className="w-full h-auto"
               loading="lazy"
-              style={{ imageRendering: 'auto' }}
             />
           </div>
           <div className="relative p-6 md:p-8 lg:p-10">
