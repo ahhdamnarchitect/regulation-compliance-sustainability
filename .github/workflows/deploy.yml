@@ -28,6 +28,14 @@ jobs:
         with:
           lfs: true
 
+      - name: Pull LFS files (ensure real videos, not pointers)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y git-lfs
+          git lfs pull
+          echo "Public MP4s after LFS pull (sizes should be MB, not bytes):"
+          ls -la public/*.mp4 2>/dev/null || true
+          du -h public/Valleymist.mp4 public/TurbineSunlight.mp4 2>/dev/null || true
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -48,6 +56,9 @@ jobs:
           echo "Build command completed, checking exit code: $?"
           echo "Checking if dist directory exists:"
           ls -la dist/ || echo "dist directory not found!"
+          echo "Video files in dist (should be real files, not tiny LFS pointers):"
+          ls -la dist/*.mp4 2>/dev/null || echo "No mp4 in dist"
+          du -h dist/Valleymist.mp4 dist/TurbineSunlight.mp4 2>/dev/null || true
           echo "Build process finished"
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
