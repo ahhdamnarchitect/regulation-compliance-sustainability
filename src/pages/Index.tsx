@@ -137,7 +137,8 @@ export default function Index() {
               onCanPlay={() => setHeroVideoReady(true)}
               onPlaying={() => setHeroVideoReady(true)}
             >
-              <source src={`${import.meta.env.BASE_URL}Valleymist.mp4`} type="video/mp4" />
+              <source src={`${import.meta.env.BASE_URL}Valleymist.mp4`} type="video/mp4" media="(max-width: 767px)" />
+              <source src={`${import.meta.env.BASE_URL}ValleymistLo.mp4`} type="video/mp4" media="(min-width: 768px)" />
             </video>
             <div className="absolute inset-0 bg-earth-primary/30" aria-hidden />
             <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">
