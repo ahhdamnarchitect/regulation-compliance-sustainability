@@ -137,7 +137,7 @@ export default function Index() {
               onCanPlay={() => setHeroVideoReady(true)}
               onPlaying={() => setHeroVideoReady(true)}
             >
-              <source src="/ForestMistSunlight.mp4" type="video/mp4" />
+              <source src="/Valleymist.mp4" type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-earth-primary/30" aria-hidden />
             <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">
