@@ -238,7 +238,7 @@ export default function Index() {
               disablePictureInPicture
               disableRemotePlayback
             >
-              <source src="/TurbinesinWaterwithClouds.mp4" type="video/mp4" />
+              <source src="/TurbineSunlight.mp4" type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-earth-primary/50" aria-hidden />
             <div className="relative z-10 h-full flex items-center justify-center px-4">
