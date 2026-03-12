@@ -11,6 +11,7 @@ import { useRegulations } from '@/hooks/useRegulations';
 import { Regulation } from '@/types/regulation';
 import { formatStatus } from '@/lib/utils';
 import { Download, BookmarkX, FileText, Bookmark } from 'lucide-react';
+import { RevealSection } from '@/components/ui/RevealSection';
 import jsPDF from 'jspdf';
 
 export default function Dashboard() {
@@ -131,60 +132,68 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen flex flex-col page-gradient">
       <Header />
-      <div className="flex-1 container mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-              <Bookmark className="w-8 h-8 text-primary" />
-              Your Bookmarks
-            </h1>
-            <p className="text-gray-600 mt-2">Manage your saved regulations</p>
-          </div>
-          
-          {bookmarkedRegulations.length > 0 && (
-            <div className="flex items-center space-x-4">
-              <Select value={exportFormat} onValueChange={(value: 'csv' | 'pdf') => setExportFormat(value)}>
-                <SelectTrigger className="w-32">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="csv">CSV</SelectItem>
-                  <SelectItem value="pdf">PDF</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button onClick={handleExport} className="bg-green-600 hover:bg-green-700">
-                {exportFormat === 'csv' ? <Download className="w-4 h-4 mr-2" /> : <FileText className="w-4 h-4 mr-2" />}
-                Export {exportFormat.toUpperCase()}
-              </Button>
+      <div className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+        <RevealSection delay={0} variant="slide-up" className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div>
+              <h1 className="font-title text-2xl md:text-3xl font-semibold text-earth-text flex items-center gap-2">
+                <Bookmark className="w-8 h-8 text-earth-primary" />
+                Your Bookmarks
+              </h1>
+              <p className="text-earth-text/80 mt-1 text-sm md:text-base">Manage your saved regulations</p>
             </div>
-          )}
-        </div>
+          
+            {bookmarkedRegulations.length > 0 && (
+              <div className="flex items-center space-x-4">
+                <Select value={exportFormat} onValueChange={(value: 'csv' | 'pdf') => setExportFormat(value)}>
+                  <SelectTrigger className="w-32 border-earth-sand">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="csv">CSV</SelectItem>
+                    <SelectItem value="pdf">PDF</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button onClick={handleExport} className="bg-earth-primary hover:bg-earth-primary/90 text-white">
+                  {exportFormat === 'csv' ? <Download className="w-4 h-4 mr-2" /> : <FileText className="w-4 h-4 mr-2" />}
+                  Export {exportFormat.toUpperCase()}
+                </Button>
+              </div>
+            )}
+          </div>
+        </RevealSection>
 
         {regulationsLoading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
-            <p className="text-foreground">Loading your bookmarks...</p>
-          </div>
+          <RevealSection delay={0} variant="fade" className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-earth-primary mx-auto mb-4" />
+            <p className="text-earth-text/80">Loading your bookmarks...</p>
+          </RevealSection>
         ) : bookmarkedRegulations.length === 0 ? (
-          <div className="text-center py-12">
-            <BookmarkX className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No bookmarks yet</h3>
-            <p className="text-gray-600">Start exploring regulations and bookmark the ones you want to track.</p>
-          </div>
+          <RevealSection delay={0} variant="slide-up" className="text-center py-16">
+            <div className="rounded-2xl border border-earth-sand bg-white/80 p-10 max-w-md mx-auto">
+              <BookmarkX className="w-14 h-14 text-earth-sand mx-auto mb-4" />
+              <h3 className="font-title text-xl font-semibold text-earth-text mb-2">No bookmarks yet</h3>
+              <p className="text-earth-text/80 text-sm mb-6">Start exploring the map or search, then bookmark regulations you want to track.</p>
+              <Button onClick={() => navigate('/')} className="bg-earth-primary hover:bg-earth-primary/90 text-white">
+                Explore the map
+              </Button>
+            </div>
+          </RevealSection>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bookmarkedRegulations.map((regulation) => (
-              <div
-                key={regulation.id}
-                className="cursor-pointer hover:scale-105 transition-transform duration-200"
-                onClick={() => navigate(`/regulation/${regulation.id}`)}
-              >
-                <RegulationCard
-                  regulation={regulation}
-                  isBookmarked={true}
-                  onBookmark={(e) => handleRemoveBookmark(e, regulation.id)}
-                />
-              </div>
+            {bookmarkedRegulations.map((regulation, index) => (
+              <RevealSection key={regulation.id} delay={Math.min(index * 60, 350)} variant="slide-up">
+                <div
+                  className="cursor-pointer card-hover-lift rounded-lg"
+                  onClick={() => navigate(`/regulation/${regulation.id}`)}
+                >
+                  <RegulationCard
+                    regulation={regulation}
+                    isBookmarked={true}
+                    onBookmark={(e) => handleRemoveBookmark(e, regulation.id)}
+                  />
+                </div>
+              </RevealSection>
             ))}
           </div>
         )}

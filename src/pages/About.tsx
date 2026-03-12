@@ -1,23 +1,42 @@
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { RevealSection } from '@/components/ui/RevealSection';
 
 export default function About() {
   return (
     <div className="min-h-screen page-gradient flex flex-col">
       <Header />
-      <main className="container mx-auto px-4 py-8 flex-1 max-w-3xl">
-        <h1 className="text-3xl font-bold text-primary mb-6">About MSRD</h1>
+      <main className="container mx-auto px-4 py-10 md:py-12 flex-1 max-w-5xl">
+        <RevealSection delay={0} variant="slide-up">
+        <div className="relative overflow-hidden rounded-2xl bg-white/80 border border-earth-sand shadow-sm mb-10 md:mb-12">
+          <div className="absolute -right-10 -top-10 w-36 sm:w-44 opacity-70 md:opacity-90 pointer-events-none">
+            <img
+              src="/theme-assets-earth/accent-leaf-transparent.png"
+              alt=""
+              className="w-full h-auto"
+              loading="lazy"
+            />
+          </div>
+          <div className="relative p-6 md:p-8 lg:p-10">
+            <p className="text-xs md:text-sm font-medium uppercase tracking-[0.25em] text-earth-primary/80 mb-3">
+              About
+            </p>
+            <h1 className="font-title text-2xl md:text-3xl lg:text-4xl font-semibold text-earth-text mb-4 md:mb-6 max-w-2xl">
+              Infrastructure for modern sustainability regulation.
+            </h1>
+            <p className="text-sm md:text-base text-earth-text/80 max-w-2xl">
+              Missick Sustainability Regulation Database LLC (MSRD) is redefining how organizations engage with sustainability regulation.
+            </p>
+          </div>
+        </div>
+        </RevealSection>
 
-        <div className="space-y-6 text-foreground/90 text-sm">
-          <p>
-            Missick Sustainability Regulation Database LLC (MSRD) is redefining how organizations engage with sustainability regulation.
-          </p>
+        <div className="space-y-6 text-foreground/90 text-sm md:text-base max-w-3xl">
+          <RevealSection delay={80} variant="slide-up">
           <p>
             As environmental and ESG disclosure requirements expand across global markets, regulatory intelligence has become a strategic function rather than a reactive one. Companies are expected to monitor, interpret, and operationalize evolving frameworks across multiple jurisdictions, often with limited internal resources and fragmented tools.
           </p>
-          <p>
-            MSRD was created to provide structure where there is complexity.
-          </p>
+          <p>MSRD was created to provide structure where there is complexity.</p>
           <p>
             We deliver a centralized regulatory intelligence platform designed to help organizations:
           </p>
@@ -34,21 +53,27 @@ export default function About() {
           <p>
             MSRD is building the infrastructure layer for modern sustainability compliance.
           </p>
+          </RevealSection>
 
-          <h2 className="text-xl font-semibold text-primary mt-8 mb-2">Our Mission</h2>
+          <RevealSection delay={120} variant="slide-up">
+          <h2 className="text-xl md:text-2xl font-semibold text-earth-primary mt-10 mb-2">Our Mission</h2>
           <p>
             To modernize how sustainability regulation is monitored, organized, and operationalized by making regulatory intelligence more accessible, structured, and actionable.
           </p>
+          </RevealSection>
 
-          <h2 className="text-xl font-semibold text-primary mt-8 mb-2">Our Vision</h2>
+          <RevealSection delay={100} variant="slide-up">
+          <h2 className="text-xl md:text-2xl font-semibold text-earth-primary mt-8 mb-2">Our Vision</h2>
           <p>
             We envision a future where sustainability compliance is supported by intelligent, user-friendly infrastructure that enables organizations of all sizes to navigate regulatory complexity with confidence.
           </p>
           <p>
             As regulatory expectations continue to evolve, MSRD aims to become a trusted platform for structured sustainability intelligence.
           </p>
+          </RevealSection>
 
-          <h2 className="text-xl font-semibold text-primary mt-8 mb-2">Who We Serve</h2>
+          <RevealSection delay={80} variant="slide-up">
+          <h2 className="text-xl md:text-2xl font-semibold text-earth-primary mt-8 mb-2">Who We Serve</h2>
           <p>
             MSRD is built for:
           </p>
@@ -63,8 +88,10 @@ export default function About() {
           <p>
             Our platform is designed to support teams that need clarity without the cost or complexity of large enterprise-only systems.
           </p>
+          </RevealSection>
 
-          <h2 className="text-xl font-semibold text-primary mt-8 mb-2">Why We're Different</h2>
+          <RevealSection delay={80} variant="slide-up">
+          <h2 className="text-xl md:text-2xl font-semibold text-earth-primary mt-8 mb-2">Why We're Different</h2>
           <ol className="list-decimal list-inside space-y-3 ml-2">
             <li>
               <strong className="text-foreground">Structured Intelligence</strong>
@@ -87,14 +114,17 @@ export default function About() {
               Sustainability regulation is accelerating. MSRD is built to scale alongside evolving frameworks and disclosure requirements.
             </li>
           </ol>
+          </RevealSection>
 
-          <h2 className="text-xl font-semibold text-primary mt-8 mb-2">Our Commitment</h2>
+          <RevealSection delay={80} variant="slide-up">
+          <h2 className="text-xl md:text-2xl font-semibold text-earth-primary mt-8 mb-2">Our Commitment</h2>
           <p>
             MSRD is committed to building a platform that supports responsible corporate transparency while maintaining clarity, integrity, and structured insight.
           </p>
           <p>
             Missick Sustainability Regulation Database LLC is headquartered in Oswego, Illinois and serves organizations navigating the evolving landscape of sustainability and ESG compliance.
           </p>
+          </RevealSection>
         </div>
       </main>
       <Footer />

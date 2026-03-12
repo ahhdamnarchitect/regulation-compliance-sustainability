@@ -73,10 +73,10 @@ export const LoginOverlay: React.FC<LoginOverlayProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <Card className="w-full max-w-md bg-card shadow-2xl border-border max-h-[90vh] overflow-y-auto glow-accent">
+      <Card className="w-full max-w-md bg-white shadow-2xl border-earth-sand max-h-[90vh] overflow-y-auto">
         <CardHeader className="text-center pb-4">
-          <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4 glow-primary">
-            <span className="text-primary-foreground font-bold text-2xl">M</span>
+          <div className="w-16 h-16 bg-earth-primary rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-white font-bold text-2xl">M</span>
           </div>
           <CardTitle className="text-2xl font-bold text-primary brand-text">
             Welcome to MSRD

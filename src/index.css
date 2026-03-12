@@ -7,76 +7,84 @@
 
 @layer base {
   :root {
-    /* Dark Neon Sustainability Theme */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
+    /* Modern Earth Theme (ea6c2ad) */
+    --background: 0 0% 97%;
+    --foreground: 0 0% 18%;
 
-    --card: 222 47% 14%;
-    --card-foreground: 210 40% 98%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 18%;
 
-    --popover: 222 47% 14%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 18%;
 
-    --primary: 142 71% 45%;
-    --primary-foreground: 222 47% 11%;
+    --primary: 150 50% 20%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 187 85% 43%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 60 30% 85%;
+    --secondary-foreground: 0 0% 18%;
 
-    --muted: 222 30% 18%;
-    --muted-foreground: 215 20% 65%;
+    --muted: 60 30% 85%;
+    --muted-foreground: 0 0% 40%;
 
-    --accent: 187 85% 43%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 80 40% 60%;
+    --accent-foreground: 0 0% 18%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 222 30% 22%;
-    --input: 222 30% 22%;
-    --ring: 142 71% 45%;
+    --border: 60 30% 85%;
+    --input: 60 30% 85%;
+    --ring: 150 50% 20%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 222 47% 11%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 142 71% 45%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 222 30% 18%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 30% 22%;
-    --sidebar-ring: 142 71% 45%;
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 0 0% 18%;
+    --sidebar-primary: 150 50% 20%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 60 30% 85%;
+    --sidebar-accent-foreground: 0 0% 18%;
+    --sidebar-border: 60 30% 85%;
+    --sidebar-ring: 150 50% 20%;
   }
 
   .dark {
-    /* Same as :root (dark neon sustainability) */
-    --background: 222 47% 11%;
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 14%;
+
+    --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
-    --popover: 222 47% 14%;
+
+    --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 142 71% 45%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 187 85% 43%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 222 30% 18%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 187 85% 43%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-    --border: 222 30% 22%;
-    --input: 222 30% 22%;
-    --ring: 142 71% 45%;
-    --sidebar-background: 222 47% 11%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+
+    --sidebar-background: 215 28% 17%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 142 71% 45%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 222 30% 18%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 215 25% 27%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 30% 22%;
-    --sidebar-ring: 142 71% 45%;
+    --sidebar-border: 215 25% 27%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
 
@@ -97,13 +105,16 @@
   }
 
   body {
-    @apply text-foreground font-sans;
-    background: #0f172a;
-    background-image: url(/theme-assets/pattern-circuit-dark.png);
-    background-repeat: repeat;
+    @apply text-earth-text font-sans;
+    background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+    background-image: 
+      url(/theme-assets-earth/pattern-earth-tile.png),
+      linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+    background-repeat: repeat, no-repeat;
+    background-size: auto, 100% 100%;
     min-height: 100vh;
     min-height: 100dvh;
-    background-attachment: fixed;
+    background-attachment: fixed, fixed;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -134,25 +145,56 @@
   .hero-bg-animate {
     animation: none;
   }
+  .hero-video-bg {
+    display: none !important;
+  }
+  .reveal-section {
+    transition-duration: 0.01ms;
+  }
 }
 
 .hero-bg-animate {
   animation: hero-kenburns 25s ease-in-out infinite alternate;
 }
 
-/* Inner pages: dark theme */
+/* Card hover lift (respect reduced motion) */
+.card-hover-lift {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+@media (hover: hover) {
+  .card-hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -8px rgb(0 0 0 / 0.12);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .card-hover-lift {
+    transition: none;
+  }
+  .card-hover-lift:hover {
+    transform: none;
+  }
+}
+
+/* Inner pages: earth gradient + texture */
 .page-gradient {
-  background: #0f172a;
-  background-image: url(/theme-assets/pattern-circuit-dark.png);
-  background-repeat: repeat;
+  background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+  background-image:
+    url(/theme-assets-earth/pattern-earth-tile.png),
+    linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: auto, 100% 100%;
   min-height: 100%;
 }
 
-/* Section-only for map etc. */
+/* Section-only gradient + texture (no min-height) for map etc. */
 .section-gradient {
-  background: #0f172a;
-  background-image: url(/theme-assets/pattern-circuit-dark.png);
-  background-repeat: repeat;
+  background: linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+  background-image:
+    url(/theme-assets-earth/pattern-earth-tile.png),
+    linear-gradient(180deg, #ffffff 0%, #f5faf5 25%, #e8f2e8 60%, #dcebdc 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: auto, 100% 100%;
 }
 
 /* Mobile viewport fixes */
@@ -166,16 +208,6 @@
   .prevent-zoom {
     touch-action: manipulation;
   }
-
-  .glow-primary {
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.35);
-  }
-  .glow-primary-hover:hover {
-    box-shadow: 0 0 24px rgba(34, 197, 94, 0.45);
-  }
-  .glow-accent {
-    box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
-  }
 }
 
 .markdown-editor {
@@ -183,7 +215,7 @@
 }
 
 .markdown-preview {
-  @apply prose max-w-none prose-invert prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground;
+  @apply prose max-w-none prose-blue dark:prose-invert;
 }
 
 .markdown-preview pre {

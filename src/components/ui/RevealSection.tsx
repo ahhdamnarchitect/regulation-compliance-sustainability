@@ -35,7 +35,7 @@ export function RevealSection({ children, className = '', delay = 0, variant = '
   return (
     <div
       ref={ref}
-      className={`transition-all duration-700 ease-out ${variantClass[variant]} ${className}`}
+      className={`transition-all duration-700 ease-out reveal-section ${variantClass[variant]} ${className}`}
     >
       {children}
     </div>

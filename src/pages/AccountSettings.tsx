@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 import { isValidEmail } from '@/lib/validation';
 import { 
@@ -23,14 +24,19 @@ import {
   ArrowLeft,
   Crown,
   Eye,
-  EyeOff
+  EyeOff,
+  XCircle
 } from 'lucide-react';
+import { RevealSection } from '@/components/ui/RevealSection';
 
 export default function AccountSettings() {
-  const { user, logout } = useAuth();
+  const { user, session, logout } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancellationScheduled, setCancellationScheduled] = useState(false);
   
   // Profile form state
   const [profileData, setProfileData] = useState({
@@ -137,12 +143,51 @@ export default function AccountSettings() {
     logout();
   };
 
+  const handleCancelSubscription = async () => {
+    if (!session?.access_token) {
+      toast({ title: 'Session expired', description: 'Please sign in again.', variant: 'destructive' });
+      return;
+    }
+    setCancelLoading(true);
+    try {
+      const res = await fetch('/api/cancel-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        toast({
+          title: 'Could not cancel',
+          description: data.error ?? 'Something went wrong. Please try again.',
+          variant: 'destructive',
+        });
+        return;
+      }
+      setCancellationScheduled(true);
+      toast({
+        title: 'Cancellation scheduled',
+        description: data.message ?? 'You will keep access until the end of your billing period.',
+      });
+    } catch {
+      toast({
+        title: 'Error',
+        description: 'Network error. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setCancelLoading(false);
+    }
+  };
+
   const getPlanBadge = (plan?: string) => {
     switch (plan) {
       case 'enterprise':
         return <Badge className="bg-purple-100 text-purple-800 border-purple-200">Enterprise</Badge>;
       case 'professional':
-        return <Badge className="bg-blue-100 text-blue-800 border-blue-200">Professional</Badge>;
+        return <Badge className="bg-earth-primary/15 text-earth-primary border-earth-primary/40">Professional</Badge>;
       default:
         return <Badge className="bg-gray-100 text-gray-800 border-gray-200">Free</Badge>;
     }
@@ -152,25 +197,26 @@ export default function AccountSettings() {
     <div className="min-h-screen page-gradient">
       <Header />
       
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex items-center mb-6">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate(-1)} 
-            className="mr-4 text-primary border-border hover:bg-muted"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-3xl font-heading text-primary">Account Settings</h1>
-        </div>
+      <div className="container mx-auto px-4 py-8 max-w-5xl">
+        <RevealSection delay={0} variant="slide-up" className="mb-6">
+          <div className="flex items-center">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate(-1)} 
+              className="mr-4 text-earth-primary border-earth-sand hover:bg-earth-sand/50"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+            <h1 className="font-title text-2xl md:text-3xl font-semibold text-earth-text">Account Settings</h1>
+          </div>
+        </RevealSection>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Account Overview */}
-          <div className="lg:col-span-1">
-            <Card className="bg-card border-border">
+          <RevealSection delay={50} variant="slide-up" className="lg:col-span-1">
+          <Card className="bg-white/90 border-earth-sand">
               <CardHeader>
-                <CardTitle className="flex items-center text-primary">
+                <CardTitle className="flex items-center text-earth-text font-semibold">
                   <User className="w-5 h-5 mr-2" />
                   Account Overview
                 </CardTitle>
@@ -187,7 +233,7 @@ export default function AccountSettings() {
                     {user?.plan === 'free' && (
                       <Button 
                         size="sm" 
-                        className="ml-2 bg-primary hover:bg-primary/90 text-primary-foreground"
+                        className="ml-2 bg-earth-primary hover:bg-earth-primary/90 text-white"
                         onClick={handleUpgrade}
                       >
                         <Crown className="w-4 h-4 mr-1" />
@@ -196,7 +242,33 @@ export default function AccountSettings() {
                     )}
                   </div>
                 </div>
-                <div className="pt-4 border-t border-border">
+                {user?.plan !== 'free' && (
+                  <div className="pt-3 border-t border-earth-sand">
+                    <Label className="text-sm font-medium text-foreground/60">Subscription</Label>
+                    {cancellationScheduled ? (
+                      <p className="text-sm text-earth-text/80 mt-1">
+                        Cancellation scheduled. You will keep access until the end of your billing period.
+                      </p>
+                    ) : (
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="text-earth-text border-earth-sand hover:bg-red-50 hover:border-red-200 hover:text-red-700"
+                          onClick={handleCancelSubscription}
+                          disabled={cancelLoading}
+                        >
+                          <XCircle className="w-4 h-4 mr-1" />
+                          {cancelLoading ? 'Cancelling…' : 'Cancel subscription'}
+                        </Button>
+                        <p className="text-xs text-earth-text/70">
+                          You will be downgraded to Free at the end of the current period.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className="pt-4 border-t border-earth-sand">
                   <Button 
                     variant="outline" 
                     onClick={handleLogout}
@@ -207,24 +279,23 @@ export default function AccountSettings() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+          </RevealSection>
 
-          {/* Settings Tabs */}
-          <div className="lg:col-span-2">
+          <RevealSection delay={100} variant="slide-up" className="lg:col-span-2">
             <Tabs defaultValue="profile" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 bg-muted">
-                <TabsTrigger value="profile" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              <TabsList className="grid w-full grid-cols-2 bg-earth-sand/50 border border-earth-sand">
+                <TabsTrigger value="profile" className="text-earth-text data-[state=active]:bg-earth-primary data-[state=active]:text-white">
                   Profile
                 </TabsTrigger>
-                <TabsTrigger value="security" className="text-foreground data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+                <TabsTrigger value="security" className="text-earth-text data-[state=active]:bg-earth-primary data-[state=active]:text-white">
                   Security
                 </TabsTrigger>
               </TabsList>
 
               <TabsContent value="profile" className="mt-6">
-                <Card className="bg-card border-border">
+                <Card className="bg-white/90 border-earth-sand">
                   <CardHeader>
-                    <CardTitle className="flex items-center text-primary">
+                    <CardTitle className="flex items-center text-earth-text font-semibold">
                       <User className="w-5 h-5 mr-2" />
                       Profile Information
                     </CardTitle>
@@ -240,7 +311,7 @@ export default function AccountSettings() {
                           type="text"
                           value={profileData.name}
                           onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                          className="border-border focus:border-primary focus:ring-primary"
+                          className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary/50"
                           required
                         />
                       </div>
@@ -254,7 +325,7 @@ export default function AccountSettings() {
                           type="email"
                           value={profileData.email}
                           onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
-                          className="border-border focus:border-primary focus:ring-primary"
+                          className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary/50"
                           required
                         />
                       </div>
@@ -270,7 +341,7 @@ export default function AccountSettings() {
                             value={profileConfirmPassword}
                             onChange={(e) => setProfileConfirmPassword(e.target.value)}
                             placeholder="Enter your password to save changes"
-                            className="border-border focus:border-primary focus:ring-primary pr-10"
+                            className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary/50 pr-10"
                             required
                           />
                           <button
@@ -286,7 +357,7 @@ export default function AccountSettings() {
                       
                       <Button 
                         type="submit" 
-                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                        className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
                         disabled={loading}
                       >
                         {loading ? 'Updating...' : 'Update Profile'}
@@ -297,9 +368,9 @@ export default function AccountSettings() {
               </TabsContent>
 
               <TabsContent value="security" className="mt-6">
-                <Card className="bg-card border-border">
+                <Card className="bg-white/90 border-earth-sand">
                   <CardHeader>
-                    <CardTitle className="flex items-center text-primary">
+                    <CardTitle className="flex items-center text-earth-text font-semibold">
                       <Lock className="w-5 h-5 mr-2" />
                       Security Settings
                     </CardTitle>
@@ -316,7 +387,7 @@ export default function AccountSettings() {
                             type={showCurrentPassword ? 'text' : 'password'}
                             value={passwordData.currentPassword}
                             onChange={(e) => setPasswordData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                            className="border-border focus:border-primary focus:ring-primary pr-10"
+                            className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary/50 pr-10"
                             required
                           />
                           <button
@@ -340,7 +411,7 @@ export default function AccountSettings() {
                             type={showNewPassword ? 'text' : 'password'}
                             value={passwordData.newPassword}
                             onChange={(e) => setPasswordData(prev => ({ ...prev, newPassword: e.target.value }))}
-                            className="border-border focus:border-primary focus:ring-primary pr-10"
+                            className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary/50 pr-10"
                             required
                           />
                           <button
@@ -364,7 +435,7 @@ export default function AccountSettings() {
                             type={showConfirmPassword ? 'text' : 'password'}
                             value={passwordData.confirmPassword}
                             onChange={(e) => setPasswordData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                            className="border-border focus:border-primary focus:ring-primary pr-10"
+                            className="border-earth-sand focus:border-earth-primary focus:ring-earth-primary/50 pr-10"
                             required
                           />
                           <button
@@ -380,7 +451,7 @@ export default function AccountSettings() {
                       
                       <Button 
                         type="submit" 
-                        className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+                        className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
                         disabled={loading}
                       >
                         {loading ? 'Changing Password...' : 'Change Password'}
@@ -390,6 +461,7 @@ export default function AccountSettings() {
                 </Card>
               </TabsContent>
             </Tabs>
+          </RevealSection>
 
             {/* Messages */}
             {message && (

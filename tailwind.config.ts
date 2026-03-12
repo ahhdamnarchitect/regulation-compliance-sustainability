@@ -21,17 +21,11 @@ export default {
     },
     extend: {
       colors: {
-        // Dark neon sustainability theme
-        neon: {
-          green: '#22c55e',
-          'green-light': '#4ade80',
-          cyan: '#06b6d4',
-          'cyan-light': '#22d3ee',
-        },
-        dark: {
-          bg: '#0f172a',
-          card: '#1e293b',
-          border: '#334155',
+        // Quite Nice / quitenice.com inspired (ea6c2ad)
+        quitenice: {
+          green: 'rgb(25, 89, 8)',
+          cream: '#FAF8F5',
+          searchBox: '#FECD97',
         },
         earth: {
           primary: 'rgb(25, 89, 8)',

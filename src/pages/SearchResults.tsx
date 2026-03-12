@@ -20,6 +20,7 @@ import {
 } from '@/data/locationHierarchy';
 import type { LocationClearScope } from '@/components/regulations/FilterSidebar';
 import { ArrowLeft, Filter } from 'lucide-react';
+import { RevealSection } from '@/components/ui/RevealSection';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { SearchInputWithSuggestions } from '@/components/search/SearchInputWithSuggestions';
 
@@ -237,15 +238,20 @@ export default function SearchResults() {
   return (
     <div className="min-h-screen flex flex-col page-gradient">
       <Header />
-      <div className="flex-1 container mx-auto px-4 py-8">
-        <div className="mb-4">
-          <Link to="/" className="inline-flex items-center text-primary hover:text-primary/90 transition-colors">
+      <div className="flex-1 container mx-auto px-4 py-8 max-w-7xl">
+        <RevealSection delay={0} variant="slide-up" className="mb-6">
+          <Link to="/" className="inline-flex items-center text-earth-primary hover:text-earth-primary/90 transition-colors font-medium">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Map
           </Link>
-        </div>
+        </RevealSection>
 
-        <h1 className="text-3xl font-bold text-foreground mb-4">Search Results</h1>
+        <RevealSection delay={50} variant="slide-up" className="mb-6">
+          <h1 className="font-title text-2xl md:text-3xl font-semibold text-earth-text mb-1">Search Results</h1>
+          <p className="text-earth-text/80 text-sm md:text-base">
+            {loading ? 'Loading…' : `${filteredRegulations.length} regulation${filteredRegulations.length === 1 ? '' : 's'} found`}
+          </p>
+        </RevealSection>
 
         {/* Search bar + Filter bar (filters up top on mobile) */}
         <div className="space-y-3 mb-6">
@@ -257,9 +263,9 @@ export default function SearchResults() {
               placeholder="Search regulations..."
               regulations={regulations}
               suggestionsEnabled={false}
-              inputClassName="border-border focus:border-primary focus:ring-primary"
+              inputClassName="border-earth-sand focus:border-earth-primary focus:ring-earth-primary/50"
             />
-            <Button onClick={() => handleSearch()} className="bg-primary hover:bg-primary/90 text-primary-foreground shrink-0">
+            <Button onClick={() => handleSearch()} className="bg-earth-primary hover:bg-earth-primary/90 text-white shrink-0">
               Search
             </Button>
           </div>
@@ -274,7 +280,7 @@ export default function SearchResults() {
                   <Filter className="w-4 h-4" />
                   Filters
                   {activeFilterCount > 0 && (
-                    <span className="bg-primary text-primary-foreground text-xs font-medium min-w-[1.25rem] h-5 px-1.5 rounded-full flex items-center justify-center">
+                    <span className="bg-earth-primary text-white text-xs font-medium min-w-[1.25rem] h-5 px-1.5 rounded-full flex items-center justify-center">
                       {activeFilterCount}
                     </span>
                   )}
@@ -292,7 +298,7 @@ export default function SearchResults() {
                 </div>
                 <div className="shrink-0 border-t border-border bg-card p-4 safe-area-pb">
                   <Button
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-3"
+                    className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white py-3"
                     onClick={() => setShowFiltersMobile(false)}
                   >
                     Show {filteredRegulations.length} results
@@ -311,10 +317,6 @@ export default function SearchResults() {
 
           {/* Main content */}
           <div className="flex-1 min-w-0">
-            <p className="text-foreground mb-6">
-              {loading ? 'Loading...' : `${filteredRegulations.length} regulations found`}
-            </p>
-
             {loading ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto" />
@@ -325,27 +327,28 @@ export default function SearchResults() {
                 <p className="text-red-600">Error loading regulations: {error}</p>
               </div>
             ) : filteredRegulations.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-foreground text-lg">No regulations found matching your criteria.</p>
-                <p className="text-foreground/60 mt-2">Try adjusting your search terms or filters.</p>
-              </div>
+              <RevealSection delay={0} variant="fade" className="text-center py-12">
+                <p className="text-earth-text text-lg font-medium">No regulations found matching your criteria.</p>
+                <p className="text-earth-text/70 mt-2 text-sm">Try adjusting your search terms or filters.</p>
+              </RevealSection>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredRegulations.map((regulation) => (
-                  <div
-                    key={regulation.id}
-                    className="cursor-pointer hover:scale-105 transition-transform duration-200"
-                    onClick={() => navigate(`/regulation/${regulation.id}`)}
-                  >
-                    <RegulationCard
-                      regulation={regulation}
-                      isBookmarked={bookmarks.includes(regulation.id)}
-                      onBookmark={(e, id) => {
-                        e.stopPropagation();
-                        handleBookmark(id);
-                      }}
-                    />
-                  </div>
+                {filteredRegulations.map((regulation, index) => (
+                  <RevealSection key={regulation.id} delay={Math.min(index * 60, 400)} variant="slide-up">
+                    <div
+                      className="cursor-pointer card-hover-lift rounded-lg"
+                      onClick={() => navigate(`/regulation/${regulation.id}`)}
+                    >
+                        <RegulationCard
+                        regulation={regulation}
+                        isBookmarked={bookmarks.includes(regulation.id)}
+                        onBookmark={(e, id) => {
+                          e.stopPropagation();
+                          handleBookmark(id);
+                        }}
+                      />
+                    </div>
+                  </RevealSection>
                 ))}
               </div>
             )}

@@ -24,6 +24,7 @@ import {
   CheckCircle,
   Clock
 } from 'lucide-react';
+import { RevealSection } from '@/components/ui/RevealSection';
 
 export default function RegulationDetail() {
   const { id } = useParams<{ id: string }>();
@@ -183,17 +184,17 @@ export default function RegulationDetail() {
   const displayStatus = regulation?.status === 'proposed' ? 'proposed' : 'enacted';
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'enacted': return <CheckCircle className="w-5 h-5 text-green-600" />;
-      case 'proposed': return <Clock className="w-5 h-5 text-yellow-600" />;
-      default: return <Clock className="w-5 h-5 text-gray-600" />;
+      case 'enacted': return <CheckCircle className="w-5 h-5 text-earth-primary" />;
+      case 'proposed': return <Clock className="w-5 h-5 text-amber-600" />;
+      default: return <Clock className="w-5 h-5 text-earth-text/70" />;
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'enacted': return 'bg-green-100 text-green-800 border-green-200';
-      case 'proposed': return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
+      case 'enacted': return 'bg-earth-primary/15 text-earth-primary border-earth-primary/40';
+      case 'proposed': return 'bg-amber-100 text-amber-800 border-amber-200';
+      default: return 'bg-earth-sand/50 text-earth-text border-earth-sand';
     }
   };
 
@@ -214,14 +215,15 @@ export default function RegulationDetail() {
 
   if (!regulation) {
     return (
-      <div className="min-h-screen page-gradient">
+      <div className="min-h-screen page-gradient flex flex-col">
         <Header />
-        <div className="container mx-auto px-4 py-8">
+        <div className="flex-1 container mx-auto px-4 py-8 flex items-center justify-center">
           <div className="text-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="text-foreground mt-4">Loading regulation details...</p>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-earth-primary mx-auto" />
+            <p className="text-earth-text/80 mt-4">Loading regulation details...</p>
           </div>
         </div>
+        <Footer />
       </div>
     );
   }
@@ -229,23 +231,23 @@ export default function RegulationDetail() {
   return (
     <div className="min-h-screen flex flex-col page-gradient">
       <Header />
-      <div className="flex-1 container mx-auto px-4 py-8">
-        {/* Back Button */}
-        <div className="mb-6">
+      <div className="flex-1 container mx-auto px-4 py-8 max-w-6xl">
+        <RevealSection delay={0} variant="slide-up" className="mb-6">
           <Button
             variant="ghost"
             onClick={() => navigate(-1)}
-            className="text-primary hover:text-primary/90"
+            className="text-earth-primary hover:text-earth-primary/90 font-medium"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Results
           </Button>
-        </div>
+        </RevealSection>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content */}
-          <div className="lg:col-span-2">
-            <Card className="border-border shadow-lg">
+          <div className="lg:col-span-2 space-y-6">
+            <RevealSection delay={50} variant="slide-up">
+            <Card className="border-earth-sand shadow-lg bg-white/95">
               <CardHeader className="pb-4">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -258,7 +260,7 @@ export default function RegulationDetail() {
                         {getStatusIcon(displayStatus)}
                         {formatStatus(regulation.status)}
                       </Badge>
-                      <Badge variant="outline" className="border-primary text-primary">
+                      <Badge variant="outline" className="border-earth-primary text-earth-primary">
                         {regulation.framework}
                       </Badge>
                     </div>
@@ -294,7 +296,7 @@ export default function RegulationDetail() {
                   <h3 className="text-lg font-semibold text-foreground mb-4">Key Information</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-5 h-5 text-primary" />
+                      <MapPin className="w-5 h-5 text-earth-primary" />
                       <div>
                         <p className="text-sm text-foreground/60">Jurisdiction</p>
                         <p className="font-medium text-foreground">{regulation.jurisdiction}</p>
@@ -302,7 +304,7 @@ export default function RegulationDetail() {
                     </div>
                     
                     <div className="flex items-center gap-3">
-                      <Building className="w-5 h-5 text-primary" />
+                      <Building className="w-5 h-5 text-earth-primary" />
                       <div>
                         <p className="text-sm text-foreground/60">Sector</p>
                         <p className="font-medium text-foreground">{regulation.sector}</p>
@@ -311,7 +313,7 @@ export default function RegulationDetail() {
                     
                     {regulation.complianceDeadline && (
                       <div className="flex items-center gap-3">
-                        <Calendar className="w-5 h-5 text-primary" />
+                        <Calendar className="w-5 h-5 text-earth-primary" />
                         <div>
                           <p className="text-sm text-foreground/60">Compliance Deadline</p>
                           <div className="flex items-center gap-2">
@@ -333,7 +335,7 @@ export default function RegulationDetail() {
                     )}
                     
                     <div className="flex items-center gap-3">
-                      <Tag className="w-5 h-5 text-primary" />
+                      <Tag className="w-5 h-5 text-earth-primary" />
                       <div>
                         <p className="text-sm text-foreground/60">Country</p>
                         <p className="font-medium text-foreground">{regulation.country}</p>
@@ -367,7 +369,7 @@ export default function RegulationDetail() {
                       <h3 className="text-lg font-semibold text-foreground mb-3">Official Source</h3>
                       <Button
                         asChild
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground text-white"
+                        className="bg-earth-primary hover:bg-earth-primary/90 text-white"
                       >
                         <a
                           href={regulation.source_url}
@@ -384,12 +386,13 @@ export default function RegulationDetail() {
                 )}
               </CardContent>
             </Card>
+            </RevealSection>
           </div>
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Actions */}
-            <Card className="border-border">
+            <RevealSection delay={100} variant="slide-up">
+            <Card className="border-earth-sand bg-white/95">
               <CardHeader>
                 <CardTitle className="text-lg text-foreground">Actions</CardTitle>
               </CardHeader>
@@ -398,7 +401,7 @@ export default function RegulationDetail() {
                   <>
                     <Button 
                       onClick={handleExportPDF}
-                      className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-white"
+                      className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white"
                     >
                       <Download className="w-4 h-4 mr-2" />
                       Export PDF
@@ -406,7 +409,7 @@ export default function RegulationDetail() {
                     <Button 
                       variant="outline" 
                       onClick={handleShare}
-                      className="w-full border-border"
+                      className="w-full border-earth-sand text-earth-text hover:bg-earth-sand/50"
                     >
                       <Share2 className="w-4 h-4 mr-2" />
                       Share
@@ -417,16 +420,17 @@ export default function RegulationDetail() {
                     <p className="text-sm text-foreground/70 mb-3">
                       Sign in to access export and sharing features
                     </p>
-                    <Button asChild className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-white">
+                    <Button asChild className="w-full bg-earth-primary hover:bg-earth-primary/90 text-white">
                       <Link to="/">Sign In</Link>
                     </Button>
                   </div>
                 )}
               </CardContent>
             </Card>
+            </RevealSection>
 
-            {/* Status Definitions */}
-            <Card className="border-border">
+            <RevealSection delay={150} variant="slide-up">
+            <Card className="border-earth-sand bg-white/95">
               <CardHeader>
                 <CardTitle className="text-lg text-foreground">Status Definitions</CardTitle>
               </CardHeader>
@@ -445,9 +449,10 @@ export default function RegulationDetail() {
                 </div>
               </CardContent>
             </Card>
+            </RevealSection>
 
-            {/* Related Information */}
-            <Card className="border-border">
+            <RevealSection delay={200} variant="slide-up">
+            <Card className="border-earth-sand bg-white/95">
               <CardHeader>
                 <CardTitle className="text-lg text-foreground">Related Information</CardTitle>
               </CardHeader>
@@ -472,6 +477,7 @@ export default function RegulationDetail() {
                 </div>
               </CardContent>
             </Card>
+            </RevealSection>
           </div>
         </div>
       </div>

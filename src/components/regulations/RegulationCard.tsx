@@ -48,9 +48,9 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
   const displayStatus = regulation.status === 'proposed' ? 'proposed' : 'enacted';
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'enacted': return 'bg-accent/20 text-accent border-accent/40';
-      case 'proposed': return 'bg-amber-400/20 text-amber-300 border-amber-400/40';
-      default: return 'bg-muted text-muted-foreground border-border';
+      case 'enacted': return 'bg-earth-primary/15 text-earth-primary border-earth-primary/40';
+      case 'proposed': return 'bg-amber-100 text-amber-800 border-amber-200';
+      default: return 'bg-earth-sand/50 text-earth-text border-earth-sand';
     }
   };
 
@@ -104,7 +104,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-200 border-l-4 border-l-primary bg-card border-border rounded-lg shadow-sm">
+    <Card className="card-hover-lift border-l-4 border-l-earth-primary bg-white border-earth-sand rounded-lg shadow-sm">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex-1">
@@ -143,7 +143,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
       </CardHeader>
 
       <CardContent>
-        <p className="text-gray-700 text-sm mb-4 line-clamp-3">
+        <p className="text-earth-text/90 text-sm mb-4 line-clamp-3">
           {regulation.summary || regulation.description || 'No description available'}
         </p>
         
@@ -151,7 +151,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
           <Badge className={getStatusColor(displayStatus)}>
             {getStatusIcon(displayStatus)} {formatStatus(regulation.status)}
           </Badge>
-          <Badge variant="outline" className="border-blue-200 text-blue-700">
+          <Badge variant="outline" className="border-earth-primary/50 text-earth-primary">
             {regulation.framework}
           </Badge>
           {regulation.tags && regulation.tags.length > 0 && (
@@ -183,7 +183,7 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
           </Button>
           
           {!regulation.source_url && (
-            <div className="flex items-center text-xs text-gray-500">
+            <div className="flex items-center text-xs text-earth-text/70">
               <AlertCircle className="w-3 h-3 mr-1" />
               No source
             </div>

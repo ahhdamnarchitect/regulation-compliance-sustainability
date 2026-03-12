@@ -35,7 +35,7 @@ function UpgradePopupWrapper() {
 }
 
 const App = () => (
-  <ThemeProvider defaultTheme="dark">
+  <ThemeProvider defaultTheme="light">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <AuthProvider>

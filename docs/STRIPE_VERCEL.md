@@ -12,6 +12,7 @@ Add these in **Vercel Dashboard** → your project → **Settings** → **Enviro
 | `STRIPE_WEBHOOK_SECRET` | Webhook signing secret (after adding endpoint in Stripe) | `whsec_...` |
 | `SUPABASE_URL` | Supabase project URL (same as frontend) | `https://xxxxx.supabase.co` |
 | `SUPABASE_SERVICE_ROLE_KEY` | Supabase **service role** key (not anon key) | `eyJ...` |
+| `SUPABASE_ANON_KEY` | Supabase anon key (for cancel-subscription API to verify user JWT; can use same value as frontend `VITE_SUPABASE_ANON_KEY`) | `eyJ...` |
 
 ## Optional (for frontend)
 
@@ -26,3 +27,10 @@ Add these in **Vercel Dashboard** → your project → **Settings** → **Enviro
    - **Endpoint URL:** `https://<your-vercel-domain>/api/stripe-webhook`
    - **Events:** `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
 3. Copy the **Signing secret** and add it in Vercel as `STRIPE_WEBHOOK_SECRET`, then redeploy if needed.
+
+## Cancel subscription
+
+- **Endpoint:** `POST /api/cancel-subscription`
+- **Auth:** Request must include `Authorization: Bearer <Supabase access token>` (user’s session).
+- **Behavior:** Sets the customer’s Stripe subscription to `cancel_at_period_end`. When the period ends, Stripe sends `customer.subscription.deleted` and the webhook sets the user’s plan to `free`.
+- **UI:** Account Settings shows a “Cancel subscription” option for non-free users; after cancellation, access continues until the end of the billing period.
