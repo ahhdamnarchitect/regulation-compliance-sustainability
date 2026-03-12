@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react-swc'
 import path from 'path'
 
 // https://vitejs.dev/config/
+// For GitHub Pages: set VITE_BASE_URL to repo path (e.g. /regulation-compliance-sustainability/)
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -10,7 +11,7 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
-  base: '/',
+  base: process.env.VITE_BASE_URL || '/',
   build: {
     outDir: 'dist',
     sourcemap: false,
