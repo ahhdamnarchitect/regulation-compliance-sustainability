@@ -28,6 +28,16 @@ import {
   XCircle
 } from 'lucide-react';
 import { RevealSection } from '@/components/ui/RevealSection';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function AccountSettings() {
   const { user, session, logout } = useAuth();
@@ -37,6 +47,7 @@ export default function AccountSettings() {
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [cancelLoading, setCancelLoading] = useState(false);
   const [cancellationScheduled, setCancellationScheduled] = useState(false);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
   
   // Profile form state
   const [profileData, setProfileData] = useState({
@@ -143,7 +154,7 @@ export default function AccountSettings() {
     logout();
   };
 
-  const handleCancelSubscription = async () => {
+  const doCancelSubscription = async () => {
     if (!session?.access_token) {
       toast({ title: 'Session expired', description: 'Please sign in again.', variant: 'destructive' });
       return;
@@ -182,6 +193,15 @@ export default function AccountSettings() {
     }
   };
 
+  const handleCancelSubscription = () => {
+    setShowCancelConfirm(true);
+  };
+
+  const handleConfirmCancelSubscription = () => {
+    setShowCancelConfirm(false);
+    doCancelSubscription();
+  };
+
   const getPlanBadge = (plan?: string) => {
     switch (plan) {
       case 'enterprise':
@@ -196,6 +216,28 @@ export default function AccountSettings() {
   return (
     <div className="min-h-screen page-gradient">
       <Header />
+
+      <AlertDialog open={showCancelConfirm} onOpenChange={setShowCancelConfirm}>
+        <AlertDialogContent className="border-earth-sand bg-white">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-earth-text">Cancel your subscription?</AlertDialogTitle>
+            <AlertDialogDescription className="text-earth-text/80 text-left">
+              We’re sorry to see you go. If you cancel, you’ll lose access to unlimited search, bookmarks, and PDF/CSV export at the end of your current billing period. Many teams find that staying on Professional saves hours each month. Are you sure you want to cancel?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2 sm:gap-0">
+            <AlertDialogCancel className="bg-earth-primary text-white hover:bg-earth-primary/90 border-0">
+              Keep my subscription
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleConfirmCancelSubscription}
+              className="bg-red-600 text-white hover:bg-red-700 border-0"
+            >
+              Yes, cancel subscription
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         <RevealSection delay={0} variant="slide-up" className="mb-6">
@@ -259,7 +301,7 @@ export default function AccountSettings() {
                           disabled={cancelLoading}
                         >
                           <XCircle className="w-4 h-4 mr-1" />
-                          {cancelLoading ? 'Cancelling…' : 'Cancel subscription'}
+                          Cancel subscription
                         </Button>
                         <p className="text-xs text-earth-text/70">
                           You will be downgraded to Free at the end of the current period.

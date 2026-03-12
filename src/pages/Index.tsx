@@ -136,7 +136,7 @@ export default function Index() {
             </video>
             <div className="absolute inset-0 bg-earth-primary/30" aria-hidden />
             <div
-              className="pointer-events-none absolute -right-10 -top-8 sm:-right-16 sm:-top-10 w-40 sm:w-56 opacity-70 md:opacity-90"
+              className="pointer-events-none absolute bottom-0 right-0 w-32 sm:w-40 md:w-48 opacity-60 md:opacity-75"
               aria-hidden
             >
               <img
@@ -144,6 +144,7 @@ export default function Index() {
                 alt=""
                 className="w-full h-auto drop-shadow-lg"
                 loading="lazy"
+                style={{ imageRendering: 'auto' }}
               />
             </div>
             <RevealSection delay={0} variant="slide-up" className="relative z-10 text-center max-w-2xl mx-auto">
