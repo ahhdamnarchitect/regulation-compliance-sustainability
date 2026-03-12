@@ -476,7 +476,6 @@ export default function AccountSettings() {
                 </AlertDescription>
               </Alert>
             )}
-          </div>
         </div>
       </div>
       <Footer />
