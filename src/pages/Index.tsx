@@ -21,6 +21,7 @@ export default function Index() {
   const [showLogin, setShowLogin] = useState(!user);
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [heroVideoReady, setHeroVideoReady] = useState(false);
   const { regulations } = useRegulations();
 
   useEffect(() => {
@@ -120,20 +121,21 @@ export default function Index() {
         )}
 
         <main className="flex-1 max-w-full overflow-x-hidden">
-          {/* Hero: video background (1080p) with image fallback and soft overlay */}
+          {/* Hero: video background with solid fallback (no old image flash), fade-in when ready */}
           <section className="relative w-full min-h-[50vh] flex flex-col items-center justify-center px-4 py-16 md:py-24 overflow-hidden">
-            <div className="absolute inset-0 bg-cover bg-center hero-bg-animate" aria-hidden style={{ backgroundImage: 'url(/hero-sustainability.jpg)' }} />
+            <div className="absolute inset-0 bg-earth-primary" aria-hidden />
             <video
-              className="hero-video-bg absolute inset-0 w-full h-full object-cover hero-bg-animate"
+              className={`hero-video-bg absolute inset-0 w-full h-full object-cover hero-bg-animate transition-opacity duration-500 ${heroVideoReady ? 'opacity-100' : 'opacity-0'}`}
               autoPlay
               muted
               loop
               playsInline
               preload="metadata"
               aria-hidden
-              poster="/hero-sustainability.jpg"
               disablePictureInPicture
               disableRemotePlayback
+              onCanPlay={() => setHeroVideoReady(true)}
+              onPlaying={() => setHeroVideoReady(true)}
             >
               <source src="/ForestMistSunlight.mp4" type="video/mp4" />
             </video>
@@ -236,7 +238,7 @@ export default function Index() {
               disablePictureInPicture
               disableRemotePlayback
             >
-              <source src="/SunsetTurbines.mp4" type="video/mp4" />
+              <source src="/TurbinesinWaterwithClouds.mp4" type="video/mp4" />
             </video>
             <div className="absolute inset-0 bg-earth-primary/50" aria-hidden />
             <div className="relative z-10 h-full flex items-center justify-center px-4">

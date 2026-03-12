@@ -157,6 +157,12 @@
   animation: hero-kenburns 25s ease-in-out infinite alternate;
 }
 
+/* Hero video: own compositor layer to reduce desktop lag */
+.hero-video-bg {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
 /* Card hover lift (respect reduced motion) */
 .card-hover-lift {
   transition: transform 0.25s ease, box-shadow 0.25s ease;
