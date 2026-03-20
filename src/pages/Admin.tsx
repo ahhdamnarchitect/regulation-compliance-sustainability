@@ -12,9 +12,27 @@ import { Plus, Edit, Trash2, ExternalLink } from "lucide-react";
 import { DatabaseRegulation } from "@/types/regulation";
 import { formatStatus } from "@/lib/utils";
 
+type InquiryStatus = "new" | "in_review" | "resolved";
+
+interface CustomerInquiry {
+  id: string;
+  inquiry_type: "question" | "suggestion";
+  name: string | null;
+  email: string;
+  message: string;
+  topic: string | null;
+  location_hint: string | null;
+  page_path: string | null;
+  status: InquiryStatus;
+  created_at: string;
+}
+
 const Admin = () => {
   const { isAdmin } = useAuth();
   const [regulations, setRegulations] = useState<DatabaseRegulation[]>([]);
+  const [inquiries, setInquiries] = useState<CustomerInquiry[]>([]);
+  const [inquiriesLoading, setInquiriesLoading] = useState(true);
+  const [inquiryErrorMsg, setInquiryErrorMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -52,6 +70,43 @@ const Admin = () => {
       setRegulations([]);
     }
     setLoading(false);
+  };
+
+  const fetchInquiries = async () => {
+    setInquiriesLoading(true);
+    setInquiryErrorMsg(null);
+    try {
+      const { data, error } = await supabase
+        .from("customer_inquiries")
+        .select("id,inquiry_type,name,email,message,topic,location_hint,page_path,status,created_at")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        setInquiryErrorMsg(error.message);
+        setInquiries([]);
+      } else {
+        setInquiries((data || []) as CustomerInquiry[]);
+      }
+    } catch {
+      setInquiryErrorMsg("Failed to fetch inquiries");
+      setInquiries([]);
+    }
+    setInquiriesLoading(false);
+  };
+
+  const handleInquiryStatusChange = async (id: string, status: InquiryStatus) => {
+    const previous = inquiries;
+    setInquiries((current) => current.map((i) => (i.id === id ? { ...i, status } : i)));
+
+    const { error } = await supabase
+      .from("customer_inquiries")
+      .update({ status, updated_at: new Date().toISOString() })
+      .eq("id", id);
+
+    if (error) {
+      setInquiryErrorMsg("Failed to update inquiry status");
+      setInquiries(previous);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -157,6 +212,7 @@ const Admin = () => {
 
   useEffect(() => {
     fetchRegulations();
+    fetchInquiries();
   }, []);
 
   if (!isAdmin) {
@@ -359,6 +415,80 @@ const Admin = () => {
             ))}
           </tbody>
         </table>
+      </div>
+
+      <div className="mt-10">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-xl font-semibold text-foreground">Customer Inquiries</h2>
+          <Button variant="outline" onClick={fetchInquiries}>
+            Refresh
+          </Button>
+        </div>
+
+        {inquiriesLoading ? (
+          <div className="p-4 border rounded bg-white">Loading inquiries…</div>
+        ) : inquiryErrorMsg ? (
+          <div className="p-4 border rounded text-red-600 bg-white">Failed to load inquiries: {inquiryErrorMsg}</div>
+        ) : inquiries.length === 0 ? (
+          <div className="p-4 border rounded bg-white text-muted-foreground">No inquiries yet.</div>
+        ) : (
+          <div className="overflow-auto border rounded bg-white">
+            <table className="min-w-[1200px] w-full text-sm">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="text-left p-3">Created</th>
+                  <th className="text-left p-3">Type</th>
+                  <th className="text-left p-3">Name</th>
+                  <th className="text-left p-3">Email</th>
+                  <th className="text-left p-3">Topic / Location</th>
+                  <th className="text-left p-3">Message</th>
+                  <th className="text-left p-3">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {inquiries.map((q) => (
+                  <tr key={q.id} className="border-t align-top hover:bg-gray-50">
+                    <td className="p-3 whitespace-nowrap">{new Date(q.created_at).toLocaleString()}</td>
+                    <td className="p-3">
+                      <Badge variant={q.inquiry_type === "question" ? "default" : "secondary"}>
+                        {q.inquiry_type === "question" ? "Question" : "Suggestion"}
+                      </Badge>
+                    </td>
+                    <td className="p-3">{q.name || "—"}</td>
+                    <td className="p-3">
+                      <a className="text-blue-600 hover:text-blue-800 underline" href={`mailto:${q.email}`}>
+                        {q.email}
+                      </a>
+                    </td>
+                    <td className="p-3 max-w-[220px]">
+                      <div className="text-xs text-muted-foreground space-y-1">
+                        {q.topic ? <p><strong>Topic:</strong> {q.topic}</p> : null}
+                        {q.location_hint ? <p><strong>Location:</strong> {q.location_hint}</p> : null}
+                        {!q.topic && !q.location_hint ? "—" : null}
+                      </div>
+                    </td>
+                    <td className="p-3 max-w-md whitespace-pre-wrap">{q.message}</td>
+                    <td className="p-3">
+                      <Select
+                        value={q.status}
+                        onValueChange={(value) => handleInquiryStatusChange(q.id, value as InquiryStatus)}
+                      >
+                        <SelectTrigger className="w-[140px]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="new">New</SelectItem>
+                          <SelectItem value="in_review">In Review</SelectItem>
+                          <SelectItem value="resolved">Resolved</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
       <Footer />
     </div>

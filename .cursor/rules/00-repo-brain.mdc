@@ -1,0 +1,29 @@
+---
+description: Enforce persistent brain updates before and after work
+alwaysApply: true
+---
+
+# Repo Brain Workflow
+
+## Before Work (required)
+1. Read:
+   - `brain/project_context.md`
+   - `brain/architecture.md`
+   - `brain/current_state.md`
+   - `brain/next_steps.md`
+   - `brain/decisions.md`
+2. Summarize current understanding in 3-7 bullets.
+3. State:
+   - the specific task being executed
+   - assumptions being made
+   - unknowns/TODOs that may affect outcome
+
+## After Work (required)
+1. Update `brain/current_state.md`.
+2. Append an entry to `brain/change_log.md`.
+3. Update `brain/next_steps.md` to reflect reality.
+4. Update `brain/decisions.md` when a decision is created/changed.
+
+## Non-negotiable
+- Never finish a task without leaving the repo in resumable state.
+- If information is missing, write `Unknown`, `Assumption`, or `TODO` explicitly.

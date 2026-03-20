@@ -113,6 +113,17 @@ This project is configured for automatic deployment to GitHub Pages:
 4. **Export Data**: Download bookmarked regulations as CSV or PDF
 5. **Admin Functions**: Add, edit, or delete regulations (admin only)
 
+## Cursor Repo OS
+
+This repository uses a persistent AI memory system so work can resume cleanly across sessions.
+
+- Brain location: `brain/`
+- Rules location: `.cursor/rules/`
+- Command definitions: `cursor-os/commands.md`
+- Bootstrap script: `scripts/init-cursor-os.py`
+
+To resume work, start by reading `brain/current_state.md` and `brain/next_steps.md`, then continue from `Now`.
+
 ## Project Structure
 
 ```

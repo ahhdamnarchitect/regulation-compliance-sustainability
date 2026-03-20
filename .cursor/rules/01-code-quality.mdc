@@ -1,0 +1,13 @@
+---
+description: Code quality and safety standards for this repo
+alwaysApply: true
+---
+
+# Code Quality
+
+- Prefer small, focused changes that match existing patterns.
+- Keep TypeScript strictness and avoid `any` unless justified.
+- Preserve user-visible behavior unless task explicitly requires changes.
+- Add/update docs when behavior or workflow changes.
+- Do not commit or expose secrets; use env vars and `env.example`.
+- Validate with available checks (`build`, `lint`, targeted runtime checks) before declaring completion.

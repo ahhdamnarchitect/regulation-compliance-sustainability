@@ -1,0 +1,21 @@
+---
+description: Systematic debugging workflow for auth, payments, and deployment
+alwaysApply: true
+---
+
+# Debugging Workflow
+
+1. Reproduce the issue with clear steps.
+2. Isolate layer:
+   - frontend UI/routing
+   - API function behavior
+   - Supabase auth/data
+   - Stripe/webhook events
+   - deployment/runtime config
+3. Collect evidence first (logs, payload shape, env assumptions, network status).
+4. Fix one root cause at a time; avoid stacked speculative changes.
+5. Re-run the failing path and record verification result.
+
+## Guardrails
+- Do not claim fixes without verification evidence.
+- If blocked by missing credentials/infrastructure, document exact blocker and next action.

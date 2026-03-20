@@ -1,0 +1,18 @@
+---
+description: Planning rule for structured, agent-friendly execution
+alwaysApply: true
+---
+
+# Planning Rule
+
+When work is non-trivial, produce a short plan with:
+- Objective
+- Scope (in/out)
+- Ordered execution steps
+- Risks/dependencies
+- Verification strategy
+
+## Execution Discipline
+- Keep exactly one step actively in progress.
+- Update plan when scope changes.
+- Capture assumptions explicitly and convert unresolved items into TODOs in brain files.

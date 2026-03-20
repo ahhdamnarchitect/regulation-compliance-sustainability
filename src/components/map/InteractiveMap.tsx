@@ -614,7 +614,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         style={{ 
           height: '100%', 
           width: '100%',
-          backgroundColor: 'transparent'
+          backgroundColor: '#d5e8eb'
         }}
         className="z-0 rounded-lg"
         maxBounds={[[-85, -180], [85, 180]]}
