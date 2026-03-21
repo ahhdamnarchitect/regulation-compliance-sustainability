@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
 import type { Regulation } from '@/types/regulation';
 import { InquiryAutocompleteInput } from '@/components/inquiry/InquiryAutocompleteInput';
+import { INQUIRY_MESSAGE_MAX_LENGTH, INQUIRY_NAME_MAX_LENGTH } from '@/lib/inquiryLimits';
 import { MessageCircle } from 'lucide-react';
 
 export interface RegulationQuestionPanelProps {
@@ -45,6 +46,14 @@ export function RegulationQuestionPanel({
       toast({
         title: 'Missing information',
         description: 'Please add your email and your question.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    if (message.length > INQUIRY_MESSAGE_MAX_LENGTH) {
+      toast({
+        title: 'Message too long',
+        description: `Please keep your message under ${INQUIRY_MESSAGE_MAX_LENGTH} characters.`,
         variant: 'destructive',
       });
       return;
@@ -95,8 +104,9 @@ export function RegulationQuestionPanel({
         <form onSubmit={handleSubmit} className="space-y-3">
           <Input
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => setName(e.target.value.slice(0, INQUIRY_NAME_MAX_LENGTH))}
             placeholder="Your name (optional)"
+            maxLength={INQUIRY_NAME_MAX_LENGTH}
             className="border-earth-sand focus-visible:ring-earth-primary"
           />
           <Input
@@ -118,13 +128,15 @@ export function RegulationQuestionPanel({
           />
           <Textarea
             value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            onChange={(e) => setMessage(e.target.value.slice(0, INQUIRY_MESSAGE_MAX_LENGTH))}
             placeholder="Your question…"
             className="min-h-[100px] border-earth-sand focus-visible:ring-earth-primary"
             required
+            maxLength={INQUIRY_MESSAGE_MAX_LENGTH}
           />
-          <Button type="submit" disabled={submitting} className="bg-earth-primary hover:opacity-90 text-white">
-            {submitting ? 'Sending…' : 'Send question'}
+          <p className="text-xs text-earth-text/60 text-right">{message.length} / {INQUIRY_MESSAGE_MAX_LENGTH}</p>
+          <Button type="submit" disabled={submitting} className="bg-earth-primary hover:opacity-90 text-white w-full sm:w-auto">
+            {submitting ? 'Submitting…' : 'Submit'}
           </Button>
         </form>
       </CardContent>

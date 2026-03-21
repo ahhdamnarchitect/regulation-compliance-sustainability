@@ -9,14 +9,15 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { useRegulations } from '@/hooks/useRegulations';
 import { supabase } from '@/lib/supabase';
+import { INQUIRY_MESSAGE_MAX_LENGTH, INQUIRY_NAME_MAX_LENGTH } from '@/lib/inquiryLimits';
 import { RevealSection } from '@/components/ui/RevealSection';
 import { InquiryAutocompleteInput } from '@/components/inquiry/InquiryAutocompleteInput';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, BookOpen } from 'lucide-react';
 
 /**
- * Questions and regulation suggestions — forms with database-backed autocomplete.
+ * Regulation-specific questions and suggestions — /regulation-help
  */
-export default function ContactSupport() {
+export default function RegulationHelpPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const { regulations } = useRegulations();
@@ -31,7 +32,6 @@ export default function ContactSupport() {
   const [suggestionName, setSuggestionName] = useState('');
   const [suggestionEmail, setSuggestionEmail] = useState('');
   const [suggestionText, setSuggestionText] = useState('');
-  const [suggestionRegulation, setSuggestionRegulation] = useState('');
   const [suggestionLocation, setSuggestionLocation] = useState('');
   const [isSubmittingSuggestion, setIsSubmittingSuggestion] = useState(false);
 
@@ -51,6 +51,18 @@ export default function ContactSupport() {
     }
   }, [searchParams]);
 
+  const validateMessage = (text: string) => {
+    if (text.length > INQUIRY_MESSAGE_MAX_LENGTH) {
+      toast({
+        title: 'Message too long',
+        description: `Please keep your message under ${INQUIRY_MESSAGE_MAX_LENGTH} characters.`,
+        variant: 'destructive',
+      });
+      return false;
+    }
+    return true;
+  };
+
   const handleQuestionSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!questionEmail.trim() || !questionText.trim()) {
@@ -61,17 +73,18 @@ export default function ContactSupport() {
       });
       return;
     }
+    if (!validateMessage(questionText.trim())) return;
 
     setIsSubmittingQuestion(true);
     const { error } = await supabase.from('customer_inquiries').insert({
       inquiry_type: 'question',
-      name: questionName.trim() || null,
+      name: questionName.trim().slice(0, INQUIRY_NAME_MAX_LENGTH) || null,
       email: questionEmail.trim(),
       message: questionText.trim(),
       topic: questionRegulation.trim() || null,
       location_hint: null,
       user_id: user?.id ?? null,
-      page_path: '/contact',
+      page_path: '/regulation-help',
       status: 'new',
     });
     setIsSubmittingQuestion(false);
@@ -103,17 +116,18 @@ export default function ContactSupport() {
       });
       return;
     }
+    if (!validateMessage(suggestionText.trim())) return;
 
     setIsSubmittingSuggestion(true);
     const { error } = await supabase.from('customer_inquiries').insert({
       inquiry_type: 'suggestion',
-      name: suggestionName.trim() || null,
+      name: suggestionName.trim().slice(0, INQUIRY_NAME_MAX_LENGTH) || null,
       email: suggestionEmail.trim(),
       message: suggestionText.trim(),
-      topic: suggestionRegulation.trim() || null,
+      topic: null,
       location_hint: suggestionLocation.trim() || null,
       user_id: user?.id ?? null,
-      page_path: '/contact',
+      page_path: '/regulation-help',
       status: 'new',
     });
     setIsSubmittingSuggestion(false);
@@ -128,7 +142,6 @@ export default function ContactSupport() {
     }
 
     setSuggestionText('');
-    setSuggestionRegulation('');
     setSuggestionLocation('');
     toast({
       title: 'Suggestion received',
@@ -149,23 +162,43 @@ export default function ContactSupport() {
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to home
             </Link>
-            <h1 className="font-title text-2xl md:text-3xl font-semibold text-earth-text mb-2">
-              Need help or see something missing?
-            </h1>
-            <p className="text-earth-text/80 text-sm md:text-base max-w-2xl">
-              Send a regulation question or suggest a rule for us to monitor. We only use your details to respond to this request.
-            </p>
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className="rounded-lg bg-earth-primary/10 p-2.5 text-earth-primary shrink-0">
+                  <BookOpen className="w-6 h-6" />
+                </div>
+                <div>
+                  <h1 className="font-title text-2xl md:text-3xl font-semibold text-earth-text mb-2">
+                    Regulation help
+                  </h1>
+                  <p className="text-earth-text/80 text-sm md:text-base max-w-2xl">
+                    Ask about a specific rule or suggest a regulation for us to monitor. For account, billing, or
+                    subscription questions, use{' '}
+                    <Link to="/contact" className="text-earth-primary font-medium underline underline-offset-2">
+                      Contact us
+                    </Link>
+                    .
+                  </p>
+                </div>
+              </div>
+            </div>
           </RevealSection>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <RevealSection delay={80} variant="slide-up">
-              <form onSubmit={handleQuestionSubmit} className="rounded-xl border border-earth-sand bg-white p-5 md:p-6 shadow-sm space-y-3 h-full">
-                <h2 className="font-title text-lg font-semibold text-earth-text">Regulation question</h2>
+              <form
+                onSubmit={handleQuestionSubmit}
+                className="rounded-xl border border-earth-sand bg-white p-5 md:p-6 shadow-sm space-y-3 h-full flex flex-col"
+              >
+                <h2 className="font-title text-lg font-semibold text-earth-text">
+                  Ask a Question About a Regulation
+                </h2>
                 <p className="text-sm text-earth-text/80">We aim to respond within 24 hours.</p>
                 <Input
                   value={questionName}
-                  onChange={(e) => setQuestionName(e.target.value)}
+                  onChange={(e) => setQuestionName(e.target.value.slice(0, INQUIRY_NAME_MAX_LENGTH))}
                   placeholder="Your name (optional)"
+                  maxLength={INQUIRY_NAME_MAX_LENGTH}
                   className="border-earth-sand focus-visible:ring-earth-primary"
                 />
                 <Input
@@ -177,7 +210,7 @@ export default function ContactSupport() {
                   required
                 />
                 <InquiryAutocompleteInput
-                  id="contact-question-regulation"
+                  id="reg-help-question-regulation"
                   label="Regulation"
                   value={questionRegulation}
                   onChange={setQuestionRegulation}
@@ -185,27 +218,37 @@ export default function ContactSupport() {
                   variant="regulation-title"
                   placeholder="Start typing — click a suggestion or finish typing"
                 />
-                <Textarea
-                  value={questionText}
-                  onChange={(e) => setQuestionText(e.target.value)}
-                  placeholder="Your question…"
-                  className="min-h-[120px] border-earth-sand focus-visible:ring-earth-primary"
-                  required
-                />
+                <div className="flex-1 flex flex-col min-h-0">
+                  <Textarea
+                    value={questionText}
+                    onChange={(e) => setQuestionText(e.target.value.slice(0, INQUIRY_MESSAGE_MAX_LENGTH))}
+                    placeholder="Your question…"
+                    className="min-h-[120px] border-earth-sand focus-visible:ring-earth-primary flex-1"
+                    required
+                    maxLength={INQUIRY_MESSAGE_MAX_LENGTH}
+                  />
+                  <p className="text-xs text-earth-text/60 mt-1.5 text-right">
+                    {questionText.length} / {INQUIRY_MESSAGE_MAX_LENGTH}
+                  </p>
+                </div>
                 <Button type="submit" disabled={isSubmittingQuestion} className="w-full bg-earth-primary hover:opacity-90 text-white">
-                  {isSubmittingQuestion ? 'Sending…' : 'Send question'}
+                  {isSubmittingQuestion ? 'Submitting…' : 'Submit'}
                 </Button>
               </form>
             </RevealSection>
 
             <RevealSection delay={120} variant="slide-up">
-              <form onSubmit={handleSuggestionSubmit} className="rounded-xl border border-earth-sand bg-white p-5 md:p-6 shadow-sm space-y-3 h-full">
-                <h2 className="font-title text-lg font-semibold text-earth-text">Suggest a regulation to monitor</h2>
-                <p className="text-sm text-earth-text/80">If you don&apos;t see a regulation, tell us what to track.</p>
+              <form
+                onSubmit={handleSuggestionSubmit}
+                className="rounded-xl border border-earth-sand bg-white p-5 md:p-6 shadow-sm space-y-3 h-full flex flex-col"
+              >
+                <h2 className="font-title text-lg font-semibold text-earth-text">Suggest a Regulation</h2>
+                <p className="text-sm text-earth-text/80">Tell us what we should add to our coverage.</p>
                 <Input
                   value={suggestionName}
-                  onChange={(e) => setSuggestionName(e.target.value)}
+                  onChange={(e) => setSuggestionName(e.target.value.slice(0, INQUIRY_NAME_MAX_LENGTH))}
                   placeholder="Your name (optional)"
+                  maxLength={INQUIRY_NAME_MAX_LENGTH}
                   className="border-earth-sand focus-visible:ring-earth-primary"
                 />
                 <Input
@@ -217,16 +260,7 @@ export default function ContactSupport() {
                   required
                 />
                 <InquiryAutocompleteInput
-                  id="contact-suggestion-regulation"
-                  label="Regulation"
-                  value={suggestionRegulation}
-                  onChange={setSuggestionRegulation}
-                  regulations={regulations}
-                  variant="regulation-title"
-                  placeholder="Related or similar regulation (optional)"
-                />
-                <InquiryAutocompleteInput
-                  id="contact-suggestion-location"
+                  id="reg-help-suggestion-location"
                   label="Country or jurisdiction"
                   value={suggestionLocation}
                   onChange={setSuggestionLocation}
@@ -234,15 +268,21 @@ export default function ContactSupport() {
                   variant="location"
                   placeholder="Start typing — e.g. EU, Japan, California"
                 />
-                <Textarea
-                  value={suggestionText}
-                  onChange={(e) => setSuggestionText(e.target.value)}
-                  placeholder="What should we add?"
-                  className="min-h-[120px] border-earth-sand focus-visible:ring-earth-primary"
-                  required
-                />
+                <div className="flex-1 flex flex-col min-h-0">
+                  <Textarea
+                    value={suggestionText}
+                    onChange={(e) => setSuggestionText(e.target.value.slice(0, INQUIRY_MESSAGE_MAX_LENGTH))}
+                    placeholder="Describe the regulation or source to track…"
+                    className="min-h-[120px] border-earth-sand focus-visible:ring-earth-primary flex-1"
+                    required
+                    maxLength={INQUIRY_MESSAGE_MAX_LENGTH}
+                  />
+                  <p className="text-xs text-earth-text/60 mt-1.5 text-right">
+                    {suggestionText.length} / {INQUIRY_MESSAGE_MAX_LENGTH}
+                  </p>
+                </div>
                 <Button type="submit" disabled={isSubmittingSuggestion} className="w-full bg-earth-primary hover:opacity-90 text-white">
-                  {isSubmittingSuggestion ? 'Sending…' : 'Send suggestion'}
+                  {isSubmittingSuggestion ? 'Submitting…' : 'Submit'}
                 </Button>
               </form>
             </RevealSection>

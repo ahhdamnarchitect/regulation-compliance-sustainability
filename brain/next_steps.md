@@ -1,8 +1,10 @@
 # Next Steps
 
 ## Now
-- Smoke-test `/contact` (both forms + autocomplete), regulation detail question panel, and **Questions or Suggestions?** blocks on home + search.
-- Apply migration `20260320000500_profiles_admin_read_update_policies.sql` in Supabase if the Admin **Users** tab cannot load profiles.
+- **Critical (login):** Run migration `20260320000600_profiles_admin_policies_fix_recursion.sql` in Supabase if profile fetch returns **500** after the admin profile policies (fixes RLS recursion).
+- Smoke-test **`/contact`** (FAQ + general form) and **`/regulation-help`** (two regulation forms); apply migration `20260320000700_customer_inquiries_general.sql` for `inquiry_type=general` + `category` column.
+- Regulation detail question panel + **Questions or Suggestions?** on home/search (hidden for free-tier logged-in users).
+- Apply migration `20260320000500_profiles_admin_read_update_policies.sql` in Supabase if the Admin **Users** tab cannot load profiles (006 replaces the policy *definitions* from 005—run 005 first if missing, then 006).
 - Set up operational triage process for `customer_inquiries` (owner, SLA, and resolution status updates).
 - Verify admin triage view can read/update inquiry status end-to-end.
 - Confirm final admin profile state in Supabase for `admin.adamg@gmail.com` (`role = 'admin'`, `plan = 'professional'`).

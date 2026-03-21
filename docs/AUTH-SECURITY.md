@@ -66,6 +66,16 @@ This document describes how to keep auth (sign-in, password reset, email change)
 
 ---
 
+## 5. Profiles API returns 500 (login looks broken)
+
+**Symptom:** Password sign-in succeeds, but the app clears the session because `GET /rest/v1/profiles?...` returns **500**.
+
+**Cause:** Row-level security policies on `public.profiles` that run a subquery **on the same table** (`EXISTS (SELECT … FROM profiles …)`) can trigger **infinite recursion** in PostgreSQL, which surfaces as HTTP 500.
+
+**Fix:** Apply migration `supabase/migrations/20260320000600_profiles_admin_policies_fix_recursion.sql`, which replaces those checks with a **`SECURITY DEFINER`** function `public.is_admin()` so the role lookup does not re-enter RLS.
+
+---
+
 ## Summary
 
 | Item              | Where / how                                      | Action                                      |
@@ -74,3 +84,4 @@ This document describes how to keep auth (sign-in, password reset, email change)
 | One-time use      | Supabase default                                 | None; leave as-is                           |
 | Redirect allowlist| Auth → URL Configuration → Redirect URLs         | Only add your real app + localhost URLs     |
 | HTTPS in prod     | App code + deployment                            | App redirects http→https; use HTTPS in Supabase |
+| Profiles 500      | RLS on `profiles`                                | Run migration `20260320000600_profiles_admin_policies_fix_recursion.sql` |

@@ -22,7 +22,8 @@ import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
-import ContactSupport from "./pages/ContactSupport";
+import ContactPage from "./pages/ContactPage";
+import RegulationHelpPage from "./pages/RegulationHelpPage";
 
 const queryClient = new QueryClient();
 
@@ -58,7 +59,8 @@ const App = () => (
               <Route path="/checkout" element={<Checkout />} />
               <Route path="/checkout/success" element={<CheckoutSuccess />} />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/contact" element={<ContactSupport />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="/regulation-help" element={<RegulationHelpPage />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />

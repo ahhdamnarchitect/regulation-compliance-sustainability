@@ -14,20 +14,51 @@ import { Plus, Edit, Trash2, ExternalLink, Home, Eye, EyeOff } from "lucide-reac
 import { DatabaseRegulation } from "@/types/regulation";
 import { formatStatus } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type InquiryStatus = "new" | "in_review" | "resolved";
 
 interface CustomerInquiry {
   id: string;
-  inquiry_type: "question" | "suggestion";
+  inquiry_type: "question" | "suggestion" | "general";
   name: string | null;
   email: string;
   message: string;
   topic: string | null;
+  category: string | null;
   location_hint: string | null;
   page_path: string | null;
   status: InquiryStatus;
   created_at: string;
+}
+
+function inquiryTypeBadgeVariant(t: CustomerInquiry["inquiry_type"]) {
+  if (t === "question") return "default" as const;
+  if (t === "suggestion") return "secondary" as const;
+  return "outline" as const;
+}
+
+function inquiryTypeLabel(t: CustomerInquiry["inquiry_type"]) {
+  if (t === "question") return "Question";
+  if (t === "suggestion") return "Suggestion";
+  return "General";
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  account: "Account & login",
+  billing: "Billing & invoices",
+  subscription: "Subscription & plan",
+  technical: "Technical issue",
+  other: "Other",
+};
+
+function categoryLabel(c: string | null) {
+  if (!c) return null;
+  return CATEGORY_LABELS[c] ?? c;
 }
 
 type ProfilePlan = "free" | "professional" | "enterprise";
@@ -113,7 +144,7 @@ const Admin = () => {
     try {
       const { data, error } = await supabase
         .from("customer_inquiries")
-        .select("id,inquiry_type,name,email,message,topic,location_hint,page_path,status,created_at")
+        .select("id,inquiry_type,name,email,message,topic,category,location_hint,page_path,status,created_at")
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -593,7 +624,7 @@ const Admin = () => {
                       <th className="text-left p-3">Type</th>
                       <th className="text-left p-3">Name</th>
                       <th className="text-left p-3">Email</th>
-                      <th className="text-left p-3">Topic / Location</th>
+                      <th className="text-left p-3">Topic / location / category</th>
                       <th className="text-left p-3">Message</th>
                       <th className="text-left p-3">Status</th>
                     </tr>
@@ -603,8 +634,8 @@ const Admin = () => {
                       <tr key={q.id} className="border-t align-top hover:bg-muted/30">
                         <td className="p-3 whitespace-nowrap">{new Date(q.created_at).toLocaleString()}</td>
                         <td className="p-3">
-                          <Badge variant={q.inquiry_type === "question" ? "default" : "secondary"}>
-                            {q.inquiry_type === "question" ? "Question" : "Suggestion"}
+                          <Badge variant={inquiryTypeBadgeVariant(q.inquiry_type)}>
+                            {inquiryTypeLabel(q.inquiry_type)}
                           </Badge>
                         </td>
                         <td className="p-3">{q.name || "—"}</td>
@@ -617,10 +648,25 @@ const Admin = () => {
                           <div className="text-xs text-muted-foreground space-y-1">
                             {q.topic ? <p><strong>Topic:</strong> {q.topic}</p> : null}
                             {q.location_hint ? <p><strong>Location:</strong> {q.location_hint}</p> : null}
-                            {!q.topic && !q.location_hint ? "—" : null}
+                            {q.category ? <p><strong>Category:</strong> {categoryLabel(q.category)}</p> : null}
+                            {!q.topic && !q.location_hint && !q.category ? "—" : null}
                           </div>
                         </td>
-                        <td className="p-3 max-w-md whitespace-pre-wrap">{q.message}</td>
+                        <td className="p-3 max-w-[280px] align-top">
+                          <Tooltip delayDuration={200}>
+                            <TooltipTrigger asChild>
+                              <span className="line-clamp-4 cursor-help whitespace-pre-wrap text-left block text-sm">
+                                {q.message}
+                              </span>
+                            </TooltipTrigger>
+                            <TooltipContent
+                              side="left"
+                              className="max-w-lg max-h-[min(70vh,420px)] overflow-y-auto border border-earth-sand bg-popover p-3 text-sm text-popover-foreground shadow-xl"
+                            >
+                              <p className="whitespace-pre-wrap break-words">{q.message}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </td>
                         <td className="p-3">
                           <Select
                             value={q.status}

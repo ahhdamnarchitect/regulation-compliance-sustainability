@@ -1,5 +1,9 @@
 # Change Log
 
+## 2026-03-20 - Brain sync before git push (session)
+- Confirmed `brain/current_state.md`, `next_steps.md`, and `change_log.md` reflect `/contact` vs `/regulation-help`, inquiry limits, admin tooltips, and pending migrations **006** (profiles RLS), **007** (general inquiries).
+- Pushed latest app + migrations + docs to `origin/main`.
+
 ## 2026-03-20 - Cursor Repo OS installation
 - Installed persistent repo memory system under `brain/`.
 - Added architecture/context/current-state/decisions/next-steps operational docs.
@@ -46,6 +50,16 @@
 - Updated migration `20260320000400_auto_admin_adamg_profile_trigger.sql` to enforce `plan = 'professional'` for `admin.adamg@gmail.com`.
 - Applied for all paths: trigger-time profile writes, auth-user backfill insert, and existing-row update.
 - User validated behavior end-to-end in testing.
+
+## 2026-03-20 - Contact split: /contact vs /regulation-help
+- **`/contact`:** FAQ + general inquiry form (accounts, billing, subscriptions, etc.); footer **Contact** link.
+- **`/regulation-help`:** “Ask a Question About a Regulation” and “Suggest a Regulation” (no regulation field on suggestion); Submit buttons; message length limit 4000; admin message column uses tooltip for full text.
+- Migration `20260320000700_customer_inquiries_general.sql`: `inquiry_type` includes `general`, optional `category` column.
+- Homepage/search **Questions or Suggestions?** → button **Contact Us** → `/regulation-help`; copy distinguishes general **Contact us** (`/contact`).
+
+## 2026-03-20 - Login fix (profiles RLS) + hide contact cue for free tier
+- **Login 500:** Admin `profiles` policies used `EXISTS (SELECT … FROM profiles …)`, which re-enters RLS and causes recursion / HTTP 500 on `GET /profiles`. New migration `20260320000600_profiles_admin_policies_fix_recursion.sql` drops those policies and replaces them with `public.is_admin()` (`SECURITY DEFINER`) + policies using `is_admin()`. **Apply in Supabase** to restore sign-in profile fetch.
+- **UI:** "Questions or Suggestions?" on home + search is hidden when the user is logged in with `plan === 'free'`; still shown for logged-out visitors and professional/enterprise.
 
 ## 2026-03-20 - Brain sync (current state & next steps)
 - Refreshed `current_state.md` for `/contact`, inquiry autocomplete, admin tabs/users, map tweaks, and regulation detail question panel.

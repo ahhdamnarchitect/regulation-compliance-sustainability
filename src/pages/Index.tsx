@@ -316,22 +316,29 @@ export default function Index() {
             </div>
           </section>
 
-          {/* Questions or suggestions — link to full contact forms */}
-          <section className="w-full py-10 md:py-12 bg-white/70 border-y border-earth-sand/60">
-            <div className="max-w-3xl mx-auto px-4 text-center">
-              <RevealSection delay={0} variant="slide-up">
-                <h2 className="font-title text-xl md:text-2xl font-semibold text-earth-text mb-2">
-                  Questions or Suggestions?
-                </h2>
-                <p className="text-earth-text/80 text-sm md:text-base mb-6">
-                  Ask a regulation question or suggest something for us to monitor — use the contact page to send your message.
+          {/* Questions or suggestions — paid / logged-out only (hidden for free-tier accounts) */}
+          {(!user || user.plan !== 'free') && (
+            <section className="w-full py-10 md:py-12 bg-white/70 border-y border-earth-sand/60">
+              <div className="max-w-3xl mx-auto px-4 text-center">
+                <RevealSection delay={0} variant="slide-up">
+                  <h2 className="font-title text-xl md:text-2xl font-semibold text-earth-text mb-2">
+                    Questions or Suggestions?
+                  </h2>
+                <p className="text-earth-text/80 text-sm md:text-base mb-6 max-w-xl mx-auto">
+                  Ask about a specific regulation or suggest coverage on our regulation help page. For account, billing, or
+                  subscription questions, use{' '}
+                  <Link to="/contact" className="text-earth-primary font-medium underline underline-offset-2">
+                    Contact us
+                  </Link>
+                  .
                 </p>
                 <Button asChild className="bg-earth-primary hover:opacity-90 text-white">
-                  <Link to="/contact">Go to contact form</Link>
+                  <Link to="/regulation-help">Contact Us</Link>
                 </Button>
-              </RevealSection>
-            </div>
-          </section>
+                </RevealSection>
+              </div>
+            </section>
+          )}
 
           {/* Pricing CTA — only for free or logged-out users */}
           {(!user || user?.plan === 'free') && (
