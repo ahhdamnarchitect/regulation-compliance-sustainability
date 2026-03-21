@@ -326,9 +326,9 @@ export default function Index() {
                   </h2>
                 <p className="text-earth-text/80 text-sm md:text-base mb-6 max-w-xl mx-auto">
                   Ask about a specific regulation or suggest coverage on our regulation help page. For account, billing, or
-                  subscription questions, use{' '}
+                  subscription questions, 
                   <Link to="/contact" className="text-earth-primary font-medium underline underline-offset-2">
-                    Contact us
+                    click here
                   </Link>
                   .
                 </p>

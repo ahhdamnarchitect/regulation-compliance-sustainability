@@ -1,5 +1,10 @@
 # Change Log
 
+## 2026-03-21 - Copy polish for contact navigation
+- Updated Regulation Help page text/labels: title to `Regulation Help`, forms to `Regulation Question` and `Regulation Suggestion`.
+- Updated Questions/Suggestions panel copy on home and search, including hyperlink anchor text (`click here` / `here`) per stakeholder request.
+- Updated `/contact` intro sentence to use linked `here` for regulation-specific help.
+
 ## 2026-03-20 - Brain sync before git push (session)
 - Confirmed `brain/current_state.md`, `next_steps.md`, and `change_log.md` reflect `/contact` vs `/regulation-help`, inquiry limits, admin tooltips, and pending migrations **006** (profiles RLS), **007** (general inquiries).
 - Pushed latest app + migrations + docs to `origin/main`.

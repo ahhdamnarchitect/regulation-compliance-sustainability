@@ -169,7 +169,7 @@ export default function RegulationHelpPage() {
                 </div>
                 <div>
                   <h1 className="font-title text-2xl md:text-3xl font-semibold text-earth-text mb-2">
-                    Regulation help
+                    Regulation Help
                   </h1>
                   <p className="text-earth-text/80 text-sm md:text-base max-w-2xl">
                     Ask about a specific rule or suggest a regulation for us to monitor. For account, billing, or
@@ -191,7 +191,7 @@ export default function RegulationHelpPage() {
                 className="rounded-xl border border-earth-sand bg-white p-5 md:p-6 shadow-sm space-y-3 h-full flex flex-col"
               >
                 <h2 className="font-title text-lg font-semibold text-earth-text">
-                  Ask a Question About a Regulation
+                  Regulation Question
                 </h2>
                 <p className="text-sm text-earth-text/80">We aim to respond within 24 hours.</p>
                 <Input
@@ -242,7 +242,7 @@ export default function RegulationHelpPage() {
                 onSubmit={handleSuggestionSubmit}
                 className="rounded-xl border border-earth-sand bg-white p-5 md:p-6 shadow-sm space-y-3 h-full flex flex-col"
               >
-                <h2 className="font-title text-lg font-semibold text-earth-text">Suggest a Regulation</h2>
+                <h2 className="font-title text-lg font-semibold text-earth-text">Regulation Suggestion</h2>
                 <p className="text-sm text-earth-text/80">Tell us what we should add to our coverage.</p>
                 <Input
                   value={suggestionName}

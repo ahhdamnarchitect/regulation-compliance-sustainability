@@ -169,11 +169,7 @@ export default function ContactPage() {
                   Contact us
                 </h1>
                 <p className="text-earth-text/80 text-sm md:text-base">
-                  Accounts, billing, subscriptions, and other general questions. For regulation-specific help, use{' '}
-                  <Link to="/regulation-help" className="text-earth-primary font-medium underline underline-offset-2">
-                    Regulation help
-                  </Link>
-                  .
+                  Accounts, billing, subscriptions, and other general questions. For regulation-specific help, visit <Link to="/regulation-help" className="text-earth-primary font-medium underline underline-offset-2">here</Link>.
                 </p>
               </div>
             </div>
