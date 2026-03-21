@@ -1,5 +1,11 @@
 # Change Log
 
+## 2026-03-21 - Brand polish for Questions/Suggestions + pricing simplification
+- Reworked homepage and search **Questions or Suggestions?** messaging to be longer, clearer, and more brand-consistent.
+- Replaced ambiguous CTA label `Go` with `Open Regulation Help` across home/search.
+- Homepage panel layout simplified: removed support disclaimer text from under CTA and moved account/billing/subscription guidance into a separate low-emphasis helper line below the panel.
+- Simplified `/pricing` by removing the not-yet-established Enterprise tier; page now focuses on Free and Professional positioning.
+
 ## 2026-03-21 - Pricing page + CTA copy alignment
 - Added new marketing-focused `/pricing` page with Free, Professional, and Enterprise tiers and plan-aware CTAs.
 - Wired routing for `/pricing` in `src/App.tsx`.

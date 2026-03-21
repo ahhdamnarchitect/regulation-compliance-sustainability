@@ -10,9 +10,7 @@ import { useUpgrade } from '@/contexts/UpgradeContext';
 import {
   ArrowRight,
   Check,
-  Headphones,
   LineChart,
-  Lock,
   MapPin,
   Search,
   Shield,
@@ -61,8 +59,8 @@ export default function Pricing() {
         </section>
 
         {/* Plans */}
-        <section className="container mx-auto px-4 py-12 md:py-16 max-w-6xl">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
+        <section className="container mx-auto px-4 py-12 md:py-16 max-w-5xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-stretch">
             {/* Free */}
             <RevealSection delay={60} variant="slide-up" className="h-full">
               <Card className="h-full border-earth-sand bg-white/95 shadow-sm flex flex-col">
@@ -197,45 +195,6 @@ export default function Pricing() {
               </Card>
             </RevealSection>
 
-            {/* Enterprise */}
-            <RevealSection delay={140} variant="slide-up" className="h-full">
-              <Card className="h-full border-earth-sand bg-white/95 shadow-sm flex flex-col">
-                <CardHeader>
-                  <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="font-title text-xl">Enterprise</CardTitle>
-                    {plan === 'enterprise' ? (
-                      <Badge variant="secondary" className="text-xs">
-                        Current plan
-                      </Badge>
-                    ) : null}
-                  </div>
-                  <p className="text-3xl font-semibold text-earth-text mt-2">Custom</p>
-                  <p className="text-sm text-earth-text/80 mt-2">
-                    For larger programs that need procurement-friendly terms, onboarding support, and a roadmap aligned
-                    to your governance model.
-                  </p>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <ul className="space-y-3 text-sm text-earth-text/90 flex-1">
-                    <li className="flex gap-2">
-                      <Users className="w-4 h-4 text-earth-primary shrink-0 mt-0.5" />
-                      Volume licensing &amp; team rollout options
-                    </li>
-                    <li className="flex gap-2">
-                      <Headphones className="w-4 h-4 text-earth-primary shrink-0 mt-0.5" />
-                      Priority support paths (as agreed)
-                    </li>
-                    <li className="flex gap-2">
-                      <Lock className="w-4 h-4 text-earth-primary shrink-0 mt-0.5" />
-                      Security &amp; procurement review support
-                    </li>
-                  </ul>
-                  <Button asChild variant="outline" className="w-full mt-6 border-earth-primary text-earth-primary">
-                    <Link to="/contact">Talk to us</Link>
-                  </Button>
-                </CardContent>
-              </Card>
-            </RevealSection>
           </div>
         </section>
 
@@ -261,7 +220,7 @@ export default function Pricing() {
               </RevealSection>
               <RevealSection delay={160} variant="slide-up" className="rounded-xl border border-earth-sand bg-white/90 p-5">
                 <p className="font-semibold text-earth-text mb-2">Room to grow</p>
-                <p>Start free, prove value, then scale to Professional—or talk to us for Enterprise procurement needs.</p>
+                <p>Start free, prove value, and scale to Professional when your team needs search, bookmarks, and export at speed.</p>
               </RevealSection>
             </div>
           </div>
