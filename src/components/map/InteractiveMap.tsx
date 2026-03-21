@@ -19,6 +19,16 @@ import 'leaflet/dist/leaflet.css';
 
 // Custom CSS to remove tile gridlines - more aggressive approach
 const mapStyles = `
+  .leaflet-container {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  .leaflet-container:focus,
+  .leaflet-container:focus-visible {
+    outline: none !important;
+    box-shadow: none !important;
+  }
   .leaflet-tile {
     border: none !important;
     outline: none !important;
@@ -606,7 +616,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
   };
 
   return (
-    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden relative max-w-6xl mx-auto bg-transparent">
+    <div className="w-full h-[400px] sm:h-[500px] md:h-[500px] lg:h-[600px] rounded-lg overflow-hidden relative max-w-6xl md:max-w-none mx-auto bg-transparent">
       
       <MapContainer
         center={[20, 0]}

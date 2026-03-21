@@ -25,6 +25,7 @@ import {
   Clock
 } from 'lucide-react';
 import { RevealSection } from '@/components/ui/RevealSection';
+import { RegulationQuestionPanel } from '@/components/inquiry/RegulationQuestionPanel';
 
 export default function RegulationDetail() {
   const { id } = useParams<{ id: string }>();
@@ -480,6 +481,14 @@ export default function RegulationDetail() {
             </RevealSection>
           </div>
         </div>
+
+        <RevealSection delay={250} variant="slide-up" className="mt-12 w-full">
+          <RegulationQuestionPanel
+            regulations={regulations}
+            defaultRegulationTitle={regulation.title}
+            pagePath={`/regulation/${regulation.id}`}
+          />
+        </RevealSection>
       </div>
       <Footer />
     </div>

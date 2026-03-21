@@ -1,9 +1,11 @@
 # Next Steps
 
 ## Now
+- Smoke-test `/contact` (both forms + autocomplete), regulation detail question panel, and **Questions or Suggestions?** blocks on home + search.
+- Apply migration `20260320000500_profiles_admin_read_update_policies.sql` in Supabase if the Admin **Users** tab cannot load profiles.
 - Set up operational triage process for `customer_inquiries` (owner, SLA, and resolution status updates).
 - Verify admin triage view can read/update inquiry status end-to-end.
-- Apply migration `20260320000300_promote_admin_adamg.sql` in Supabase to grant admin role to `admin.adamg@gmail.com`.
+- Confirm final admin profile state in Supabase for `admin.adamg@gmail.com` (`role = 'admin'`, `plan = 'professional'`).
 - Align all deployment docs/workflows to Vercel as canonical target.
 - Run baseline validation (`npm run build`, `npm run lint`) and record results.
 - Remove/disable production auth debug logs if no longer needed.

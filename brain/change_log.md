@@ -37,3 +37,29 @@
 ## 2026-03-20 - Admin promotion migration added
 - Added migration `20260320000300_promote_admin_adamg.sql`.
 - Migration promotes `admin.adamg@gmail.com` to `role = 'admin'` in `public.profiles`.
+
+## 2026-03-20 - Admin auto-role trigger added
+- Added migration `20260320000400_auto_admin_adamg_profile_trigger.sql`.
+- Ensures `admin.adamg@gmail.com` is set to admin on profile insert/update and backfills profile from `auth.users` if needed.
+
+## 2026-03-20 - Admin plan tier elevated
+- Updated migration `20260320000400_auto_admin_adamg_profile_trigger.sql` to enforce `plan = 'professional'` for `admin.adamg@gmail.com`.
+- Applied for all paths: trigger-time profile writes, auth-user backfill insert, and existing-row update.
+- User validated behavior end-to-end in testing.
+
+## 2026-03-20 - Brain sync (current state & next steps)
+- Refreshed `current_state.md` for `/contact`, inquiry autocomplete, admin tabs/users, map tweaks, and regulation detail question panel.
+- `next_steps.md`: added smoke-test item for new contact/search/home inquiry UX.
+
+## 2026-03-20 - Questions / suggestions sections & inquiry autocomplete
+- Homepage: dedicated **Questions or Suggestions?** section after search with CTA link to `/contact`.
+- Search results: same titled block + **Go to contact form** button.
+- Contact: **Regulation** field (was regulation/topic) with DB autocomplete (top 3 titles); suggestion form adds **Regulation** autocomplete + **Country or jurisdiction** autocomplete; optional `?regulation=` query pre-fills question regulation.
+- Regulation detail: bottom **RegulationQuestionPanel** with regulation pre-filled and same autocomplete.
+- New: `inquiryAutocomplete.ts`, `InquiryAutocompleteInput`, `RegulationQuestionPanel`.
+
+## 2026-03-20 - Homepage map, contact page, admin tabs
+- Map: removed region/country/jurisdiction tip; reduced decorative border; Leaflet container outline/border cleared; wider map on desktop (`md:max-w-none`).
+- Contact: new `/contact` page with question + suggestion forms; homepage shows link after search; search results footer links to `/contact`.
+- Admin: link back to homepage; tabs for Regulations, Customer inquiries, Users (masked email, reveal toggle, edit plan/role/display name + Save).
+- Migration `20260320000500_profiles_admin_read_update_policies.sql`: admin RLS to select/update all `profiles` (required for Users tab).

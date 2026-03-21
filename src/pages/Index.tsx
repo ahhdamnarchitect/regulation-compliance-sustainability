@@ -1,18 +1,14 @@
-import { useState, useEffect, type FormEvent } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { LoginOverlay } from '@/components/auth/LoginOverlay';
 import InteractiveMap from '@/components/map/InteractiveMap';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { SearchInputWithSuggestions } from '@/components/search/SearchInputWithSuggestions';
 import { useRegulations } from '@/hooks/useRegulations';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUpgrade } from '@/contexts/UpgradeContext';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/lib/supabase';
 import { RevealSection } from '@/components/ui/RevealSection';
 import { MapPin, Search, Eye, GitBranch, FileText, Download } from 'lucide-react';
 
@@ -26,24 +22,7 @@ export default function Index() {
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [heroVideoReady, setHeroVideoReady] = useState(false);
-  const [questionName, setQuestionName] = useState('');
-  const [questionEmail, setQuestionEmail] = useState('');
-  const [questionText, setQuestionText] = useState('');
-  const [questionRegulation, setQuestionRegulation] = useState('');
-  const [isSubmittingQuestion, setIsSubmittingQuestion] = useState(false);
-  const [suggestionName, setSuggestionName] = useState('');
-  const [suggestionEmail, setSuggestionEmail] = useState('');
-  const [suggestionText, setSuggestionText] = useState('');
-  const [suggestionLocation, setSuggestionLocation] = useState('');
-  const [isSubmittingSuggestion, setIsSubmittingSuggestion] = useState(false);
-  const { toast } = useToast();
   const { regulations } = useRegulations();
-
-  useEffect(() => {
-    if (!user?.email) return;
-    setQuestionEmail(user.email);
-    setSuggestionEmail(user.email);
-  }, [user?.email]);
 
   useEffect(() => {
     if (location.hash === '#pricing') {
@@ -126,90 +105,6 @@ export default function Index() {
 
   const scrollToMap = () => {
     document.getElementById('map-section')?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const handleQuestionSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!questionEmail.trim() || !questionText.trim()) {
-      toast({
-        title: 'Missing information',
-        description: 'Please add your email and your regulation question.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsSubmittingQuestion(true);
-    const { error } = await supabase.from('customer_inquiries').insert({
-      inquiry_type: 'question',
-      name: questionName.trim() || null,
-      email: questionEmail.trim(),
-      message: questionText.trim(),
-      topic: questionRegulation.trim() || null,
-      location_hint: null,
-      user_id: user?.id ?? null,
-      page_path: '/',
-      status: 'new',
-    });
-    setIsSubmittingQuestion(false);
-
-    if (error) {
-      toast({
-        title: 'Could not send question',
-        description: 'Please try again in a moment.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setQuestionText('');
-    setQuestionRegulation('');
-    toast({
-      title: 'Question received',
-      description: 'Thanks. We aim to respond within 24 hours.',
-    });
-  };
-
-  const handleSuggestionSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!suggestionEmail.trim() || !suggestionText.trim()) {
-      toast({
-        title: 'Missing information',
-        description: 'Please add your email and your suggestion.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setIsSubmittingSuggestion(true);
-    const { error } = await supabase.from('customer_inquiries').insert({
-      inquiry_type: 'suggestion',
-      name: suggestionName.trim() || null,
-      email: suggestionEmail.trim(),
-      message: suggestionText.trim(),
-      topic: null,
-      location_hint: suggestionLocation.trim() || null,
-      user_id: user?.id ?? null,
-      page_path: '/',
-      status: 'new',
-    });
-    setIsSubmittingSuggestion(false);
-
-    if (error) {
-      toast({
-        title: 'Could not send suggestion',
-        description: 'Please try again in a moment.',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    setSuggestionText('');
-    setSuggestionLocation('');
-    toast({
-      title: 'Suggestion received',
-      description: 'Thanks. We will review it for monitoring.',
-    });
   };
 
   return (
@@ -364,14 +259,11 @@ export default function Index() {
             className="relative w-full py-8 md:py-12 section-gradient"
           >
             <RevealSection delay={100} variant="slide-up" className="w-full">
-              <div className="w-full px-2 sm:px-4 max-w-7xl mx-auto">
+              <div className="w-full px-2 sm:px-4 md:px-4 max-w-7xl mx-auto">
                 <p className="text-center text-sm text-earth-text mb-4">
                   Click a region to explore regulations.
                 </p>
-                <p className="text-center text-xs md:text-sm text-earth-text/80 mb-4">
-                  Tip: <strong>Region</strong> is broad geography (e.g., EU), <strong>Country</strong> is nation-level, and <strong>Jurisdiction</strong> is the legal authority issuing the rule.
-                </p>
-                <div className="rounded-xl overflow-hidden min-h-[400px] md:min-h-[500px] bg-[#d5e8eb] border border-white/60 shadow-lg">
+                <div className="rounded-xl overflow-hidden min-h-[400px] md:min-h-[500px] bg-[#d5e8eb] border-0 shadow-md md:shadow-sm outline-none ring-0">
                   <InteractiveMap
                     regulations={regulations}
                     onRegulationClick={handleRegulationClick}
@@ -379,95 +271,6 @@ export default function Index() {
                 </div>
               </div>
             </RevealSection>
-          </section>
-
-          <section className="w-full py-12 md:py-16 bg-white/70 border-y border-earth-sand/60">
-            <div className="max-w-6xl mx-auto px-4">
-              <RevealSection delay={0} variant="slide-up" className="text-center mb-8">
-                <h2 className="font-title text-xl md:text-2xl font-semibold text-earth-text mb-2">
-                  Need help or see something missing?
-                </h2>
-                <p className="text-earth-text/80 text-sm md:text-base">
-                  Send a regulation question or request a regulation for us to monitor.
-                </p>
-              </RevealSection>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <RevealSection delay={80} variant="slide-up">
-                  <form onSubmit={handleQuestionSubmit} className="rounded-xl border border-earth-sand bg-white p-5 md:p-6 shadow-sm space-y-3">
-                    <h3 className="font-title text-lg font-semibold text-earth-text">Regulation question</h3>
-                    <p className="text-sm text-earth-text/80">We aim to respond within 24 hours.</p>
-                    <Input
-                      value={questionName}
-                      onChange={(e) => setQuestionName(e.target.value)}
-                      placeholder="Your name (optional)"
-                      className="border-earth-sand focus-visible:ring-earth-primary"
-                    />
-                    <Input
-                      type="email"
-                      value={questionEmail}
-                      onChange={(e) => setQuestionEmail(e.target.value)}
-                      placeholder="Your email"
-                      className="border-earth-sand focus-visible:ring-earth-primary"
-                      required
-                    />
-                    <Input
-                      value={questionRegulation}
-                      onChange={(e) => setQuestionRegulation(e.target.value)}
-                      placeholder="Regulation/topic (optional)"
-                      className="border-earth-sand focus-visible:ring-earth-primary"
-                    />
-                    <Textarea
-                      value={questionText}
-                      onChange={(e) => setQuestionText(e.target.value)}
-                      placeholder="Type your question..."
-                      className="min-h-[120px] border-earth-sand focus-visible:ring-earth-primary"
-                      required
-                    />
-                    <Button type="submit" disabled={isSubmittingQuestion} className="w-full bg-earth-primary hover:opacity-90 text-white">
-                      {isSubmittingQuestion ? 'Sending...' : 'Send question'}
-                    </Button>
-                  </form>
-                </RevealSection>
-
-                <RevealSection delay={120} variant="slide-up">
-                  <form onSubmit={handleSuggestionSubmit} className="rounded-xl border border-earth-sand bg-white p-5 md:p-6 shadow-sm space-y-3">
-                    <h3 className="font-title text-lg font-semibold text-earth-text">Suggest a regulation to monitor</h3>
-                    <p className="text-sm text-earth-text/80">If you do not see a regulation, tell us what to track.</p>
-                    <Input
-                      value={suggestionName}
-                      onChange={(e) => setSuggestionName(e.target.value)}
-                      placeholder="Your name (optional)"
-                      className="border-earth-sand focus-visible:ring-earth-primary"
-                    />
-                    <Input
-                      type="email"
-                      value={suggestionEmail}
-                      onChange={(e) => setSuggestionEmail(e.target.value)}
-                      placeholder="Your email"
-                      className="border-earth-sand focus-visible:ring-earth-primary"
-                      required
-                    />
-                    <Input
-                      value={suggestionLocation}
-                      onChange={(e) => setSuggestionLocation(e.target.value)}
-                      placeholder="Country or jurisdiction (optional)"
-                      className="border-earth-sand focus-visible:ring-earth-primary"
-                    />
-                    <Textarea
-                      value={suggestionText}
-                      onChange={(e) => setSuggestionText(e.target.value)}
-                      placeholder="What regulation should we add?"
-                      className="min-h-[120px] border-earth-sand focus-visible:ring-earth-primary"
-                      required
-                    />
-                    <Button type="submit" disabled={isSubmittingSuggestion} className="w-full bg-earth-primary hover:opacity-90 text-white">
-                      {isSubmittingSuggestion ? 'Sending...' : 'Send suggestion'}
-                    </Button>
-                  </form>
-                </RevealSection>
-              </div>
-            </div>
           </section>
 
           {/* Search by framework */}
@@ -509,6 +312,23 @@ export default function Index() {
                     Search
                   </Button>
                 </div>
+              </RevealSection>
+            </div>
+          </section>
+
+          {/* Questions or suggestions — link to full contact forms */}
+          <section className="w-full py-10 md:py-12 bg-white/70 border-y border-earth-sand/60">
+            <div className="max-w-3xl mx-auto px-4 text-center">
+              <RevealSection delay={0} variant="slide-up">
+                <h2 className="font-title text-xl md:text-2xl font-semibold text-earth-text mb-2">
+                  Questions or Suggestions?
+                </h2>
+                <p className="text-earth-text/80 text-sm md:text-base mb-6">
+                  Ask a regulation question or suggest something for us to monitor — use the contact page to send your message.
+                </p>
+                <Button asChild className="bg-earth-primary hover:opacity-90 text-white">
+                  <Link to="/contact">Go to contact form</Link>
+                </Button>
               </RevealSection>
             </div>
           </section>

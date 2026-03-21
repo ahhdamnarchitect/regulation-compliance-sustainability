@@ -10,11 +10,11 @@ Stabilize and operationalize the regulation platform so auth, payments, deployme
 - Supabase migrations for profile and bookmark persistence.
 - Active deployment on Vercel; legacy GitHub Pages workflow still present in repo.
 - Map section visual adjustment completed: border is now thinner/even on desktop+mobile with water-tone background alignment.
-- Homepage now includes two customer intake forms:
-  - Regulation question form (24-hour response expectation text)
-  - Regulation suggestion form
-- Form submissions are persisted to Supabase `customer_inquiries` (new migration added).
-- Admin page now includes a customer inquiries triage table with status updates (`new`, `in_review`, `resolved`).
+- Customer inquiries: forms live on **`/contact`** (not inline on homepage). Homepage and search results include a **Questions or Suggestions?** section linking there. Regulation detail pages include a bottom **question panel** with the current regulation pre-filled.
+- Inquiry forms use **database-backed autocomplete** (regulation titles and country/jurisdiction values from loaded regulations).
+- Form submissions persist to Supabase `customer_inquiries` (migrations under `supabase/migrations/`).
+- **Admin** (`/admin`): tabs for **Regulations**, **Customer inquiries**, and **Users** (masked email, plan/role support); link back to homepage. Admin profile list/update requires migration `20260320000500_profiles_admin_read_update_policies.sql`.
+- Map section: reduced decorative borders; Leaflet focus outline cleared; optional full-width map on desktop.
 
 ## In Progress
 - Assumption: design refresh and product positioning improvements (based on design research docs and theme assets).

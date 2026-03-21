@@ -352,6 +352,22 @@ export default function SearchResults() {
                 ))}
               </div>
             )}
+
+            {!loading && !error && (
+              <RevealSection delay={0} variant="fade" className="mt-10 pt-8 border-t border-earth-sand/50">
+                <div className="rounded-xl border border-earth-sand/80 bg-white/70 px-4 py-8 text-center shadow-sm">
+                  <h2 className="font-title text-lg md:text-xl font-semibold text-earth-text mb-2">
+                    Questions or Suggestions?
+                  </h2>
+                  <p className="text-earth-text/80 text-sm mb-5 max-w-md mx-auto">
+                    Ask a regulation question or suggest a rule for us to monitor.
+                  </p>
+                  <Button asChild variant="outline" className="border-earth-primary text-earth-primary hover:bg-earth-primary/10">
+                    <Link to="/contact">Go to contact form</Link>
+                  </Button>
+                </div>
+              </RevealSection>
+            )}
           </div>
         </div>
       </div>
