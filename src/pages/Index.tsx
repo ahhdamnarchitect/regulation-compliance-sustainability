@@ -325,16 +325,18 @@ export default function Index() {
                     Questions or Suggestions?
                   </h2>
                 <p className="text-earth-text/80 text-sm md:text-base mb-6 max-w-xl mx-auto">
-                  Ask about a specific regulation or suggest coverage on our regulation help page. For account, billing, or
-                  subscription questions, 
-                  <Link to="/contact" className="text-earth-primary font-medium underline underline-offset-2">
-                    click here
-                  </Link>
-                  .
+                  Ask about a specific regulation or suggest coverage on our Regulation Help page.
                 </p>
                 <Button asChild className="bg-earth-primary hover:opacity-90 text-white">
-                  <Link to="/regulation-help">Contact Us</Link>
+                  <Link to="/regulation-help">Go</Link>
                 </Button>
+                <p className="text-earth-text/80 text-sm md:text-base mt-4 max-w-xl mx-auto">
+                  For account, billing, or subscription questions, visit the{' '}
+                  <Link to="/contact" className="text-earth-primary font-medium underline underline-offset-2">
+                    Contact
+                  </Link>{' '}
+                  page.
+                </p>
                 </RevealSection>
               </div>
             </section>

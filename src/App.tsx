@@ -18,6 +18,7 @@ import ResetPassword from "./pages/ResetPassword";
 import Checkout from "./pages/Checkout";
 import CheckoutSuccess from "./pages/CheckoutSuccess";
 import About from "./pages/About";
+import Pricing from "./pages/Pricing";
 import Terms from "./pages/Terms";
 import Privacy from "./pages/Privacy";
 import Disclaimer from "./pages/Disclaimer";
@@ -61,6 +62,7 @@ const App = () => (
               <Route path="/admin" element={<Admin />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/regulation-help" element={<RegulationHelpPage />} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="/about" element={<About />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/privacy" element={<Privacy />} />

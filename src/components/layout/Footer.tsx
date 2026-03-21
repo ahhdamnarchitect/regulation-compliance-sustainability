@@ -24,6 +24,10 @@ export const Footer = () => {
           <Link to="/about" className="hover:opacity-80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-earth-primary focus-visible:ring-offset-2 rounded transition-colors">
             About
           </Link>
+          <span className="text-earth-text/50">|</span>
+          <Link to="/pricing" className="hover:opacity-80 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-earth-primary focus-visible:ring-offset-2 rounded transition-colors">
+            Pricing
+          </Link>
         </div>
         <p className="text-xs text-earth-text/80">
           © 2026 Missick Sustainability Regulation Database LLC. All rights reserved.

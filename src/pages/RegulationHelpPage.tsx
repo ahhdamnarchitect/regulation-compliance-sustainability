@@ -173,11 +173,11 @@ export default function RegulationHelpPage() {
                   </h1>
                   <p className="text-earth-text/80 text-sm md:text-base max-w-2xl">
                     Ask about a specific rule or suggest a regulation for us to monitor. For account, billing, or
-                    subscription questions, use{' '}
+                    subscription questions, visit the{' '}
                     <Link to="/contact" className="text-earth-primary font-medium underline underline-offset-2">
-                      Contact us
-                    </Link>
-                    .
+                      Contact
+                    </Link>{' '}
+                    page.
                   </p>
                 </div>
               </div>

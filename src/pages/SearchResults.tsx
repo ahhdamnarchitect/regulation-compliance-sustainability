@@ -360,10 +360,10 @@ export default function SearchResults() {
                     Questions or Suggestions?
                   </h2>
                   <p className="text-earth-text/80 text-sm mb-5 max-w-md mx-auto">
-                    Regulation questions and suggestions — or visit <Link to="/contact" className="text-earth-primary font-medium underline underline-offset-2">here</Link> for account and billing.
+                    Ask about a specific regulation or suggest coverage.
                   </p>
                   <Button asChild variant="outline" className="border-earth-primary text-earth-primary hover:bg-earth-primary/10">
-                    <Link to="/regulation-help">Contact Us</Link>
+                    <Link to="/regulation-help">Go</Link>
                   </Button>
                 </div>
               </RevealSection>

@@ -1,5 +1,11 @@
 # Change Log
 
+## 2026-03-21 - Pricing page + CTA copy alignment
+- Added new marketing-focused `/pricing` page with Free, Professional, and Enterprise tiers and plan-aware CTAs.
+- Wired routing for `/pricing` in `src/App.tsx`.
+- Added `Pricing` link in the footer navigation.
+- Updated **Questions or Suggestions?** copy and CTA labels on homepage and search (`Go` -> `/regulation-help`), and refined regulation-help intro copy to route account/billing/subscription questions to `/contact` via linked `Contact`.
+
 ## 2026-03-21 - Copy polish for contact navigation
 - Updated Regulation Help page text/labels: title to `Regulation Help`, forms to `Regulation Question` and `Regulation Suggestion`.
 - Updated Questions/Suggestions panel copy on home and search, including hyperlink anchor text (`click here` / `here`) per stakeholder request.
