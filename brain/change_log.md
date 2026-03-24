@@ -1,5 +1,8 @@
 # Change Log
 
+## 2026-03-24 - Admin page: filterable & sortable tables
+- `/admin`: Regulations, Customer inquiries, and Users tables support text search (where applicable), dropdown filters (status/type/role/plan), and clickable column headers for sort (toggle asc/desc). Shows “Showing X of Y” counts.
+
 ## 2026-03-21 - Admin seed user (missickconsulting@gmail.com)
 - Added migration `20260320000800_admin_missickconsulting_user.sql`: extends `assign_admin_role_for_adamg` to include `missickconsulting@gmail.com`, creates auth user + `auth.identities` when missing (demo password per request), and forces `profiles` to `admin` + `professional`.
 - Apply in Supabase SQL Editor if not using CLI-linked migrations; rotate password after first login.

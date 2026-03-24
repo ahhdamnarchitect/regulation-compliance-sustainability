@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,9 +10,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Edit, Trash2, ExternalLink, Home, Eye, EyeOff } from "lucide-react";
+import { Plus, Edit, Trash2, ExternalLink, Home, Eye, EyeOff, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
 import { DatabaseRegulation } from "@/types/regulation";
-import { formatStatus } from "@/lib/utils";
+import { formatStatus, cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import {
   Tooltip,
@@ -83,6 +83,56 @@ function maskEmail(email: string): string {
   return `${local[0]}${"*".repeat(Math.min(6, local.length - 1))}@${domain}`;
 }
 
+type SortDir = "asc" | "desc";
+
+type RegulationSortKey = "id" | "title" | "region" | "country" | "framework" | "sector" | "reporting_year" | "status";
+type InquirySortKey = "created_at" | "inquiry_type" | "email" | "name" | "status";
+type ProfileSortKey = "email" | "full_name" | "region" | "role" | "plan" | "created_at";
+
+function SortableTh({
+  label,
+  columnKey,
+  sortKey,
+  sortDir,
+  onSort,
+  className,
+}: {
+  label: string;
+  columnKey: string;
+  sortKey: string;
+  sortDir: SortDir;
+  onSort: (key: string) => void;
+  className?: string;
+}) {
+  const active = sortKey === columnKey;
+  return (
+    <th className={cn("text-left p-3", className)}>
+      <button
+        type="button"
+        className="inline-flex items-center gap-1 select-none hover:text-foreground text-muted-foreground"
+        onClick={() => onSort(columnKey)}
+      >
+        <span>{label}</span>
+        {active ? (
+          sortDir === "asc" ? (
+            <ArrowUp className="w-3.5 h-3.5 shrink-0" aria-hidden />
+          ) : (
+            <ArrowDown className="w-3.5 h-3.5 shrink-0" aria-hidden />
+          )
+        ) : (
+          <ArrowUpDown className="w-3.5 h-3.5 shrink-0 opacity-40" aria-hidden />
+        )}
+      </button>
+    </th>
+  );
+}
+
+function regulationYearSortValue(y: DatabaseRegulation["reporting_year"]): number {
+  if (y == null || y === "") return Number.NEGATIVE_INFINITY;
+  const n = typeof y === "number" ? y : parseInt(String(y), 10);
+  return Number.isFinite(n) ? n : Number.NEGATIVE_INFINITY;
+}
+
 const Admin = () => {
   const { isAdmin, user: currentUser } = useAuth();
   const { toast } = useToast();
@@ -115,6 +165,50 @@ const Admin = () => {
   const [profilesError, setProfilesError] = useState<string | null>(null);
   const [revealedEmails, setRevealedEmails] = useState<Record<string, boolean>>({});
   const [profileEdits, setProfileEdits] = useState<Record<string, Partial<Pick<ProfileRow, "role" | "plan" | "full_name">>>>({});
+
+  const [regSearch, setRegSearch] = useState("");
+  const [regStatusFilter, setRegStatusFilter] = useState<"all" | "proposed" | "enacted">("all");
+  const [regSortKey, setRegSortKey] = useState<RegulationSortKey>("id");
+  const [regSortDir, setRegSortDir] = useState<SortDir>("asc");
+
+  const [inqSearch, setInqSearch] = useState("");
+  const [inqTypeFilter, setInqTypeFilter] = useState<"all" | CustomerInquiry["inquiry_type"]>("all");
+  const [inqStatusFilter, setInqStatusFilter] = useState<"all" | InquiryStatus>("all");
+  const [inqSortKey, setInqSortKey] = useState<InquirySortKey>("created_at");
+  const [inqSortDir, setInqSortDir] = useState<SortDir>("desc");
+
+  const [userSearch, setUserSearch] = useState("");
+  const [userRoleFilter, setUserRoleFilter] = useState<"all" | ProfileRole>("all");
+  const [userPlanFilter, setUserPlanFilter] = useState<"all" | ProfilePlan>("all");
+  const [userSortKey, setUserSortKey] = useState<ProfileSortKey>("created_at");
+  const [userSortDir, setUserSortDir] = useState<SortDir>("desc");
+
+  const toggleRegSort = (key: string) => {
+    const k = key as RegulationSortKey;
+    if (k === regSortKey) setRegSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else {
+      setRegSortKey(k);
+      setRegSortDir("asc");
+    }
+  };
+
+  const toggleInqSort = (key: string) => {
+    const k = key as InquirySortKey;
+    if (k === inqSortKey) setInqSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else {
+      setInqSortKey(k);
+      setInqSortDir(k === "created_at" ? "desc" : "asc");
+    }
+  };
+
+  const toggleUserSort = (key: string) => {
+    const k = key as ProfileSortKey;
+    if (k === userSortKey) setUserSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    else {
+      setUserSortKey(k);
+      setUserSortDir(k === "created_at" ? "desc" : "asc");
+    }
+  };
 
   const fetchRegulations = async () => {
     setLoading(true);
@@ -282,6 +376,144 @@ const Admin = () => {
       (eff.full_name || "") !== (p.full_name || "")
     );
   };
+
+  const filteredSortedRegulations = useMemo(() => {
+    let list = regulations.filter((r) => {
+      if (regStatusFilter !== "all") {
+        const s = (r.status || "").toLowerCase();
+        if (regStatusFilter === "proposed" && s !== "proposed") return false;
+        if (regStatusFilter === "enacted" && s !== "enacted") return false;
+      }
+      const q = regSearch.trim().toLowerCase();
+      if (!q) return true;
+      const blob = [
+        r.title,
+        r.region,
+        r.country,
+        r.framework,
+        r.sector,
+        r.tags,
+        String(r.id),
+        r.description,
+      ]
+        .map((x) => (x == null ? "" : String(x)))
+        .join(" ")
+        .toLowerCase();
+      return blob.includes(q);
+    });
+
+    const dir = regSortDir === "asc" ? 1 : -1;
+    list = [...list].sort((a, b) => {
+      const cmpNum = (va: number, vb: number) => (va < vb ? -1 : va > vb ? 1 : 0) * dir;
+      switch (regSortKey) {
+        case "id":
+          return cmpNum(a.id, b.id);
+        case "title":
+          return (a.title || "").localeCompare(b.title || "", undefined, { sensitivity: "base" }) * dir;
+        case "region":
+          return (a.region || "").localeCompare(b.region || "", undefined, { sensitivity: "base" }) * dir;
+        case "country":
+          return (a.country || "").localeCompare(b.country || "", undefined, { sensitivity: "base" }) * dir;
+        case "framework":
+          return (a.framework || "").localeCompare(b.framework || "", undefined, { sensitivity: "base" }) * dir;
+        case "sector":
+          return (a.sector || "").localeCompare(b.sector || "", undefined, { sensitivity: "base" }) * dir;
+        case "reporting_year": {
+          const va = regulationYearSortValue(a.reporting_year);
+          const vb = regulationYearSortValue(b.reporting_year);
+          return (va - vb) * dir;
+        }
+        case "status":
+          return (a.status || "").localeCompare(b.status || "", undefined, { sensitivity: "base" }) * dir;
+        default:
+          return 0;
+      }
+    });
+    return list;
+  }, [regulations, regSearch, regStatusFilter, regSortKey, regSortDir]);
+
+  const filteredSortedInquiries = useMemo(() => {
+    let list = inquiries.filter((q) => {
+      if (inqTypeFilter !== "all" && q.inquiry_type !== inqTypeFilter) return false;
+      if (inqStatusFilter !== "all" && q.status !== inqStatusFilter) return false;
+      const s = inqSearch.trim().toLowerCase();
+      if (!s) return true;
+      const blob = [
+        q.email,
+        q.name,
+        q.message,
+        q.topic,
+        q.location_hint,
+        q.category,
+        inquiryTypeLabel(q.inquiry_type),
+        q.page_path,
+      ]
+        .map((x) => (x == null ? "" : String(x)))
+        .join(" ")
+        .toLowerCase();
+      return blob.includes(s);
+    });
+
+    const dir = inqSortDir === "asc" ? 1 : -1;
+    list = [...list].sort((a, b) => {
+      switch (inqSortKey) {
+        case "created_at": {
+          const ta = new Date(a.created_at).getTime();
+          const tb = new Date(b.created_at).getTime();
+          return (ta - tb) * dir;
+        }
+        case "inquiry_type":
+          return a.inquiry_type.localeCompare(b.inquiry_type) * dir;
+        case "email":
+          return a.email.localeCompare(b.email, undefined, { sensitivity: "base" }) * dir;
+        case "name":
+          return (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" }) * dir;
+        case "status":
+          return a.status.localeCompare(b.status) * dir;
+        default:
+          return 0;
+      }
+    });
+    return list;
+  }, [inquiries, inqSearch, inqTypeFilter, inqStatusFilter, inqSortKey, inqSortDir]);
+
+  const filteredSortedProfiles = useMemo(() => {
+    let list = profiles.filter((p) => {
+      const eff = getEffective(p);
+      if (userRoleFilter !== "all" && eff.role !== userRoleFilter) return false;
+      if (userPlanFilter !== "all" && eff.plan !== userPlanFilter) return false;
+      const q = userSearch.trim().toLowerCase();
+      if (!q) return true;
+      const blob = [p.email, eff.full_name || "", p.region || ""].join(" ").toLowerCase();
+      return blob.includes(q);
+    });
+
+    const dir = userSortDir === "asc" ? 1 : -1;
+    list = [...list].sort((a, b) => {
+      const ea = getEffective(a);
+      const eb = getEffective(b);
+      switch (userSortKey) {
+        case "email":
+          return a.email.localeCompare(b.email, undefined, { sensitivity: "base" }) * dir;
+        case "full_name":
+          return (ea.full_name || "").localeCompare(eb.full_name || "", undefined, { sensitivity: "base" }) * dir;
+        case "region":
+          return (a.region || "").localeCompare(b.region || "", undefined, { sensitivity: "base" }) * dir;
+        case "role":
+          return ea.role.localeCompare(eb.role) * dir;
+        case "plan":
+          return ea.plan.localeCompare(eb.plan) * dir;
+        case "created_at": {
+          const ta = a.created_at ? new Date(a.created_at).getTime() : 0;
+          const tb = b.created_at ? new Date(b.created_at).getTime() : 0;
+          return (ta - tb) * dir;
+        }
+        default:
+          return 0;
+      }
+    });
+    return list;
+  }, [profiles, profileEdits, userSearch, userRoleFilter, userPlanFilter, userSortKey, userSortDir]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -534,24 +766,107 @@ const Admin = () => {
             ) : errorMsg ? (
               <div className="p-6 border rounded text-red-600 bg-card">Failed to load regulations: {errorMsg}</div>
             ) : (
+              <div className="space-y-3">
+                <div className="flex flex-col sm:flex-row gap-3 sm:items-end">
+                  <div className="flex-1 min-w-[200px]">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Search</label>
+                    <Input
+                      placeholder="Title, region, country, framework, sector, tags, ID…"
+                      value={regSearch}
+                      onChange={(e) => setRegSearch(e.target.value)}
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="w-full sm:w-[160px]">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Status</label>
+                    <Select value={regStatusFilter} onValueChange={(v) => setRegStatusFilter(v as typeof regStatusFilter)}>
+                      <SelectTrigger className="h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All statuses</SelectItem>
+                        <SelectItem value="proposed">Proposed</SelectItem>
+                        <SelectItem value="enacted">Enacted</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Showing {filteredSortedRegulations.length} of {regulations.length} regulations
+                </p>
+                {!filteredSortedRegulations.length ? (
+                  <div className="p-6 border rounded bg-card text-muted-foreground text-sm">
+                    {regulations.length === 0
+                      ? "No regulations in the database yet."
+                      : "No regulations match your filters."}
+                  </div>
+                ) : (
               <div className="overflow-auto border rounded bg-card">
                 <table className="min-w-[1200px] w-full text-sm">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="text-left p-3">ID</th>
-                      <th className="text-left p-3">Title</th>
-                      <th className="text-left p-3">Region</th>
-                      <th className="text-left p-3">Country</th>
-                      <th className="text-left p-3">Framework</th>
-                      <th className="text-left p-3">Sector</th>
-                      <th className="text-left p-3">Year</th>
-                      <th className="text-left p-3">Status</th>
+                      <SortableTh
+                        label="ID"
+                        columnKey="id"
+                        sortKey={regSortKey}
+                        sortDir={regSortDir}
+                        onSort={toggleRegSort}
+                      />
+                      <SortableTh
+                        label="Title"
+                        columnKey="title"
+                        sortKey={regSortKey}
+                        sortDir={regSortDir}
+                        onSort={toggleRegSort}
+                      />
+                      <SortableTh
+                        label="Region"
+                        columnKey="region"
+                        sortKey={regSortKey}
+                        sortDir={regSortDir}
+                        onSort={toggleRegSort}
+                      />
+                      <SortableTh
+                        label="Country"
+                        columnKey="country"
+                        sortKey={regSortKey}
+                        sortDir={regSortDir}
+                        onSort={toggleRegSort}
+                      />
+                      <SortableTh
+                        label="Framework"
+                        columnKey="framework"
+                        sortKey={regSortKey}
+                        sortDir={regSortDir}
+                        onSort={toggleRegSort}
+                      />
+                      <SortableTh
+                        label="Sector"
+                        columnKey="sector"
+                        sortKey={regSortKey}
+                        sortDir={regSortDir}
+                        onSort={toggleRegSort}
+                      />
+                      <SortableTh
+                        label="Year"
+                        columnKey="reporting_year"
+                        sortKey={regSortKey}
+                        sortDir={regSortDir}
+                        onSort={toggleRegSort}
+                      />
+                      <SortableTh
+                        label="Status"
+                        columnKey="status"
+                        sortKey={regSortKey}
+                        sortDir={regSortDir}
+                        onSort={toggleRegSort}
+                      />
                       <th className="text-left p-3">Source</th>
                       <th className="text-left p-3">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {regulations.map((r) => (
+                    {filteredSortedRegulations.map((r) => (
                       <tr key={r.id} className="border-t hover:bg-muted/30">
                         <td className="p-3">{r.id}</td>
                         <td className="p-3 max-w-xs truncate">{r.title || "—"}</td>
@@ -600,6 +915,8 @@ const Admin = () => {
                   </tbody>
                 </table>
               </div>
+                )}
+              </div>
             )}
           </TabsContent>
 
@@ -616,21 +933,99 @@ const Admin = () => {
             ) : inquiries.length === 0 ? (
               <div className="p-4 border rounded bg-card text-muted-foreground">No inquiries yet.</div>
             ) : (
+              <div className="space-y-3">
+                <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
+                  <div className="flex-1 min-w-[200px]">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Search</label>
+                    <Input
+                      placeholder="Email, message, name, topic, category…"
+                      value={inqSearch}
+                      onChange={(e) => setInqSearch(e.target.value)}
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="w-full sm:w-[160px]">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Type</label>
+                    <Select value={inqTypeFilter} onValueChange={(v) => setInqTypeFilter(v as typeof inqTypeFilter)}>
+                      <SelectTrigger className="h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All types</SelectItem>
+                        <SelectItem value="question">Question</SelectItem>
+                        <SelectItem value="suggestion">Suggestion</SelectItem>
+                        <SelectItem value="general">General</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="w-full sm:w-[160px]">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Status</label>
+                    <Select value={inqStatusFilter} onValueChange={(v) => setInqStatusFilter(v as typeof inqStatusFilter)}>
+                      <SelectTrigger className="h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All statuses</SelectItem>
+                        <SelectItem value="new">New</SelectItem>
+                        <SelectItem value="in_review">In Review</SelectItem>
+                        <SelectItem value="resolved">Resolved</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Showing {filteredSortedInquiries.length} of {inquiries.length} inquiries
+                </p>
+                {!filteredSortedInquiries.length ? (
+                  <div className="p-4 border rounded bg-card text-muted-foreground text-sm">
+                    No inquiries match your filters.
+                  </div>
+                ) : (
               <div className="overflow-auto border rounded bg-card">
                 <table className="min-w-[1200px] w-full text-sm">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="text-left p-3">Created</th>
-                      <th className="text-left p-3">Type</th>
-                      <th className="text-left p-3">Name</th>
-                      <th className="text-left p-3">Email</th>
+                      <SortableTh
+                        label="Created"
+                        columnKey="created_at"
+                        sortKey={inqSortKey}
+                        sortDir={inqSortDir}
+                        onSort={toggleInqSort}
+                      />
+                      <SortableTh
+                        label="Type"
+                        columnKey="inquiry_type"
+                        sortKey={inqSortKey}
+                        sortDir={inqSortDir}
+                        onSort={toggleInqSort}
+                      />
+                      <SortableTh
+                        label="Name"
+                        columnKey="name"
+                        sortKey={inqSortKey}
+                        sortDir={inqSortDir}
+                        onSort={toggleInqSort}
+                      />
+                      <SortableTh
+                        label="Email"
+                        columnKey="email"
+                        sortKey={inqSortKey}
+                        sortDir={inqSortDir}
+                        onSort={toggleInqSort}
+                      />
                       <th className="text-left p-3">Topic / location / category</th>
                       <th className="text-left p-3">Message</th>
-                      <th className="text-left p-3">Status</th>
+                      <SortableTh
+                        label="Status"
+                        columnKey="status"
+                        sortKey={inqSortKey}
+                        sortDir={inqSortDir}
+                        onSort={toggleInqSort}
+                      />
                     </tr>
                   </thead>
                   <tbody>
-                    {inquiries.map((q) => (
+                    {filteredSortedInquiries.map((q) => (
                       <tr key={q.id} className="border-t align-top hover:bg-muted/30">
                         <td className="p-3 whitespace-nowrap">{new Date(q.created_at).toLocaleString()}</td>
                         <td className="p-3">
@@ -687,6 +1082,8 @@ const Admin = () => {
                   </tbody>
                 </table>
               </div>
+                )}
+              </div>
             )}
           </TabsContent>
 
@@ -716,21 +1113,104 @@ const Admin = () => {
             ) : profiles.length === 0 ? (
               <div className="p-4 border rounded bg-card text-muted-foreground">No profiles found.</div>
             ) : (
+              <div className="space-y-3">
+                <div className="flex flex-col lg:flex-row gap-3 lg:items-end">
+                  <div className="flex-1 min-w-[200px]">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Search</label>
+                    <Input
+                      placeholder="Email, display name, region…"
+                      value={userSearch}
+                      onChange={(e) => setUserSearch(e.target.value)}
+                      className="h-9"
+                    />
+                  </div>
+                  <div className="w-full sm:w-[140px]">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Role</label>
+                    <Select value={userRoleFilter} onValueChange={(v) => setUserRoleFilter(v as typeof userRoleFilter)}>
+                      <SelectTrigger className="h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All roles</SelectItem>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="w-full sm:w-[160px]">
+                    <label className="text-xs font-medium text-muted-foreground mb-1 block">Plan</label>
+                    <Select value={userPlanFilter} onValueChange={(v) => setUserPlanFilter(v as typeof userPlanFilter)}>
+                      <SelectTrigger className="h-9">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All plans</SelectItem>
+                        <SelectItem value="free">Free</SelectItem>
+                        <SelectItem value="professional">Professional</SelectItem>
+                        <SelectItem value="enterprise">Enterprise</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Showing {filteredSortedProfiles.length} of {profiles.length} users
+                </p>
+                {!filteredSortedProfiles.length ? (
+                  <div className="p-4 border rounded bg-card text-muted-foreground text-sm">
+                    No users match your filters.
+                  </div>
+                ) : (
               <div className="overflow-auto border rounded bg-card">
                 <table className="min-w-[900px] w-full text-sm">
                   <thead className="bg-muted/50">
                     <tr>
-                      <th className="text-left p-3">Email</th>
-                      <th className="text-left p-3">Display name</th>
-                      <th className="text-left p-3">Region</th>
-                      <th className="text-left p-3">Role</th>
-                      <th className="text-left p-3">Plan</th>
-                      <th className="text-left p-3">Joined</th>
+                      <SortableTh
+                        label="Email"
+                        columnKey="email"
+                        sortKey={userSortKey}
+                        sortDir={userSortDir}
+                        onSort={toggleUserSort}
+                      />
+                      <SortableTh
+                        label="Display name"
+                        columnKey="full_name"
+                        sortKey={userSortKey}
+                        sortDir={userSortDir}
+                        onSort={toggleUserSort}
+                      />
+                      <SortableTh
+                        label="Region"
+                        columnKey="region"
+                        sortKey={userSortKey}
+                        sortDir={userSortDir}
+                        onSort={toggleUserSort}
+                      />
+                      <SortableTh
+                        label="Role"
+                        columnKey="role"
+                        sortKey={userSortKey}
+                        sortDir={userSortDir}
+                        onSort={toggleUserSort}
+                      />
+                      <SortableTh
+                        label="Plan"
+                        columnKey="plan"
+                        sortKey={userSortKey}
+                        sortDir={userSortDir}
+                        onSort={toggleUserSort}
+                      />
+                      <SortableTh
+                        label="Joined"
+                        columnKey="created_at"
+                        sortKey={userSortKey}
+                        sortDir={userSortDir}
+                        onSort={toggleUserSort}
+                      />
                       <th className="text-left p-3">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {profiles.map((p) => {
+                    {filteredSortedProfiles.map((p) => {
                       const eff = getEffective(p);
                       const showEmail = revealedEmails[p.id];
                       const isSelf = currentUser?.id === p.id;
@@ -822,6 +1302,8 @@ const Admin = () => {
                     })}
                   </tbody>
                 </table>
+              </div>
+                )}
               </div>
             )}
           </TabsContent>
