@@ -3,6 +3,9 @@
 ## Current Objective
 Stabilize and operationalize the regulation platform so auth, payments, deployment, and data workflows are consistent and maintainable.
 
+## Last brain sync
+2026-03-24 — aligned with repo: pricing (Free/Professional), admin filter/sort, migrations **006–008** (profiles RLS, inquiries general/category, optional admin seed), Vercel production.
+
 ## What Exists
 - React/Vite SPA with routing and core pages (index, search, detail, dashboard, admin, checkout).
 - Supabase auth context with profile and bookmarks support.
@@ -13,7 +16,7 @@ Stabilize and operationalize the regulation platform so auth, payments, deployme
 - Customer inquiries: **`/contact`** = general help (FAQ + accounts/billing/subscriptions form). **`/regulation-help`** = ask a regulation question or suggest coverage (with autocomplete). Homepage/search **Questions or Suggestions?** links to **`/regulation-help`** with CTA label **Open Regulation Help** and expanded explanatory copy. Homepage support routing note (account/billing/subscriptions -> **Contact**) is now shown as separate helper text below the panel.
 - New `/pricing` page is live with marketing content for **Free** and **Professional** tiers (Enterprise removed for now); route is wired and footer includes a **Pricing** link.
 - Inquiry forms use **database-backed autocomplete** (regulation titles and country/jurisdiction values from loaded regulations).
-- Form submissions persist to Supabase `customer_inquiries` (migrations under `supabase/migrations/`).
+- Form submissions persist to Supabase `customer_inquiries` (migrations under `supabase/migrations/`). Table supports **`inquiry_type`** `question` | `suggestion` | **`general`** (Contact page) and optional **`category`** after migration **`20260320000700_customer_inquiries_general.sql`** — apply in Supabase if Contact or admin inquiries error on missing column.
 - **Admin** (`/admin`): tabs for **Regulations**, **Customer inquiries**, and **Users** (masked email, plan/role support); link back to homepage. Tables are **filterable** (search + status/type/plan/role where relevant) and **sortable** (column header toggles). Admin profile policies: run `20260320000500` then **`20260320000600_profiles_admin_policies_fix_recursion.sql`** (006 fixes RLS recursion that caused **500** on profile fetch / broken login).
 - Optional seed migration **`20260320000800_admin_missickconsulting_user.sql`** provisions `missickconsulting@gmail.com` as admin + professional (email login); run in Supabase SQL Editor if needed.
 - **Questions or Suggestions?** on home + search: **not shown** to logged-in **free** plan users; shown when logged out or on professional/enterprise.

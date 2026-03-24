@@ -1,5 +1,9 @@
 # Change Log
 
+## 2026-03-24 - Brain sync (operational memory)
+- Refreshed **`current_state.md`** and **`next_steps.md`**: deployment target (Vercel), inquiry schema (**007** `general` + `category`), admin triage UX (filter/sort on `/admin`), and seed migration **008** optional admin account.
+- Clarified pricing history: `/pricing` ships **Free + Professional** only; Enterprise tier removed from the page until offered.
+
 ## 2026-03-24 - Admin page: filterable & sortable tables
 - `/admin`: Regulations, Customer inquiries, and Users tables support text search (where applicable), dropdown filters (status/type/role/plan), and clickable column headers for sort (toggle asc/desc). Shows “Showing X of Y” counts.
 
@@ -14,7 +18,7 @@
 - Simplified `/pricing` by removing the not-yet-established Enterprise tier; page now focuses on Free and Professional positioning.
 
 ## 2026-03-21 - Pricing page + CTA copy alignment
-- Added new marketing-focused `/pricing` page with Free, Professional, and Enterprise tiers and plan-aware CTAs.
+- Added new marketing-focused `/pricing` page with Free and Professional tiers and plan-aware CTAs (Enterprise tier removed later until offered).
 - Wired routing for `/pricing` in `src/App.tsx`.
 - Added `Pricing` link in the footer navigation.
 - Updated **Questions or Suggestions?** copy and CTA labels on homepage and search (`Go` -> `/regulation-help`), and refined regulation-help intro copy to route account/billing/subscription questions to `/contact` via linked `Contact`.
