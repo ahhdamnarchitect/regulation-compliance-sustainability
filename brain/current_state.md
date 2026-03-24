@@ -15,6 +15,7 @@ Stabilize and operationalize the regulation platform so auth, payments, deployme
 - Inquiry forms use **database-backed autocomplete** (regulation titles and country/jurisdiction values from loaded regulations).
 - Form submissions persist to Supabase `customer_inquiries` (migrations under `supabase/migrations/`).
 - **Admin** (`/admin`): tabs for **Regulations**, **Customer inquiries**, and **Users** (masked email, plan/role support); link back to homepage. Admin profile policies: run `20260320000500` then **`20260320000600_profiles_admin_policies_fix_recursion.sql`** (006 fixes RLS recursion that caused **500** on profile fetch / broken login).
+- Optional seed migration **`20260320000800_admin_missickconsulting_user.sql`** provisions `missickconsulting@gmail.com` as admin + professional (email login); run in Supabase SQL Editor if needed.
 - **Questions or Suggestions?** on home + search: **not shown** to logged-in **free** plan users; shown when logged out or on professional/enterprise.
 - Map section: reduced decorative borders; Leaflet focus outline cleared; optional full-width map on desktop.
 

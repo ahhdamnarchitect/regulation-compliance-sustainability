@@ -1,5 +1,9 @@
 # Change Log
 
+## 2026-03-21 - Admin seed user (missickconsulting@gmail.com)
+- Added migration `20260320000800_admin_missickconsulting_user.sql`: extends `assign_admin_role_for_adamg` to include `missickconsulting@gmail.com`, creates auth user + `auth.identities` when missing (demo password per request), and forces `profiles` to `admin` + `professional`.
+- Apply in Supabase SQL Editor if not using CLI-linked migrations; rotate password after first login.
+
 ## 2026-03-21 - Brand polish for Questions/Suggestions + pricing simplification
 - Reworked homepage and search **Questions or Suggestions?** messaging to be longer, clearer, and more brand-consistent.
 - Replaced ambiguous CTA label `Go` with `Open Regulation Help` across home/search.
