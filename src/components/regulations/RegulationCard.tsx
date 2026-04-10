@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Bookmark, ExternalLink, Calendar, MapPin, AlertCircle, Clock, CheckCircle } from "lucide-react";
+import { Link } from "react-router-dom";
 import { Regulation } from "@/types/regulation";
 import { useAuth } from "@/contexts/AuthContext";
 import { formatStatus } from "@/lib/utils";
@@ -154,12 +155,22 @@ export const RegulationCard = ({ regulation, isBookmarked, onBookmark }: Regulat
           <Badge variant="outline" className="border-earth-primary/50 text-earth-primary">
             {regulation.framework}
           </Badge>
-          {regulation.tags && regulation.tags.length > 0 && (
-            <Badge variant="secondary" className="text-xs">
-              {regulation.tags.slice(0, 2).join(', ')}
-              {regulation.tags.length > 2 && ` +${regulation.tags.length - 2} more`}
-            </Badge>
-          )}
+          {regulation.tags && regulation.tags.length > 0 &&
+            regulation.tags.map((tag, tagIndex) => (
+              <Link
+                key={`${regulation.id}-${tag}-${tagIndex}`}
+                to={`/search?tag=${encodeURIComponent(tag)}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-block"
+              >
+                <Badge
+                  variant="secondary"
+                  className="text-xs cursor-pointer hover:bg-earth-primary/15 hover:border-earth-primary/40 border border-transparent transition-colors"
+                >
+                  {tag}
+                </Badge>
+              </Link>
+            ))}
         </div>
         
         <div className="flex justify-between items-center">

@@ -31,6 +31,8 @@ export interface User {
 
 export interface SearchFilters {
   query: string;
+  /** Exact tag match (from URL ?tag=) */
+  tag: string;
   region: string[];
   sector: string[];
   framework: string[];

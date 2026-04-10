@@ -61,7 +61,8 @@ const mapStyles = `
     border: none !important;
     outline: none !important;
     box-shadow: none !important;
-    filter: none !important;
+    /* Subtle: slightly richer oceans / map without harsh contrast */
+    filter: saturate(1.08) brightness(0.94) contrast(1.03) !important;
   }
   .leaflet-zoom-animated {
     border: none !important;
@@ -624,7 +625,7 @@ const InteractiveMap: React.FC<InteractiveMapProps> = ({ regulations, onRegulati
         style={{ 
           height: '100%', 
           width: '100%',
-          backgroundColor: '#d5e8eb'
+          backgroundColor: '#c4dce3'
         }}
         className="z-0 rounded-lg"
         maxBounds={[[-85, -180], [85, 180]]}

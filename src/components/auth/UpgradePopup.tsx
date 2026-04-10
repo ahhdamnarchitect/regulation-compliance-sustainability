@@ -14,6 +14,7 @@ const PROFESSIONAL_FEATURES = [
   'Unlimited bookmarks',
   'PDF & CSV export',
   'Full regulation detail pages & source links',
+  'Ask about a specific regulation (Regulation Help)',
 ];
 
 export const UpgradePopup: React.FC<UpgradePopupProps> = ({ open, onClose }) => {

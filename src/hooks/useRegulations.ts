@@ -140,7 +140,13 @@ export const useRegulations = () => {
             statusArr.some(s => s === 'proposed' ? reg.status === 'proposed' : (s === 'enacted' && (reg.status === 'active' || reg.status === 'enacted')))
           );
         }
-        
+        if (filters?.tag?.trim()) {
+          const t = filters.tag.trim().toLowerCase();
+          filteredData = filteredData.filter((reg) =>
+            reg.tags?.some((tag) => tag.trim().toLowerCase() === t)
+          );
+        }
+
         setRegulations(filteredData);
       } else {
         const transformedData = (data || []).map(transformRegulation);

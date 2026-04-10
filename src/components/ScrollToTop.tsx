@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
+import { useLayoutEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 /**
  * Scrolls the window to the top whenever the route pathname changes.
- * Use inside BrowserRouter so navigation to Privacy, Terms, About, Disclaimer, etc. opens at the top.
+ * useLayoutEffect + documentElement/body avoids Safari restoring the previous scroll position after paint.
  */
 export function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => {
+  useLayoutEffect(() => {
     window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
   }, [pathname]);
   return null;
 }

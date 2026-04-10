@@ -51,6 +51,7 @@ export default function SearchResults() {
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [filters, setFilters] = useState<SearchFilters>(() => ({
     query: searchParams.get('q') || '',
+    tag: (searchParams.get('tag') || '').trim(),
     region: parseArrayParam(searchParams.get('region')),
     sector: parseArrayParam(searchParams.get('sector')),
     framework: parseArrayParam(searchParams.get('framework')),
@@ -64,6 +65,30 @@ export default function SearchResults() {
   useEffect(() => {
     refetch(filters);
   }, [filters, refetch]);
+
+  /** Keep draft search text in the URL so filter changes don't fight URL→state sync */
+  const mergeSearchDraftIntoParams = (params: URLSearchParams) => {
+    const q = searchQuery.trim();
+    if (q) params.set('q', q);
+    else params.delete('q');
+  };
+
+  const queryString = searchParams.toString();
+  // Sync state when the URL changes (tag links, browser back/forward, shared links)
+  useEffect(() => {
+    const q = searchParams.get('q') ?? '';
+    const tag = (searchParams.get('tag') ?? '').trim();
+    setSearchQuery(q);
+    setFilters({
+      query: q,
+      tag,
+      region: parseArrayParam(searchParams.get('region')),
+      sector: parseArrayParam(searchParams.get('sector')),
+      framework: parseArrayParam(searchParams.get('framework')),
+      status: parseArrayParam(searchParams.get('status')),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally react only to full query string
+  }, [queryString]);
 
   // Sanitize region filter: when region-level selection changes, remove any country/state that is no longer in the current options
   useEffect(() => {
@@ -110,6 +135,7 @@ export default function SearchResults() {
         const next = new URLSearchParams(prev);
         if (nextRegion.length) next.set('region', nextRegion.join(','));
         else next.delete('region');
+        mergeSearchDraftIntoParams(next);
         return next;
       });
       return;
@@ -119,6 +145,7 @@ export default function SearchResults() {
       setSearchParams(prev => {
         const next = new URLSearchParams(prev);
         next.delete(key);
+        mergeSearchDraftIntoParams(next);
         return next;
       });
       return;
@@ -130,6 +157,7 @@ export default function SearchResults() {
       const np = new URLSearchParams(prev);
       if (nextArr.length) np.set(key, nextArr.join(','));
       else np.delete(key);
+      mergeSearchDraftIntoParams(np);
       return np;
     });
   };
@@ -137,6 +165,7 @@ export default function SearchResults() {
   const handleClearFilters = () => {
     setFilters({
       query: '',
+      tag: '',
       region: [],
       sector: [],
       framework: [],
@@ -146,8 +175,18 @@ export default function SearchResults() {
     setSearchParams({});
   };
 
+  const clearTagFilter = () => {
+    setFilters((prev) => ({ ...prev, tag: '' }));
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.delete('tag');
+      return next;
+    });
+  };
+
   const hasActiveFilters =
     !!filters.query ||
+    !!filters.tag?.trim() ||
     (filters.region?.length ?? 0) > 0 ||
     (filters.sector?.length ?? 0) > 0 ||
     (filters.framework?.length ?? 0) > 0 ||
@@ -174,6 +213,13 @@ export default function SearchResults() {
   const selectedRegionsOnly = regions.filter((r) => REGION_LEVEL_NAMES.includes(r));
 
   const filteredRegulations = regulations.filter(regulation => {
+    const tagFilter = filters.tag?.trim();
+    if (tagFilter) {
+      const t = tagFilter.toLowerCase();
+      if (!regulation.tags?.some((tag) => tag.trim().toLowerCase() === t)) {
+        return false;
+      }
+    }
     if (filters.query) {
       const query = filters.query.trim();
       const titleMatch = smartSearch(regulation.title, query);
@@ -230,6 +276,7 @@ export default function SearchResults() {
   );
 
   const activeFilterCount =
+    (filters.tag?.trim() ? 1 : 0) +
     (filters.region?.length ?? 0) +
     (filters.sector?.length ?? 0) +
     (filters.framework?.length ?? 0) +
@@ -255,6 +302,24 @@ export default function SearchResults() {
 
         {/* Search bar + Filter bar (filters up top on mobile) */}
         <div className="space-y-3 mb-6">
+          {filters.tag?.trim() ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-sm text-earth-text/80">Filtered by tag:</span>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                className="h-8 gap-1.5 rounded-full border-earth-sand bg-white text-earth-primary hover:bg-earth-sand/40"
+                onClick={clearTagFilter}
+              >
+                {filters.tag.trim()}
+                <span className="sr-only">Remove tag filter</span>
+                <span aria-hidden className="text-earth-text/60">
+                  ×
+                </span>
+              </Button>
+            </div>
+          ) : null}
           <div className="flex gap-2 sm:gap-4">
             <SearchInputWithSuggestions
               value={searchQuery}

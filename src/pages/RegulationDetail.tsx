@@ -353,9 +353,18 @@ export default function RegulationDetail() {
                       <h3 className="text-lg font-semibold text-foreground mb-3">Tags</h3>
                       <div className="flex flex-wrap gap-2">
                         {regulation.tags.map((tag: string, index: number) => (
-                          <Badge key={index} variant="secondary" className="bg-muted text-foreground">
-                            {tag}
-                          </Badge>
+                          <Link
+                            key={`${tag}-${index}`}
+                            to={`/search?tag=${encodeURIComponent(tag)}`}
+                            className="inline-block"
+                          >
+                            <Badge
+                              variant="secondary"
+                              className="bg-muted text-foreground cursor-pointer hover:bg-earth-primary/15 hover:border-earth-primary/40 border border-transparent transition-colors"
+                            >
+                              {tag}
+                            </Badge>
+                          </Link>
                         ))}
                       </div>
                     </div>
